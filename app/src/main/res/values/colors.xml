@@ -1,0 +1,117 @@
+<!-- res/values/colors.xml -->
+<resources>
+
+    <!-- ========================================== -->
+    <!-- PRIMARY PALETTE (Deep Blue) -->
+    <!-- ========================================== -->
+    <color name="primary_900">#0F172A</color>      <!-- Darkest -->
+    <color name="primary_800">#1E293B</color>
+    <color name="primary_700">#334155</color>
+    <color name="primary_600">#475569</color>
+    <color name="primary_500">#1E3A8A</color>      <!-- Main Primary -->
+    <color name="primary_400">#3B82F6</color>
+    <color name="primary_300">#60A5FA</color>
+    <color name="primary_200">#93C5FD</color>
+    <color name="primary_100">#DBEAFE</color>
+    <color name="primary_50">#EFF6FF</color>       <!-- Lightest -->
+
+    <!-- ========================================== -->
+    <!-- SECONDARY PALETTE (Vibrant Orange) -->
+    <!-- ========================================== -->
+    <color name="secondary_900">#7C2D12</color>
+    <color name="secondary_800">#9A3412</color>
+    <color name="secondary_700">#C2410C</color>
+    <color name="secondary_600">#EA580C</color>
+    <color name="secondary_500">#F97316</color>    <!-- Main Secondary -->
+    <color name="secondary_400">#FB923C</color>
+    <color name="secondary_300">#FDBA74</color>
+    <color name="secondary_200">#FED7AA</color>
+    <color name="secondary_100">#FFEDD5</color>
+    <color name="secondary_50">#FFF7ED</color>
+
+    <!-- ========================================== -->
+    <!-- TERTIARY PALETTE (Success Green) -->
+    <!-- ========================================== -->
+    <color name="tertiary_900">#064E3B</color>
+    <color name="tertiary_800">#065F46</color>
+    <color name="tertiary_700">#047857</color>
+    <color name="tertiary_600">#059669</color>
+    <color name="tertiary_500">#10B981</color>     <!-- Main Tertiary -->
+    <color name="tertiary_400">#34D399</color>
+    <color name="tertiary_300">#6EE7B7</color>
+    <color name="tertiary_200">#A7F3D0</color>
+    <color name="tertiary_100">#D1FAE5</color>
+    <color name="tertiary_50">#ECFDF5</color>
+
+    <!-- ========================================== -->
+    <!-- NEUTRAL PALETTE (Grays) -->
+    <!-- ========================================== -->
+    <color name="neutral_900">#0F172A</color>      <!-- Almost black -->
+    <color name="neutral_800">#1E293B</color>
+    <color name="neutral_700">#334155</color>
+    <color name="neutral_600">#475569</color>
+    <color name="neutral_500">#64748B</color>
+    <color name="neutral_400">#94A3B8</color>
+    <color name="neutral_300">#CBD5E1</color>
+    <color name="neutral_200">#E2E8F0</color>
+    <color name="neutral_100">#F1F5F9</color>
+    <color name="neutral_50">#F8FAFC</color>       <!-- Almost white -->
+
+    <!-- ========================================== -->
+    <!-- SEMANTIC COLORS -->
+    <!-- ========================================== -->
+
+    <!-- Success -->
+    <color name="success">#10B981</color>
+    <color name="success_light">#D1FAE5</color>
+    <color name="success_dark">#065F46</color>
+
+    <!-- Warning -->
+    <color name="warning">#F59E0B</color>
+    <color name="warning_light">#FEF3C7</color>
+    <color name="warning_dark">#B45309</color>
+
+    <!-- Error -->
+    <color name="error">#EF4444</color>
+    <color name="error_light">#FEE2E2</color>
+    <color name="error_dark">#B91C1C</color>
+
+    <!-- Info -->
+    <color name="info">#3B82F6</color>
+    <color name="info_light">#DBEAFE</color>
+    <color name="info_dark">#1E40AF</color>
+
+    <!-- ========================================== -->
+    <!-- BASIC COLORS -->
+    <!-- ========================================== -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- ========================================== -->
+    <!-- STATUS BAR & NAVIGATION BAR -->
+    <!-- ========================================== -->
+    <color name="status_bar_color">@color/primary_500</color>
+    <color name="navigation_bar_color">@color/white</color>
+
+    <!-- ========================================== -->
+    <!-- SPECIAL USE COLORS -->
+    <!-- ========================================== -->
+
+    <!-- Card backgrounds -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_background_elevated">#FFFFFF</color>
+
+    <!-- Dividers -->
+    <color name="divider">#E2E8F0</color>
+    <color name="divider_light">#F1F5F9</color>
+
+    <!-- Overlays -->
+    <color name="overlay_dark">#80000000</color>    <!-- 50% black -->
+    <color name="overlay_light">#80FFFFFF</color>   <!-- 50% white -->
+
+    <!-- Ripple effects -->
+    <color name="ripple_primary">#331E3A8A</color>  <!-- 20% primary -->
+    <color name="ripple_secondary">#33F97316</color> <!-- 20% secondary -->
+
+</resources>

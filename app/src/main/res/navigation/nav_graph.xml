@@ -1,0 +1,19 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.client_training_app.HomeFragment"
+        android:label="Trainer App" />
+
+    <fragment
+        android:id="@+id/profilesFragment"
+        android:name="com.example.client_training_app.ProfilesFragment"
+        android:label="Profily" />
+
+    <fragment
+        android:id="@+id/exercisesFragment"
+        android:name="com.example.client_training_app.ExercisesFragment"
+        android:label="Cviky" />
+</navigation>
