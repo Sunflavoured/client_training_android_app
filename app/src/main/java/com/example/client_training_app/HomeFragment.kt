@@ -23,7 +23,7 @@ class HomeFragment : Fragment() {
         setupClickListeners()
 
         return binding.root
-        
+
     }
 
     private fun setupClickListeners() {
