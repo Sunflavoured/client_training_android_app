@@ -1,0 +1,102 @@
+[
+  {
+    "id": "squat_01",
+    "name": "Dřep",
+    "category": "STRENGTH",
+    "description": "Postav se do mírně rozkročeného postoje, nohy na šířku ramen. Zvedni hrudník, aktivuj core a začni klesat směrem dolů, jako bys chtěl sednout na židli. Kolena směřují ve směru špiček. Vrať se do výchozí polohy.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": ["Přední stehna", "Zadní stehna"],
+    "isDefault": true
+  },
+  {
+    "id": "pushup_01",
+    "name": "Klik",
+    "category": "STRENGTH",
+    "description": "Pozice na dlaních a špičkách, tělo v rovné linii. Ohni lokty a sniž hrudník téměř k zemi. Vystrč zpět do výchozí pozice. Lokty směřují dozadu, ne do stran.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": ["Hrudník", "Triceps", "Ramena"],
+    "isDefault": true
+  },
+  {
+    "id": "plank_01",
+    "name": "Prkno",
+    "category": "STRENGTH",
+    "description": "Pozice na předloktích a špičkách nohou. Tělo tvoří rovnou linii od hlavy po paty. Aktivuj core, nezvedej zadek nahoru ani ho nepouštěj dolů. Drž pozici.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": ["Břicho"],
+    "isDefault": true
+  },
+  {
+    "id": "pullup_01",
+    "name": "Shyb",
+    "category": "STRENGTH",
+    "description": "Chyť se hrazdy nadhmatem (hřbety rukou k sobě). Vytáhni se nahoru, až brada přesáhne hrazdu. Pomalu se spusť zpět dolů.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": ["Latissimus", "Biceps", "Rhombický sval"],
+    "isDefault": true
+  },
+  {
+    "id": "deadlift_01",
+    "name": "Mrtvý tah",
+    "category": "STRENGTH",
+    "description": "Postav se k činke, nohy na šířku ramen. Chyť se činky, záda rovná. Zvedni činku aktivací nohou a zadku, udržuj rovná záda. Spusť zpět kontrolovaně.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": ["Zadní stehna", "Spodní záda", "Latissimus"],
+    "isDefault": true
+  },
+  {
+    "id": "running_01",
+    "name": "Běh",
+    "category": "CARDIO",
+    "description": "Běžecká aktivita venku nebo na běžeckém pásu. Udržuj konstantní tempo přizpůsobené tvé kondici.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": [],
+    "isDefault": true
+  },
+  {
+    "id": "cycling_01",
+    "name": "Jízda na kole",
+    "category": "CARDIO",
+    "description": "Cyklistika venku nebo na stacionárním kole. Udržuj stabilní tempo a kadenci.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": [],
+    "isDefault": true
+  },
+  {
+    "id": "stretch_hamstring_01",
+    "name": "Protažení hamstringů",
+    "category": "MOBILITY",
+    "description": "Sed na zemi, nohy natažené před sebou. Pomalu se předkloň z boků směrem k prstům na nohou. Drž natažení 20-30 sekund.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": [],
+    "isDefault": true
+  },
+  {
+    "id": "shoulder_stretch_01",
+    "name": "Protažení ramen",
+    "category": "MOBILITY",
+    "description": "Stoj vzpřímeně. Přitáhni pravou paži přes hrudník k levému rameni. Levou rukou ji přidrž. Drž 20-30 sekund, pak prohoď strany.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": [],
+    "isDefault": true
+  },
+  {
+    "id": "cat_cow_01",
+    "name": "Kočka-kráva",
+    "category": "MOBILITY",
+    "description": "Pozice na čtyřech. Prohni záda dolů (kráva), hlavu nahoru. Pak vykleň záda nahoru (kočka), hlavu dolů. Střídej plynule.",
+    "mediaType": "NONE",
+    "mediaUrl": null,
+    "muscleGroups": [],
+    "isDefault": true
+  }
+]

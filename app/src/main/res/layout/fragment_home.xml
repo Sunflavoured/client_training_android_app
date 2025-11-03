@@ -13,24 +13,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Welcome Section -->
-        <TextView
-            android:id="@+id/tvWelcome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ahoj!"
-            android:textAppearance="@style/TextAppearance.TrainerApp.Headline"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Čím dnes začneme?"
-            android:textAppearance="@style/TextAppearance.TrainerApp.Body"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:layout_marginBottom="24dp" />
-
         <!-- Quick Stats Card -->
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.TrainerApp.Card"
