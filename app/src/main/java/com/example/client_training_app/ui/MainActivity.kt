@@ -1,10 +1,11 @@
-package com.example.client_training_app
+package com.example.client_training_app.ui
 
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.example.client_training_app.R
 import com.example.client_training_app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

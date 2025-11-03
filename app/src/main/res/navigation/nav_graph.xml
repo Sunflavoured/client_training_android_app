@@ -4,17 +4,17 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.client_training_app.ui.HomeFragment"
+        android:name="com.example.client_training_app.HomeFragment"
         android:label="Trainer App" />
 
     <fragment
         android:id="@+id/profilesFragment"
-        android:name="com.example.client_training_app.ui.ProfilesFragment"
+        android:name="com.example.client_training_app.ProfilesFragment"
         android:label="Profily" />
 
     <fragment
         android:id="@+id/exercisesFragment"
-        android:name="com.example.client_training_app.ui.ExerciseFragment"
+        android:name="com.example.client_training_app.ExerciseFragment"
         android:label="Cviky">
         <action
             android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/exerciseDetailFragment"
-        android:name="com.example.client_training_app.ui.exercises.ExerciseDetailFragment"
+        android:name="com.example.client_training_app.ExerciseDetailFragment"
         android:label="Detail cviku">
 
         <!-- Argument musí být uvnitř fragmentu -->

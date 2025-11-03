@@ -1,4 +1,4 @@
-package com.example.client_training_app.ui
+package com.example.client_training_app
 
 import android.os.Bundle
 import android.view.LayoutInflater

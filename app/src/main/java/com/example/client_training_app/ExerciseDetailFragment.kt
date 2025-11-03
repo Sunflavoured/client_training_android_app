@@ -1,10 +1,11 @@
-package com.example.client_training_app.ui.exercises
+package com.example.client_training_app
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.client_training_app.data.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentExerciseDetailBinding
 
 class ExerciseDetailFragment : Fragment() {
@@ -26,7 +27,7 @@ class ExerciseDetailFragment : Fragment() {
         val args = ExerciseDetailFragmentArgs.fromBundle(requireArguments())
         val exerciseId = args.exerciseId
 
-        val repository = com.example.client_training_app.data.ExerciseRepository(requireContext())
+        val repository = ExerciseRepository(requireContext())
         val exercise = repository.getExercises().find { it.id == exerciseId }
 
         exercise?.let {

@@ -36,6 +36,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tvClientCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TODO"
@@ -65,9 +66,10 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tvExerciseCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TODO"
+                        android:text="0"
                         android:textSize="32sp"
                         android:textColor="@color/secondary_500"
                         android:fontFamily="sans-serif-medium" />
