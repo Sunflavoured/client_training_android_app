@@ -4,16 +4,32 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.client_training_app.HomeFragment"
+        android:name="com.example.client_training_app.ui.HomeFragment"
         android:label="Trainer App" />
 
     <fragment
         android:id="@+id/profilesFragment"
-        android:name="com.example.client_training_app.ProfilesFragment"
+        android:name="com.example.client_training_app.ui.ProfilesFragment"
         android:label="Profily" />
 
     <fragment
         android:id="@+id/exercisesFragment"
-        android:name="com.example.client_training_app.ExercisesFragment"
-        android:label="Cviky" />
+        android:name="com.example.client_training_app.ui.ExerciseFragment"
+        android:label="Cviky">
+        <action
+            android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
+            app:destination="@id/exerciseDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseDetailFragment"
+        android:name="com.example.client_training_app.ui.exercises.ExerciseDetailFragment"
+        android:label="Detail cviku">
+
+        <!-- Argument musí být uvnitř fragmentu -->
+        <argument
+            android:name="exerciseId"
+            app:argType="string" />
+    </fragment>
+
 </navigation>

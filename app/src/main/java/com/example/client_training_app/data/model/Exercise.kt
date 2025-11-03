@@ -1,4 +1,4 @@
-package com.example.client_training_app
+package com.example.client_training_app.data.model
 
 data class Exercise (
     val id: String,                    // Unikátní ID (např. "squat_01")
