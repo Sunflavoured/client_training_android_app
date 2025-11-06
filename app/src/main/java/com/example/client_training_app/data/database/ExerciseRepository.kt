@@ -31,6 +31,17 @@ class ExerciseRepository(private val context: Context) {
         }
     }
 
+    //najdi cvik podle id
+    suspend fun getExerciseById(id: String): Exercise? {
+        // Zkusíme najít v custom cvicích
+        val customExercise = exerciseDao.getExerciseById(id)
+        if (customExercise != null) {
+            return customExercise.toExercise()
+        }
+        // Pokud nenajdeme, hledáme v default cvicích
+        return loadDefaultExercises().find { it.id == id }
+    }
+
     // Synchronní verze (pro kompatibilitu se starým kódem)
     fun getExercises(): List<Exercise> {
         return loadDefaultExercises()

@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.client_training_app.data.database.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentExerciseDetailBinding
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class ExerciseDetailFragment : Fragment() {
 
@@ -26,26 +28,27 @@ class ExerciseDetailFragment : Fragment() {
 
         val args = ExerciseDetailFragmentArgs.fromBundle(requireArguments())
         val exerciseId = args.exerciseId
-
         val repository = ExerciseRepository(requireContext())
-        val exercise = repository.getExercises().find { it.id == exerciseId }
 
-        exercise?.let {
-            binding.exerciseName.text = it.name
-            binding.exerciseCategory.text = it.category.displayName //protože je to enum list
-            binding.exerciseDescription.text = it.description
+        viewLifecycleOwner.lifecycleScope.launch {
+            val exercise = repository.getExerciseById(exerciseId)
 
-            // Pokud jsou svalové skupiny prázdné, schovej celou kartu
-            if (it.muscleGroups.isEmpty()) {
-                binding.cardMuscleGroups.visibility = View.GONE
-            } else {
-                binding.cardMuscleGroups.visibility = View.VISIBLE
-                binding.exerciseMuscleGroups.text = it.muscleGroups.joinToString(", ")
+            exercise?.let {
+                binding.exerciseName.text = it.name
+                binding.exerciseCategory.text = it.category.displayName
+                binding.exerciseDescription.text = it.description
+
+                if (it.muscleGroups.isEmpty()) {
+                    binding.cardMuscleGroups.visibility = View.GONE
+                } else {
+                    binding.cardMuscleGroups.visibility = View.VISIBLE
+                    binding.exerciseMuscleGroups.text = it.muscleGroups.joinToString(", ")
+                }
+
+                binding.exerciseIsDefault.text = if (it.isDefault) "Ano" else "Ne"
+            } ?: run {
+                binding.exerciseName.text = "Cvik nenalezen"
             }
-
-            binding.exerciseIsDefault.text = if (it.isDefault) "Ano" else "Ne"
-        } ?: run {
-            binding.exerciseName.text = "Cvik nenalezen"
         }
     }
 
