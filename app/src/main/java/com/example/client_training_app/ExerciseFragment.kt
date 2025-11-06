@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.client_training_app.data.ExerciseRepository
+import com.example.client_training_app.data.database.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentExercisesBinding
 import com.example.client_training_app.ui.exercises.ExerciseAdapter
 
@@ -48,15 +48,7 @@ class ExerciseFragment : Fragment() {
     // ← NOVÁ FUNKCE: Nastavení FAB
     private fun setupFAB() {
         binding.fabAddExercise.setOnClickListener {
-            // TODO: Naviguj na AddExerciseFragment
-            // findNavController().navigate(R.id.action_exercisesFragment_to_addExerciseFragment)
-
-            // Zatím jen toast pro test
-            android.widget.Toast.makeText(
-                requireContext(),
-                "Přidat nový cvik - TODO",
-                android.widget.Toast.LENGTH_SHORT
-            ).show()
+            findNavController().navigate(R.id.action_exercisesFragment_to_addExerciseFragment)
         }
     }
 

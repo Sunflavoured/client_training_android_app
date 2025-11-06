@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.client_training_app.data.ExerciseRepository
+import com.example.client_training_app.data.database.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentExerciseDetailBinding
 
 class ExerciseDetailFragment : Fragment() {

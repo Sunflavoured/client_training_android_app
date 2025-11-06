@@ -13,12 +13,22 @@
         android:label="Profily" />
 
     <fragment
+        android:id="@+id/addExerciseFragment"
+        android:name="com.example.client_training_app.AddExerciseFragment"
+        android:label="Přidat cvik" />
+
+
+    <fragment
         android:id="@+id/exercisesFragment"
         android:name="com.example.client_training_app.ExerciseFragment"
         android:label="Cviky">
         <action
             android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
             app:destination="@id/exerciseDetailFragment" />
+        <action
+            android:id="@+id/action_exercisesFragment_to_addExerciseFragment"
+            app:destination="@id/addExerciseFragment" />
+
     </fragment>
 
     <fragment
@@ -31,5 +41,7 @@
             android:name="exerciseId"
             app:argType="string" />
     </fragment>
+
+
 
 </navigation>
