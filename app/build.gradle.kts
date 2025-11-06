@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("androidx.navigation.safeargs.kotlin") version "2.7.2"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -60,4 +61,12 @@ dependencies {
 
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // Room Database
+    val room_version = "2.8.3"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+
 }

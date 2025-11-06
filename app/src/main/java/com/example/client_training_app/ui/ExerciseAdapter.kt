@@ -9,7 +9,7 @@ import com.example.client_training_app.R
 import com.example.client_training_app.data.model.Exercise
 
 class ExerciseAdapter(
-    private val exercises: List<Exercise>,
+    private var exercises: List<Exercise>, // var, aby šlo měnit data
     private val onItemClick: (Exercise) -> Unit
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
@@ -30,4 +30,9 @@ class ExerciseAdapter(
     }
 
     override fun getItemCount() = exercises.size
+
+    fun updateExercises(newExercises: List<Exercise>) {
+        exercises = newExercises
+        notifyDataSetChanged()
+    }
 }

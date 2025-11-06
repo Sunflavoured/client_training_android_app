@@ -27,21 +27,40 @@ class ExerciseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // uložení cviků z ExerciseRepository do proměnné
-        val repository = ExerciseRepository(requireContext())
-        val exercises = repository.getExercises()
+        setupRecyclerView()
+        setupFAB()
+    }
+        private fun setupRecyclerView() {
+            // Uložení cviků z ExerciseRepository do proměnné
+            val repository = ExerciseRepository(requireContext())
+            val exercises = repository.getExercises()
 
-        //skrz ExerciseAdapter vložíme proměnnou exercises do recycler view
-        val adapter = ExerciseAdapter(exercises) { exercise ->
-            val action = ExerciseFragmentDirections
-                .actionExercisesFragmentToExerciseDetailFragment(exercise.id)
-            findNavController().navigate(action)
-        }
+            // Skrz ExerciseAdapter vložíme proměnnou exercises do recycler view
+            val adapter = ExerciseAdapter(exercises) { exercise ->
+                val action = ExerciseFragmentDirections
+                    .actionExercisesFragmentToExerciseDetailFragment(exercise.id)
+                findNavController().navigate(action)
+            }
 
         binding.exercisesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.exercisesRecyclerView.adapter = adapter
     }
-        override fun onDestroyView() {
+    // ← NOVÁ FUNKCE: Nastavení FAB
+    private fun setupFAB() {
+        binding.fabAddExercise.setOnClickListener {
+            // TODO: Naviguj na AddExerciseFragment
+            // findNavController().navigate(R.id.action_exercisesFragment_to_addExerciseFragment)
+
+            // Zatím jen toast pro test
+            android.widget.Toast.makeText(
+                requireContext(),
+                "Přidat nový cvik - TODO",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    override fun onDestroyView() {
             super.onDestroyView()
             _binding = null
         }
