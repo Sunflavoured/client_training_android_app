@@ -63,20 +63,24 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Svalové skupiny (jen pro Síla) -->
+        <!-- Svalové skupiny (vypadá jako dropdown, ale otevírá dialog) -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilMuscleGroups"
-            style="@style/Widget.TrainerApp.TextInputLayout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Svalové skupiny (oddělené čárkou)"
-            android:layout_marginBottom="24dp">
+            android:hint="Svalové skupiny"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etMuscleGroups"
+            <AutoCompleteTextView
+                android:id="@+id/actvMuscleGroups"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:inputType="none"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:text="Vyberte svalové skupiny" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -86,7 +90,8 @@
             style="@style/Widget.TrainerApp.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Uložit cvik" />
+            android:text="Uložit cvik"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

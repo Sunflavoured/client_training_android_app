@@ -12,15 +12,19 @@ import com.example.client_training_app.data.database.ExerciseRepository
 import com.example.client_training_app.data.model.Exercise
 import com.example.client_training_app.data.model.ExerciseCategory
 import com.example.client_training_app.data.model.MediaType
+import com.example.client_training_app.data.model.MuscleGroup
 import com.example.client_training_app.databinding.FragmentAddExerciseBinding
 import kotlinx.coroutines.launch
 import java.util.UUID
+import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
 
 class AddExerciseFragment : Fragment() {
     private var _binding: FragmentAddExerciseBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var repository: ExerciseRepository
+    private val selectedMuscleGroups = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,11 +33,13 @@ class AddExerciseFragment : Fragment() {
     ): View {
         _binding = FragmentAddExerciseBinding.inflate(inflater, container, false)
 
-        //  Initialize repository here
         repository = ExerciseRepository(requireContext())
 
         setupCategoryDropdown()
+        setupMuscleGroupsDropdown()  // ← NOVÁ FUNKCE
         setupSaveButton()
+        setupResultListener()
+
         return binding.root
     }
 
@@ -44,9 +50,63 @@ class AddExerciseFragment : Fragment() {
 
         binding.actvCategory.setOnItemClickListener { _, _, position, _ ->
             val selected = ExerciseCategory.values()[position]
+
+            // Zobraz/skryj pole se svalovými skupinami
             binding.tilMuscleGroups.visibility =
                 if (selected == ExerciseCategory.STRENGTH) View.VISIBLE else View.GONE
+
+            // Vyčisti vybrané svalové skupiny
+            if (selected != ExerciseCategory.STRENGTH) {
+                selectedMuscleGroups.clear()
+                updateMuscleGroupsDisplay()
+            }
         }
+    }
+
+    // ← NOVÁ FUNKCE: Nastavení "fake" dropdownu pro svalové skupiny
+    private fun setupMuscleGroupsDropdown() {
+        // Zakážeme normální chování AutoCompleteTextView
+        binding.actvMuscleGroups.keyListener = null
+
+        // Po kliknutí otevřeme NOVÝ FRAGMENT
+        val clickListener = View.OnClickListener {
+            // Převedeme náš seznam na pole pro poslání jako argument
+            val currentSelection = selectedMuscleGroups.toTypedArray()
+
+            // Použijeme vygenerovanou akci (nezapomeň rebuildnout projekt!)
+            val action = AddExerciseFragmentDirections
+                .actionAddExerciseFragmentToSelectMuscleGroupsFragment(currentSelection)
+
+            findNavController().navigate(action)
+        }
+
+        binding.actvMuscleGroups.setOnClickListener(clickListener)
+        binding.tilMuscleGroups.setEndIconOnClickListener(clickListener)
+    }
+
+    private fun setupResultListener() {
+        // posloucháme výsledky podle klíče
+        setFragmentResultListener(SelectMuscleGroupsFragment.REQUEST_KEY) { requestKey, bundle ->
+            val newList = bundle.getStringArrayList(SelectMuscleGroupsFragment.BUNDLE_KEY)
+
+            selectedMuscleGroups.clear()
+            if (newList != null) {
+                selectedMuscleGroups.addAll(newList)
+            }
+
+            updateMuscleGroupsDisplay()
+        }
+    }
+
+    // Aktualizuj text v "dropdownu"
+    private fun updateMuscleGroupsDisplay() {
+        binding.actvMuscleGroups.setText(
+            if (selectedMuscleGroups.isEmpty()) {
+                "Vyberte svalové skupiny"
+            } else {
+                selectedMuscleGroups.joinToString(", ")
+            }
+        )
     }
 
     private fun setupSaveButton() {
@@ -54,8 +114,8 @@ class AddExerciseFragment : Fragment() {
             val name = binding.etExerciseName.text.toString().trim()
             val categoryName = binding.actvCategory.text.toString().trim()
             val description = binding.etExerciseDescription.text.toString().trim()
-            val muscleGroupsText = binding.etMuscleGroups.text.toString().trim()
 
+            // Validace
             if (name.isEmpty() || categoryName.isEmpty() || description.isEmpty()) {
                 Toast.makeText(requireContext(), "Vyplňte všechna povinná pole", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -64,10 +124,11 @@ class AddExerciseFragment : Fragment() {
             val category = ExerciseCategory.values().find { it.displayName == categoryName }
                 ?: ExerciseCategory.STRENGTH
 
-            val muscleGroups =
-                if (category == ExerciseCategory.STRENGTH && muscleGroupsText.isNotEmpty())
-                    muscleGroupsText.split(",").map { it.trim() }
-                else emptyList()
+            // Pro STRENGTH kontrola svalových skupin
+            if (category == ExerciseCategory.STRENGTH && selectedMuscleGroups.isEmpty()) {
+                Toast.makeText(requireContext(), "Vyberte alespoň jednu svalovou skupinu", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val newExercise = Exercise(
                 id = UUID.randomUUID().toString(),
@@ -76,7 +137,7 @@ class AddExerciseFragment : Fragment() {
                 description = description,
                 mediaType = MediaType.NONE,
                 mediaUrl = null,
-                muscleGroups = muscleGroups,
+                muscleGroups = if (category == ExerciseCategory.STRENGTH) selectedMuscleGroups.toList() else emptyList(),
                 isDefault = false
             )
 

@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("androidx.navigation.safeargs.kotlin") version "2.7.2"
+    alias(libs.plugins.navigation.safeargs.kotlin)
     id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -72,5 +73,7 @@ dependencies {
     //lifecycle a corountines
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    implementation("androidx.fragment:fragment-ktx:1.8.2")
 
 }
