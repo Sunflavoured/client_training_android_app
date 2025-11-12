@@ -13,24 +13,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Welcome Section -->
-        <TextView
-            android:id="@+id/tvWelcome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ahoj!"
-            android:textAppearance="@style/TextAppearance.TrainerApp.Headline"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tvSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Čím dnes začneme?"
-            android:textAppearance="@style/TextAppearance.TrainerApp.Body"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:layout_marginBottom="24dp" />
-
         <!-- Quick Stats Card -->
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.TrainerApp.Card"
@@ -54,6 +36,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tvClientCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TODO"
@@ -83,9 +66,10 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tvExerciseCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TODO"
+                        android:text="0"
                         android:textSize="32sp"
                         android:textColor="@color/secondary_500"
                         android:fontFamily="sans-serif-medium" />

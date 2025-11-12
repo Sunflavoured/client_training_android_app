@@ -48,6 +48,8 @@
         <item name="textInputStyle">@style/Widget.TrainerApp.TextInputLayout</item>
     </style>
 
+
+
     <!-- ========================================== -->
     <!-- BUTTON STYLES -->
     <!-- ========================================== -->
@@ -103,6 +105,14 @@
     <style name="Widget.TrainerApp.Card" parent="Widget.Material3.CardView.Elevated">
         <item name="cardCornerRadius">20dp</item>
         <item name="cardElevation">3dp</item>
+        <item name="contentPadding">16dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+
+    <style name="Widget.TrainerApp.Card.Basic" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
         <item name="contentPadding">16dp</item>
         <item name="android:layout_margin">8dp</item>
         <item name="cardBackgroundColor">@color/white</item>

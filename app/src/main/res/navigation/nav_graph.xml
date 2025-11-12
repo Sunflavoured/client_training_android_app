@@ -12,8 +12,53 @@
         android:name="com.example.client_training_app.ProfilesFragment"
         android:label="Profily" />
 
+
+
+
     <fragment
         android:id="@+id/exercisesFragment"
-        android:name="com.example.client_training_app.ExercisesFragment"
-        android:label="Cviky" />
+        android:name="com.example.client_training_app.ExerciseFragment"
+        android:label="Cviky">
+        <action
+            android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
+            app:destination="@id/exerciseDetailFragment" />
+        <action
+            android:id="@+id/action_exercisesFragment_to_addExerciseFragment"
+            app:destination="@id/addExerciseFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseDetailFragment"
+        android:name="com.example.client_training_app.ExerciseDetailFragment"
+        android:label="Detail cviku">
+
+        <!-- Argument musí být uvnitř fragmentu -->
+        <argument
+            android:name="exerciseId"
+            app:argType="string" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/addExerciseFragment"
+        android:name="com.example.client_training_app.AddExerciseFragment"
+        android:label="Přidat cvik" >
+        <action
+            android:id="@+id/action_addExerciseFragment_to_selectMuscleGroupsFragment"
+            app:destination="@id/selectMuscleGroupsFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/selectMuscleGroupsFragment"
+        android:name="com.example.client_training_app.SelectMuscleGroupsFragment"
+        android:label="Vybrat svaly" >
+
+        <argument
+            android:name="currentSelection"
+            app:argType="string[]" />
+    </fragment>
+
+
+
 </navigation>
