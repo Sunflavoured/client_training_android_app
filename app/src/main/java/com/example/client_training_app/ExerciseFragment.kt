@@ -118,7 +118,12 @@ class ExerciseFragment : Fragment() {
     private fun observeExercises() {
         viewLifecycleOwner.lifecycleScope.launch {
             repository.getAllExercisesFlow().collect { exercises ->
-                adapter.updateExercises(exercises)
+                // 1. Aktualizujeme náš "master" seznam
+                allExercises = exercises
+
+                // 2. Znovu aplikujeme aktuální filtr (co je v search baru)
+                // Tato funkce už zavolá updateUI(), který aktualizuje adaptér.
+                filterExercises(binding.searchEditText.text.toString())
             }
         }
     }
