@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.client_training_app.data.database.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentHomeBinding
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -40,14 +42,25 @@ class HomeFragment : Fragment() {
         }
     }
 
-    //FUNKCE: Načte počet cviků
+    // FUNKCE: Načte počet cviků
     private fun loadExerciseCount() {
         val repository = ExerciseRepository(requireContext())
-        val exercises = repository.getExercises()
-        val exerciseCount = exercises.size
 
-        // Zobraz počet v UI
-        binding.tvExerciseCount.text = exerciseCount.toString()
+        // 1. Spustíme coroutine, která je vázaná na životní cyklus fragmentu.
+        //    Poběží jen, když je fragment "naživu".
+        viewLifecycleOwner.lifecycleScope.launch {
+            // 2. Napojíme se na Flow a "sbíráme" data.
+            //    Tento blok se spustí, jakmile přijdou data z databáze.
+            repository.getAllExercisesFlow().collect { exerciseList ->
+                // 3. 'exerciseList' je nyní SKUTEČNÝ List<Exercise>!
+                //    Teď už můžeme bezpečně získat jeho velikost.
+                val exerciseCount = exerciseList.size
+                // 4. Zobrazíme počet v UI.
+                //    Toto musí být také uvnitř 'collect', protože 'exerciseCount'
+                //    existuje pouze tady, až po doručení dat.
+                binding.tvExerciseCount.text = exerciseCount.toString()
+            }
+        }
     }
 
     override fun onDestroyView() {

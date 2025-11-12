@@ -14,11 +14,13 @@ interface ExerciseDao {
     suspend fun insertAll(exercises: List<ExerciseEntity>)
 
     //SELECTS
+    //vrací flow
     @Query("SELECT * FROM exercises ORDER BY name ASC")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercises WHERE id = :id LIMIT 1")
     suspend fun getExerciseById(id: String): ExerciseEntity?
+
 
     //UPDATES
     @Update

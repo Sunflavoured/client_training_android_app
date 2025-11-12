@@ -42,12 +42,6 @@ class ExerciseRepository(private val context: Context) {
         return loadDefaultExercises().find { it.id == id }
     }
 
-    // Synchronní verze (pro kompatibilitu se starým kódem)
-    fun getExercises(): List<Exercise> {
-        return loadDefaultExercises()
-        // TODO: Později můžeme přidat i custom cviky ze suspend funkce
-    }
-
     // Přidej nový custom cvik
     suspend fun addExercise(exercise: Exercise) {
         exerciseDao.insert(exercise.toEntity())
