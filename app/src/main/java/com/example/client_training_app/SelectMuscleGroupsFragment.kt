@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.client_training_app.data.model.MuscleGroup
+import com.example.client_training_app.model.MuscleGroup
 import com.example.client_training_app.databinding.FragmentSelectMuscleGroupsBinding
 import com.example.client_training_app.ui.MuscleGroupAdapter
 

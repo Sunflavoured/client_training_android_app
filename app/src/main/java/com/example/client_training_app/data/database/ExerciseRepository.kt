@@ -2,7 +2,7 @@ package com.example.client_training_app.data.database
 
 import android.content.Context
 import com.example.client_training_app.R
-import com.example.client_training_app.data.model.Exercise
+import com.example.client_training_app.model.Exercise
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow

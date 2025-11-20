@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.client_training_app.data.database.ExerciseRepository
-import com.example.client_training_app.databinding.FragmentExerciseDetailBinding
 import androidx.lifecycle.lifecycleScope
+import com.example.client_training_app.databinding.FragmentExerciseDetailBinding
 import kotlinx.coroutines.launch
 
 class ExerciseDetailFragment : Fragment() {

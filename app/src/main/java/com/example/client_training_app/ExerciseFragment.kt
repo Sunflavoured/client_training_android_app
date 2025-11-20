@@ -11,9 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.client_training_app.data.database.ExerciseRepository
-import com.example.client_training_app.data.model.Exercise
+import com.example.client_training_app.model.Exercise
 import com.example.client_training_app.databinding.FragmentExercisesBinding
-import com.example.client_training_app.ui.exercises.ExerciseAdapter
+import com.example.client_training_app.ui.ExerciseAdapter
 import kotlinx.coroutines.launch
 
 
@@ -41,7 +41,7 @@ class ExerciseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView() //funkce předávající id cviku TODO
+        setupRecyclerView() //funkce předávající id cviku
         setupFAB() //nastavení floating button aby navigoval na fragment add exercise
         observeExercises() // funkce pro sledování Flow
         setupSearchBar()

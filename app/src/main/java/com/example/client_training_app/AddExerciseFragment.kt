@@ -9,15 +9,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.client_training_app.data.database.ExerciseRepository
-import com.example.client_training_app.data.model.Exercise
-import com.example.client_training_app.data.model.ExerciseCategory
-import com.example.client_training_app.data.model.MediaType
-import com.example.client_training_app.data.model.MuscleGroup
 import com.example.client_training_app.databinding.FragmentAddExerciseBinding
 import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import com.example.client_training_app.model.Exercise
+import com.example.client_training_app.model.ExerciseCategory
+import com.example.client_training_app.model.MediaType
 
 class AddExerciseFragment : Fragment() {
     private var _binding: FragmentAddExerciseBinding? = null

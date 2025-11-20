@@ -1,10 +1,10 @@
-package com.example.client_training_app.data.model
+package com.example.client_training_app.model
 
 data class Exercise (
     val id: String,
     val name: String,
     val category: ExerciseCategory,
-    val description: String,
+    val description: String?,
     val mediaType: MediaType,
     val mediaUrl: String?,
     val muscleGroups: List<String>,    // Zůstane List<String> pro flexibilitu
