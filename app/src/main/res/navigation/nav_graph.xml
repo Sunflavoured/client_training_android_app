@@ -11,8 +11,7 @@
         android:id="@+id/profilesFragment"
         android:name="com.example.client_training_app.ProfilesFragment"
         android:label="Profily" />
-
-
+    
 
 
     <fragment

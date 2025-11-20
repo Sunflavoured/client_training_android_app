@@ -94,10 +94,12 @@ class ExerciseFragment : Fragment() {
             allExercises
         } else {
             allExercises.filter { exercise ->
-                exercise.name.contains(query, ignoreCase = true)
+                // Rozšířené filtrování (název + kategorie + svalové skupiny)
+                exercise.name.contains(query, ignoreCase = true) ||
+                        exercise.category.displayName.contains(query, ignoreCase = true) ||
+                        exercise.muscleGroups.any { it.contains(query, ignoreCase = true) }
             }
         }
-
         updateUI()
     }
 
