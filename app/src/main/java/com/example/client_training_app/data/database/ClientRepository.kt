@@ -19,6 +19,12 @@ class ClientRepository(context: Context) {
         }
     }
 
+    fun getClientByIdFlow(clientId: String): Flow<Client?> {
+        // Použijeme .map ke konverzi Entity na aplikační model Client
+        return clientDao.getClientByIdFlow(clientId)
+            .map { entity -> entity?.toClient() }
+    }
+
     // 2. Hledání klientů
     fun searchClientsFlow(query: String): Flow<List<Client>> {
         return clientDao.searchClients(query).map { entities ->

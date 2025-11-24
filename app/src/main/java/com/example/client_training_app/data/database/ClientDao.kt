@@ -21,6 +21,9 @@ interface ClientDao {
     @Query("SELECT * FROM clients WHERE id = :clientId")
     suspend fun getClientById(clientId: String): ClientEntity?
 
+    @Query("SELECT * FROM clients WHERE id = :clientId")
+    fun getClientByIdFlow(clientId: String): Flow<ClientEntity?>
+
     @Query("SELECT * FROM clients WHERE firstName LIKE '%' || :query || '%' OR lastName LIKE '%' || :query || '%' ORDER BY lastName ASC")
     fun searchClients(query: String): Flow<List<ClientEntity>>
 

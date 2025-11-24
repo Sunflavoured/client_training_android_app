@@ -47,10 +47,9 @@ class ProfilesFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = ClientAdapter(emptyList()) { client ->
-            // TODO: Akce pro zobrazení detailu klienta
-            // Budeš potřebovat definovat akci v nav_graph.xml:
-            // ProfilesFragmentDirections.actionProfilesFragmentToClientDetailFragment(client.id)
-            android.widget.Toast.makeText(requireContext(), "Kliknuto na ${client.firstName}", android.widget.Toast.LENGTH_SHORT).show()
+            // NOVÁ AKCE: Použijeme Safe Args (po Rebuildu) pro navigaci
+            val action = ProfilesFragmentDirections.actionProfilesFragmentToClientDetailFragment(client.id)
+            findNavController().navigate(action)
         }
 
         binding.profileRecyclerView.layoutManager = LinearLayoutManager(requireContext())
