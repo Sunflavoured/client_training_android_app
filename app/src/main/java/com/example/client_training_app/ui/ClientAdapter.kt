@@ -16,7 +16,8 @@ class ClientAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(client: Client) {
-
+            val fullName = "${client.firstName} ${client.lastName}"
+            binding.tvName.text = fullName
 
             // Nastavení kliknutí na celou položku
             binding.root.setOnClickListener {

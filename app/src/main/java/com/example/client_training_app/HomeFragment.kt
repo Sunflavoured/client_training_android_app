@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.client_training_app.data.database.ClientRepository
 import com.example.client_training_app.data.database.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
@@ -25,8 +26,8 @@ class HomeFragment : Fragment() {
 
         setupClickListeners()
         loadExerciseCount()
+        loadProfileCount()
         return binding.root
-
     }
 
     private fun setupClickListeners() {
@@ -44,14 +45,14 @@ class HomeFragment : Fragment() {
 
     // FUNKCE: Načte počet cviků
     private fun loadExerciseCount() {
-        val repository = ExerciseRepository(requireContext())
+        val ExerciseRepository = ExerciseRepository(requireContext())
 
         // 1. Spustíme coroutine, která je vázaná na životní cyklus fragmentu.
         //    Poběží jen, když je fragment "naživu".
         viewLifecycleOwner.lifecycleScope.launch {
             // 2. Napojíme se na Flow a "sbíráme" data.
             //    Tento blok se spustí, jakmile přijdou data z databáze.
-            repository.getAllExercisesFlow().collect { exerciseList ->
+            ExerciseRepository.getAllExercisesFlow().collect { exerciseList ->
                 // 3. 'exerciseList' je nyní SKUTEČNÝ List<Exercise>!
                 //    Teď už můžeme bezpečně získat jeho velikost.
                 val exerciseCount = exerciseList.size
@@ -59,6 +60,16 @@ class HomeFragment : Fragment() {
                 //    Toto musí být také uvnitř 'collect', protože 'exerciseCount'
                 //    existuje pouze tady, až po doručení dat.
                 binding.tvExerciseCount.text = exerciseCount.toString()
+            }
+        }
+    }
+
+    private fun loadProfileCount() {
+        val clientRepository = ClientRepository(requireContext())
+        viewLifecycleOwner.lifecycleScope.launch {
+            clientRepository.getAllClientsFlow().collect { clientList ->
+                val profileCount = clientList.size
+                binding.tvClientCount.text = profileCount.toString()
             }
         }
     }
