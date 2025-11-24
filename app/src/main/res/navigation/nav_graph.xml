@@ -7,12 +7,31 @@
         android:name="com.example.client_training_app.HomeFragment"
         android:label="Trainer App" />
 
+
+    <fragment
+        android:id="@+id/addProfileFragment"
+        android:name="com.example.client_training_app.AddProfileFragment"
+        android:label="Nový profil klienta" />
+
     <fragment
         android:id="@+id/profilesFragment"
         android:name="com.example.client_training_app.ProfilesFragment"
-        android:label="Profily" />
-    
+        android:label="Profily" >
+    <action
+        android:id="@+id/action_profilesFragment_to_addProfileFragment"
+        app:destination="@id/addProfileFragment" />
+    </fragment>
 
+
+    <fragment
+        android:id="@+id/addMeasurementFragment"
+        android:name="com.example.client_training_app.AddMeasurementFragment"
+        android:label="Nové měření">
+
+        <argument
+            android:name="clientId"
+            app:argType="string"/>
+    </fragment>
 
     <fragment
         android:id="@+id/exercisesFragment"

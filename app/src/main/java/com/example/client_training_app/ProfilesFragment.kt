@@ -58,10 +58,9 @@ class ProfilesFragment : Fragment() {
     }
 
     private fun setupFAB() {
-        // PŘEDPOKLAD: Máš v nav_graph.xml akci pro přechod na přidání klienta (např. AddClientFragment)
         binding.fabAddProfile.setOnClickListener {
-            // findNavController().navigate(R.id.action_profilesFragment_to_addClientFragment)
-            android.widget.Toast.makeText(requireContext(), "Navigace na přidání klienta", android.widget.Toast.LENGTH_SHORT).show()
+            // Použij ID akce pro navigaci
+            findNavController().navigate(R.id.action_profilesFragment_to_addProfileFragment)
         }
     }
 
