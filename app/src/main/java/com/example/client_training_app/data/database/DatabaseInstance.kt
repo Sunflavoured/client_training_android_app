@@ -81,7 +81,8 @@ object DatabaseInstance {
                 "trainer_app_database"
             )
                 // Kdekoliv zde v řetězci .build()
-                .addMigrations(MIGRATION_1_2) // <--- PŘIDÁNO SEM!
+                //.addMigrations(MIGRATION_1_2) // <--- PŘIDÁNO SEM!
+                .fallbackToDestructiveMigration() // při vývoji ruším migrace a vždy obnovuji databázi
                 .build()
             INSTANCE = instance
             instance

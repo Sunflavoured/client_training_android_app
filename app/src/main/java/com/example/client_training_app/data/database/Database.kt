@@ -5,8 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [ExerciseEntity::class, ClientEntity::class], // <--- PŘIDANÁ ClientEntity!
-    version = 2, // <--- ZVÝŠENÍ VERZE
+    entities = [ExerciseEntity::class, ClientEntity::class, MeasurementEntity::class], // <--- PŘIDANÁ ClientEntity!
+    version = 3, // <--- ZVÝŠENÍ VERZE
     exportSchema = false
 )
 @TypeConverters(Converters::class)

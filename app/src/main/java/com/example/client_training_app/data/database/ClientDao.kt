@@ -23,4 +23,12 @@ interface ClientDao {
 
     @Query("SELECT * FROM clients WHERE firstName LIKE '%' || :query || '%' OR lastName LIKE '%' || :query || '%' ORDER BY lastName ASC")
     fun searchClients(query: String): Flow<List<ClientEntity>>
+
+    /** Uloží nové měření. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMeasurement(measurement: MeasurementEntity)
+
+    /** Získá všechna měření pro daného klienta, seřazená od nejnovějšího. */
+    @Query("SELECT * FROM measurements WHERE clientId = :clientId ORDER BY date DESC")
+    fun getMeasurementsForClient(clientId: String): Flow<List<MeasurementEntity>>
 }
