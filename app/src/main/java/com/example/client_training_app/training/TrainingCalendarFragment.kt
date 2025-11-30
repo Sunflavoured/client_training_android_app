@@ -8,8 +8,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.example.client_training_app.data.database.ClientRepository
-import com.example.client_training_app.data.database.TrainingSessionEntity
+import com.example.client_training_app.data.repository.ClientRepository
+import com.example.client_training_app.data.entity.TrainingSessionEntity
 import com.example.client_training_app.databinding.FragmentTrainingCalendarBinding
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
