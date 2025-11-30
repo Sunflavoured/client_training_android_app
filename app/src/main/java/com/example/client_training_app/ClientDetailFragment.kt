@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.navigation.fragment.findNavController
 
 class ClientDetailFragment : Fragment() {
 
@@ -23,9 +24,11 @@ class ClientDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
         _binding = FragmentClientDetailBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,8 +36,24 @@ class ClientDetailFragment : Fragment() {
 
         val clientId = args.clientId
         loadClientDetails(clientId)
-
+        setupButtons(clientId)
         // TODO: Nastavení posluchačů pro přechod na Kalendář, Měření atd.
+    }
+    private fun setupButtons(clientId: String) {
+        // Tlačítko Kalendář - OŽIVENO!
+        binding.btnCalendar.setOnClickListener {
+            // Použijeme Safe Args pro bezpečné předání ID
+            val action = ClientDetailFragmentDirections
+                .actionClientDetailFragmentToTrainingCalendarFragment(clientId)
+
+            // Provedeme navigaci
+            findNavController().navigate(action)
+        }
+
+        // Tlačítko Měření (zatím necháme Toast)
+        binding.btnMeasurements.setOnClickListener {
+            android.widget.Toast.makeText(requireContext(), "Měření (brzy)", android.widget.Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun loadClientDetails(clientId: String) {

@@ -34,4 +34,12 @@ interface ClientDao {
     /** Získá všechna měření pro daného klienta, seřazená od nejnovějšího. */
     @Query("SELECT * FROM measurements WHERE clientId = :clientId ORDER BY date DESC")
     fun getMeasurementsForClient(clientId: String): Flow<List<MeasurementEntity>>
+
+    /** Načítání tréninku */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTrainingSession(session: TrainingSessionEntity)
+
+    // Načte tréninky pro konkrétního klienta
+    @Query("SELECT * FROM training_sessions WHERE clientId = :clientId")
+    fun getTrainingSessionsForClient(clientId: String): Flow<List<TrainingSessionEntity>>
 }

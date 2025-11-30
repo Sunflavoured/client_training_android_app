@@ -62,4 +62,8 @@ class ClientRepository(context: Context) {
             entities.map { it.toMeasurement() }
         }
     }
+    /** Načtení tréninku podle clientId*/
+    fun getTrainingSessionsFlow(clientId: String): Flow<List<TrainingSessionEntity>> {
+        return clientDao.getTrainingSessionsForClient(clientId)
+    }
 }

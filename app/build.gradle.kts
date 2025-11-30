@@ -30,6 +30,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -75,5 +76,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     implementation("androidx.fragment:fragment-ktx:1.8.2")
+
+    // Moderní kalendář
+    implementation("com.kizitonwose.calendar:view:2.5.0")
+
+    // Pro práci s datem (Java Time API desugaring - pro starší Androidy, jistota)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
 }

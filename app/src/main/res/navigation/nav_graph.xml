@@ -7,7 +7,7 @@
         android:name="com.example.client_training_app.HomeFragment"
         android:label="Trainer App" />
 
-
+    <!-- Profiles/Clients -->
     <fragment
         android:id="@+id/profilesFragment"
         android:name="com.example.client_training_app.ProfilesFragment"
@@ -24,6 +24,7 @@
         app:destination="@id/addProfileFragment" />
     </fragment>
 
+    <!-- Add Profiles/Clients -->
     <fragment
         android:id="@+id/addProfileFragment"
         android:name="com.example.client_training_app.AddProfileFragment"
@@ -34,10 +35,16 @@
         android:name="com.example.client_training_app.ClientDetailFragment"
         android:label="Detail klienta">
             <argument
-            android:name="clientId"
-            app:argType="string"/>
+                android:name="clientId"
+                app:argType="string"/>
+            <action
+                android:id="@+id/action_clientDetailFragment_to_trainingCalendarFragment"
+                app:destination="@id/trainingCalendarFragment" />
+
     </fragment>
 
+
+    <!-- Add Measurments -->
     <fragment
         android:id="@+id/addMeasurementFragment"
         android:name="com.example.client_training_app.AddMeasurementFragment"
@@ -46,6 +53,17 @@
         <argument
             android:name="clientId"
             app:argType="string"/>
+    </fragment>
+
+    <!-- Calendar -->
+    <fragment
+        android:id="@+id/trainingCalendarFragment"
+        android:name="com.example.client_training_app.TrainingCalendarFragment"
+        android:label="Tréninkový kalendář">
+
+        <argument
+            android:name="clientId"
+            app:argType="string" />
     </fragment>
 
     <fragment
