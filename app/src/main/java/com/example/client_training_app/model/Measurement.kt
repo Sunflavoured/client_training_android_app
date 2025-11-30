@@ -1,5 +1,7 @@
 package com.example.client_training_app.model
 
+import com.example.client_training_app.data.entity.MeasurementEntity
+
 // Tato třída slouží pro aplikační logiku (fragmenty, repository, business logika)
 data class Measurement(
     val measurementId: Int = 0,
@@ -15,4 +17,34 @@ data class Measurement(
     val hipsCm: Double?,
     val thighCm: Double?,
     val armCm: Double?
+)
+
+// PŘEVOD Z Measurement -> MeasurementEntity
+fun Measurement.toEntity() = MeasurementEntity(
+    measurementId = measurementId,
+    clientId = clientId,
+    date = date,
+    weight = weight,
+    bustCm = bustCm,
+    chestCm = chestCm,
+    waistCm = waistCm,
+    abdomenCm = abdomenCm,
+    hipsCm = hipsCm,
+    thighCm = thighCm,
+    armCm = armCm
+)
+
+// PŘEVOD Z MeasurementEntity -> Measurement
+fun MeasurementEntity.toMeasurement() = Measurement(
+    measurementId = measurementId,
+    clientId = clientId,
+    date = date,
+    weight = weight,
+    bustCm = bustCm,
+    chestCm = chestCm,
+    waistCm = waistCm,
+    abdomenCm = abdomenCm,
+    hipsCm = hipsCm,
+    thighCm = thighCm,
+    armCm = armCm
 )

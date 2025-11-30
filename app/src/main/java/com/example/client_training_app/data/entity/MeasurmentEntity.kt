@@ -1,9 +1,9 @@
-package com.example.client_training_app.data.database
+package com.example.client_training_app.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.client_training_app.model.Measurement
 
 
 @Entity(
@@ -18,7 +18,7 @@ import com.example.client_training_app.model.Measurement
         )
     ],
     // Index pro rychlé hledání podle klienta zůstává
-    indices = [androidx.room.Index(value = ["clientId"])]
+    indices = [Index(value = ["clientId"])]
 )
 data class MeasurementEntity(
     @PrimaryKey(autoGenerate = true)
@@ -43,37 +43,4 @@ data class MeasurementEntity(
     val hipsCm: Double?,      // Zadek/boky
     val thighCm: Double?,     // Stehno (obvykle neširší místo)
     val armCm: Double?        // Paže (obvykle biceps v relaxaci)
-)
-
-// ... v souboru MeasurementEntity.kt, pod datovou třídou MeasurementEntity
-
-
-// PŘEVOD Z Measurement -> MeasurementEntity
-fun Measurement.toEntity() = MeasurementEntity(
-    measurementId = measurementId,
-    clientId = clientId,
-    date = date,
-    weight = weight,
-    bustCm = bustCm,
-    chestCm = chestCm,
-    waistCm = waistCm,
-    abdomenCm = abdomenCm,
-    hipsCm = hipsCm,
-    thighCm = thighCm,
-    armCm = armCm
-)
-
-// PŘEVOD Z MeasurementEntity -> Measurement
-fun MeasurementEntity.toMeasurement() = Measurement(
-    measurementId = measurementId,
-    clientId = clientId,
-    date = date,
-    weight = weight,
-    bustCm = bustCm,
-    chestCm = chestCm,
-    waistCm = waistCm,
-    abdomenCm = abdomenCm,
-    hipsCm = hipsCm,
-    thighCm = thighCm,
-    armCm = armCm
 )

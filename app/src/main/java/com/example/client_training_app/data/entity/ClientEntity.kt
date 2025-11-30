@@ -1,4 +1,4 @@
-package com.example.client_training_app.data.database
+package com.example.client_training_app.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

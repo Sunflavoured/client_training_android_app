@@ -1,2 +1,38 @@
-package com.example.client_training_app.data.dao 
+package com.example.client_training_app.data.dao
 
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import com.example.client_training_app.data.entity.ExerciseEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface ExerciseDao {
+
+    //INSERTS
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    suspend fun insert(exercise: ExerciseEntity)
+
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    suspend fun insertAll(exercises: List<ExerciseEntity>)
+
+    //SELECTS
+    //vrací flow
+    @Query("SELECT * FROM exercises ORDER BY name ASC")
+    fun getAllExercises(): Flow<List<ExerciseEntity>>
+
+    @Query("SELECT * FROM exercises WHERE id = :id LIMIT 1")
+    suspend fun getExerciseById(id: String): ExerciseEntity?
+
+
+    //UPDATES
+    @Update
+    suspend fun update(exercise: ExerciseEntity)
+
+    //DELETES
+    @Delete
+    suspend fun delete(exercise: ExerciseEntity)
+}

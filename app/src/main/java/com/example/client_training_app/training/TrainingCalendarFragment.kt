@@ -1,13 +1,18 @@
-package com.example.client_training_app
+package com.example.client_training_app.training
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.client_training_app.R
 import com.example.client_training_app.data.repository.ClientRepository
 import com.example.client_training_app.data.entity.TrainingSessionEntity
 import com.example.client_training_app.databinding.FragmentTrainingCalendarBinding
@@ -22,7 +27,9 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
-import com.example.client_training_app.ui.TrainingSessionAdapter
+import com.example.client_training_app.ui.adapters.TrainingSessionAdapter
+import java.time.Instant
+import java.time.ZoneId
 import java.util.UUID
 
 class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
@@ -60,16 +67,16 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
     private fun setupRecyclerView() {
         trainingAdapter = TrainingSessionAdapter { session ->
             // TODO: Kliknutí na trénink -> Otevřít detail tréninku (RunWorkoutFragment)
-            android.widget.Toast.makeText(requireContext(), "Kliknuto: ${session.name}", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Kliknuto: ${session.name}", Toast.LENGTH_SHORT).show()
         }
 
-        binding.rvTrainings.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        binding.rvTrainings.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTrainings.adapter = trainingAdapter
     }
 
     private fun setupFab() {
         binding.fabAddTraining.setOnClickListener {
-            val dateToAdd = selectedDate ?: java.time.LocalDate.now()
+            val dateToAdd = selectedDate ?: LocalDate.now()
 
             // PROZATÍM: Rychlé přidání tréninku přes dialog (pro testování teček)
             // V budoucnu: Navigace na "AddTrainingFragment"
@@ -78,10 +85,10 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
     }
 
     private fun showAddTrainingDialog(date: LocalDate) {
-        val builder = android.app.AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Nový trénink na ${date.dayOfMonth}. ${date.monthValue}.")
 
-        val input = android.widget.EditText(requireContext())
+        val input = EditText(requireContext())
         input.hint = "Název tréninku (např. Nohy)"
         builder.setView(input)
 
@@ -96,7 +103,7 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
 
     private fun saveTraining(name: String, date: LocalDate) {
         val repository = ClientRepository(requireContext())
-        val timestamp = date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val timestamp = date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         val newSession = TrainingSessionEntity(
             id = UUID.randomUUID().toString(),
@@ -108,7 +115,7 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repository.addTrainingSession(newSession) // Tuto metodu musíš mít v Repository!
-            android.widget.Toast.makeText(requireContext(), "Trénink přidán!", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Trénink přidán!", Toast.LENGTH_SHORT).show()
         }
     }
     private fun loadTrainings() {
@@ -248,7 +255,7 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
 
 // Pomocná funkce mimo třídu
 fun Long.toLocalDate(): LocalDate {
-    return java.time.Instant.ofEpochMilli(this)
-        .atZone(java.time.ZoneId.systemDefault())
+    return Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
         .toLocalDate()
 }

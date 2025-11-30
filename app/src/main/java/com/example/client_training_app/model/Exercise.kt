@@ -1,5 +1,7 @@
 package com.example.client_training_app.model
 
+import com.example.client_training_app.data.entity.ExerciseEntity
+
 data class Exercise (
     val id: String,
     val name: String,
@@ -53,3 +55,26 @@ enum class MuscleGroup(val displayName: String) {
         }
     }
 }
+
+// Extension funkce pro převod mezi Exercise z Json a ExerciseEntity
+fun Exercise.toEntity() = ExerciseEntity(
+    id = id,
+    name = name,
+    category = category.name,  // Převede STRENGTH na "STRENGTH"
+    description = description,
+    mediaType = mediaType.name,
+    mediaUrl = mediaUrl,
+    muscleGroups = muscleGroups,
+    isDefault = isDefault
+)
+
+fun ExerciseEntity.toExercise() = Exercise(
+    id = id,
+    name = name,
+    category = ExerciseCategory.valueOf(category),  // "STRENGTH" -> STRENGTH
+    description = description,
+    mediaType = MediaType.valueOf(mediaType),
+    mediaUrl = mediaUrl,
+    muscleGroups = muscleGroups,
+    isDefault = isDefault
+)

@@ -4,13 +4,13 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.client_training_app.HomeFragment"
+        android:name="com.example.client_training_app.ui.home.HomeFragment"
         android:label="Trainer App" />
 
     <!-- Profiles/Clients -->
     <fragment
         android:id="@+id/profilesFragment"
-        android:name="com.example.client_training_app.ProfilesFragment"
+        android:name="com.example.client_training_app.ui.client.ProfilesFragment"
         android:label="Profily" >
         <action
             android:id="@+id/action_profilesFragment_to_clientDetailFragment"
@@ -27,12 +27,12 @@
     <!-- Add Profiles/Clients -->
     <fragment
         android:id="@+id/addProfileFragment"
-        android:name="com.example.client_training_app.AddProfileFragment"
+        android:name="com.example.client_training_app.ui.client.AddProfileFragment"
         android:label="Nový profil klienta" />
 
     <fragment
         android:id="@+id/clientDetailFragment"
-        android:name="com.example.client_training_app.ClientDetailFragment"
+        android:name="com.example.client_training_app.ui.client.ClientDetailFragment"
         android:label="Detail klienta">
             <argument
                 android:name="clientId"
@@ -47,7 +47,7 @@
     <!-- Add Measurments -->
     <fragment
         android:id="@+id/addMeasurementFragment"
-        android:name="com.example.client_training_app.AddMeasurementFragment"
+        android:name="com.example.client_training_app.ui.client.AddMeasurementFragment"
         android:label="Nové měření">
 
         <argument
@@ -58,7 +58,7 @@
     <!-- Calendar -->
     <fragment
         android:id="@+id/trainingCalendarFragment"
-        android:name="com.example.client_training_app.TrainingCalendarFragment"
+        android:name="com.example.client_training_app.training.TrainingCalendarFragment"
         android:label="Tréninkový kalendář">
 
         <argument
@@ -68,7 +68,7 @@
 
     <fragment
         android:id="@+id/exercisesFragment"
-        android:name="com.example.client_training_app.ExerciseFragment"
+        android:name="com.example.client_training_app.ui.exercise.ExerciseFragment"
         android:label="Cviky">
         <action
             android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
@@ -81,7 +81,7 @@
 
     <fragment
         android:id="@+id/exerciseDetailFragment"
-        android:name="com.example.client_training_app.ExerciseDetailFragment"
+        android:name="com.example.client_training_app.ui.exercise.ExerciseDetailFragment"
         android:label="Detail cviku">
 
         <!-- Argument musí být uvnitř fragmentu -->
@@ -93,7 +93,7 @@
 
     <fragment
         android:id="@+id/addExerciseFragment"
-        android:name="com.example.client_training_app.AddExerciseFragment"
+        android:name="com.example.client_training_app.ui.exercise.AddExerciseFragment"
         android:label="Přidat cvik" >
         <action
             android:id="@+id/action_addExerciseFragment_to_selectMuscleGroupsFragment"
@@ -102,7 +102,7 @@
     
     <fragment
         android:id="@+id/selectMuscleGroupsFragment"
-        android:name="com.example.client_training_app.SelectMuscleGroupsFragment"
+        android:name="com.example.client_training_app.ui.exercise.SelectMuscleGroupsFragment"
         android:label="Vybrat svaly" >
 
         <argument
