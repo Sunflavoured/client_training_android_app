@@ -107,7 +107,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Přidat profil" app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="Přidat profil"
+        app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/secondary_300"
         app:tint="@color/white" />
 

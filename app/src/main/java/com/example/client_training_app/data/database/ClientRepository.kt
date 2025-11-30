@@ -66,4 +66,8 @@ class ClientRepository(context: Context) {
     fun getTrainingSessionsFlow(clientId: String): Flow<List<TrainingSessionEntity>> {
         return clientDao.getTrainingSessionsForClient(clientId)
     }
+    /** Vložení tréninku */
+    suspend fun addTrainingSession(session: TrainingSessionEntity) {
+        clientDao.insertTrainingSession(session)
+    }
 }

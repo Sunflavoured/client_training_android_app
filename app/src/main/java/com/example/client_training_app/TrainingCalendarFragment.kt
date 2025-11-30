@@ -22,6 +22,8 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import com.example.client_training_app.ui.TrainingSessionAdapter
+import java.util.UUID
 
 class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
 
@@ -35,17 +37,80 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
     // Klíč = Datum, Hodnota = Seznam tréninků v ten den
     private var trainingsByDate: Map<LocalDate, List<TrainingSessionEntity>> = emptyMap()
 
+    // Definice adapteru
+    private lateinit var trainingAdapter: TrainingSessionAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentTrainingCalendarBinding.bind(view)
 
-        // 1. Nastavíme kalendář (zatím bez dat)
+        // 1. Nastavení RecyclerView a Adapteru
+        setupRecyclerView()
+
+        // 2. Nastavení Kalendáře
         setupCalendar()
 
-        // 2. Začneme načítat data z DB
+        // 3. Tlačítko Přidat (+)
+        setupFab()
+
+        // 4. Načítání dat
         loadTrainings()
     }
 
+    private fun setupRecyclerView() {
+        trainingAdapter = TrainingSessionAdapter { session ->
+            // TODO: Kliknutí na trénink -> Otevřít detail tréninku (RunWorkoutFragment)
+            android.widget.Toast.makeText(requireContext(), "Kliknuto: ${session.name}", android.widget.Toast.LENGTH_SHORT).show()
+        }
+
+        binding.rvTrainings.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        binding.rvTrainings.adapter = trainingAdapter
+    }
+
+    private fun setupFab() {
+        binding.fabAddTraining.setOnClickListener {
+            val dateToAdd = selectedDate ?: java.time.LocalDate.now()
+
+            // PROZATÍM: Rychlé přidání tréninku přes dialog (pro testování teček)
+            // V budoucnu: Navigace na "AddTrainingFragment"
+            showAddTrainingDialog(dateToAdd)
+        }
+    }
+
+    private fun showAddTrainingDialog(date: LocalDate) {
+        val builder = android.app.AlertDialog.Builder(requireContext())
+        builder.setTitle("Nový trénink na ${date.dayOfMonth}. ${date.monthValue}.")
+
+        val input = android.widget.EditText(requireContext())
+        input.hint = "Název tréninku (např. Nohy)"
+        builder.setView(input)
+
+        builder.setPositiveButton("Uložit") { _, _ ->
+            val name = input.text.toString()
+            if (name.isNotEmpty()) saveTraining(name, date)
+        }
+        builder.setNegativeButton("Zrušit") { dialog, _ -> dialog.cancel() }
+
+        builder.show()
+    }
+
+    private fun saveTraining(name: String, date: LocalDate) {
+        val repository = ClientRepository(requireContext())
+        val timestamp = date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        val newSession = TrainingSessionEntity(
+            id = UUID.randomUUID().toString(),
+            clientId = args.clientId,
+            dateInMillis = timestamp,
+            name = name,
+            isCompleted = false
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repository.addTrainingSession(newSession) // Tuto metodu musíš mít v Repository!
+            android.widget.Toast.makeText(requireContext(), "Trénink přidán!", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
     private fun loadTrainings() {
         val repository = ClientRepository(requireContext())
 
@@ -161,8 +226,7 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
         binding.tvSelectedDate.text = "Tréninky pro: ${date.dayOfMonth}. ${date.monthValue}."
 
         val trainings = trainingsByDate[date] ?: emptyList()
-        // TODO: Zde naplníme RecyclerView daty (v dalším kroku)
-        // adapter.submitList(trainings)
+        trainingAdapter.submitList(trainings)
     }
 
     // --- ViewHolder pro den ---
