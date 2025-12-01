@@ -1,7 +1,11 @@
 package com.example.client_training_app.model
 
 import com.example.client_training_app.data.entity.ExerciseEntity
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+
+@Parcelize
 data class Exercise (
     val id: String,
     val name: String,
@@ -11,7 +15,8 @@ data class Exercise (
     val mediaUrl: String?,
     val muscleGroups: List<String>,    // Zůstane List<String> pro flexibilitu
     val isDefault: Boolean = false
-)
+): Parcelable
+
 
 // Enum pro kategorii cviku
 enum class ExerciseCategory(val displayName: String) {

@@ -43,29 +43,29 @@
 
     </fragment>
 
-
     <!-- Add Measurments -->
-    <fragment
-        android:id="@+id/addMeasurementFragment"
-        android:name="com.example.client_training_app.ui.client.AddMeasurementFragment"
-        android:label="Nové měření">
+        <fragment
+            android:id="@+id/addMeasurementFragment"
+            android:name="com.example.client_training_app.ui.client.AddMeasurementFragment"
+            android:label="Nové měření">
 
-        <argument
-            android:name="clientId"
-            app:argType="string"/>
-    </fragment>
+            <argument
+                android:name="clientId"
+                app:argType="string"/>
+        </fragment>
 
-    <!-- Calendar -->
-    <fragment
-        android:id="@+id/trainingCalendarFragment"
-        android:name="com.example.client_training_app.training.TrainingCalendarFragment"
-        android:label="Tréninkový kalendář">
+        <!-- Calendar -->
+        <fragment
+            android:id="@+id/trainingCalendarFragment"
+            android:name="com.example.client_training_app.ui.training.TrainingCalendarFragment"
+            android:label="Tréninkový kalendář">
 
-        <argument
-            android:name="clientId"
-            app:argType="string" />
-    </fragment>
+            <argument
+                android:name="clientId"
+                app:argType="string" />
+        </fragment>
 
+    <!-- Exercises -->
     <fragment
         android:id="@+id/exercisesFragment"
         android:name="com.example.client_training_app.ui.exercise.ExerciseFragment"
@@ -78,6 +78,29 @@
             app:destination="@id/addExerciseFragment" />
 
     </fragment>
+
+    <!-- Přidání treninkové jednotky -->
+    <fragment
+        android:id="@+id/trainingUnitEditorFragment"
+        android:name="com.example.client_training_app.ui.training.TrainingUnitEditorFragment"
+        android:label="Editor tréninku">
+
+        <argument
+            android:name="clientId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <action
+            android:id="@+id/action_trainingUnitEditorFragment_to_exercisePickerFragment"
+            app:destination="@id/exercisePickerFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/exercisePickerFragment"
+        android:name="com.example.client_training_app.ui.training.ExercisePickerFragment"
+        android:label="Vybrat cviky" />
 
     <fragment
         android:id="@+id/exerciseDetailFragment"
@@ -110,6 +133,14 @@
             app:argType="string[]" />
     </fragment>
 
+    <fragment
+        android:id="@+id/trainingUnitLibraryFragment"
+        android:name="com.example.client_training_app.ui.training.TrainingUnitLibraryFragment"
+        android:label="Knihovna tréninků">
 
+        <action
+            android:id="@+id/action_trainingUnitLibraryFragment_to_trainingUnitEditorFragment"
+            app:destination="@id/trainingUnitEditorFragment" />
+    </fragment>
 
 </navigation>

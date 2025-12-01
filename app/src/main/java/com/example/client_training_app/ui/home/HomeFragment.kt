@@ -42,6 +42,11 @@ class HomeFragment : Fragment() {
         binding.cardExercises.setOnClickListener {
             findNavController().navigate(R.id.exercisesFragment)
         }
+
+        // Navigate to Trainings
+                binding.cardTrainingUnits.setOnClickListener {
+                    findNavController().navigate(R.id.trainingUnitLibraryFragment)
+                }
     }
 
     // FUNKCE: Načte počet cviků

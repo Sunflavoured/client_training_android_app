@@ -3,7 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.navigation.safeargs.kotlin)
     id("com.google.devtools.ksp")
-
+    //plugin který umožňuje přenášet objekty mezi fragmenty
+    id("kotlin-parcelize")
 }
 
 android {

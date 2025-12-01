@@ -1,4 +1,4 @@
-package com.example.client_training_app.training
+package com.example.client_training_app.ui.training
 
 import android.app.AlertDialog
 import android.graphics.Color
