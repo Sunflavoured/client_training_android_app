@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseDao {
 
     // INSERTS
-    @Insert(onConflict = OnConflictStrategy.REPLACE) 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exercise: ExerciseEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

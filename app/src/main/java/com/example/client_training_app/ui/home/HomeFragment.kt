@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.client_training_app.R
 import com.example.client_training_app.data.repository.ClientRepository
 import com.example.client_training_app.data.repository.ExerciseRepository
+import com.example.client_training_app.data.repository.TrainingUnitRepository // 1. Import repository
 import com.example.client_training_app.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
 
@@ -28,44 +29,29 @@ class HomeFragment : Fragment() {
         setupClickListeners()
         loadExerciseCount()
         loadProfileCount()
+        loadTrainingUnitCount() // 2. ZAVOLAT metodu při startu
         return binding.root
     }
 
     private fun setupClickListeners() {
-
-        // Navigate to Profiles
         binding.cardProfiles.setOnClickListener {
             findNavController().navigate(R.id.profilesFragment)
         }
 
-        // Navigate to Exercises
         binding.cardExercises.setOnClickListener {
             findNavController().navigate(R.id.exercisesFragment)
         }
 
-        // Navigate to Trainings
-                binding.cardTrainingUnits.setOnClickListener {
-                    findNavController().navigate(R.id.trainingUnitLibraryFragment)
-                }
+        binding.cardTrainingUnits.setOnClickListener {
+            findNavController().navigate(R.id.trainingUnitLibraryFragment)
+        }
     }
 
-    // FUNKCE: Načte počet cviků
     private fun loadExerciseCount() {
-        val ExerciseRepository = ExerciseRepository(requireContext())
-
-        // 1. Spustíme coroutine, která je vázaná na životní cyklus fragmentu.
-        //    Poběží jen, když je fragment "naživu".
+        val exerciseRepository = ExerciseRepository(requireContext())
         viewLifecycleOwner.lifecycleScope.launch {
-            // 2. Napojíme se na Flow a "sbíráme" data.
-            //    Tento blok se spustí, jakmile přijdou data z databáze.
-            ExerciseRepository.getAllExercisesFlow().collect { exerciseList ->
-                // 3. 'exerciseList' je nyní SKUTEČNÝ List<Exercise>!
-                //    Teď už můžeme bezpečně získat jeho velikost.
-                val exerciseCount = exerciseList.size
-                // 4. Zobrazíme počet v UI.
-                //    Toto musí být také uvnitř 'collect', protože 'exerciseCount'
-                //    existuje pouze tady, až po doručení dat.
-                binding.tvExerciseCount.text = exerciseCount.toString()
+            exerciseRepository.getAllExercisesFlow().collect { exerciseList ->
+                binding.tvExerciseCount.text = exerciseList.size.toString()
             }
         }
     }
@@ -74,8 +60,23 @@ class HomeFragment : Fragment() {
         val clientRepository = ClientRepository(requireContext())
         viewLifecycleOwner.lifecycleScope.launch {
             clientRepository.getAllClientsFlow().collect { clientList ->
-                val profileCount = clientList.size
-                binding.tvClientCount.text = profileCount.toString()
+                binding.tvClientCount.text = clientList.size.toString()
+            }
+        }
+    }
+
+    // 3. OPRAVENÁ METODA PRO TRÉNINKY
+    private fun loadTrainingUnitCount() {
+        // Inicializujeme správný repository
+        val trainingRepository = TrainingUnitRepository(requireContext())
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Voláme metodu pro získání globálních (šablonových) tréninků
+            // Ujisti se, že tuto metodu máš v Repository (viz bod níže)
+            trainingRepository.getGlobalUnitsFlow().collect { unitsList ->
+                val count = unitsList.size
+                // Předpokládám, že máš v XML TextView s ID tvTrainingUnitCount
+                binding.tvUnitCount.text = count.toString()
             }
         }
     }

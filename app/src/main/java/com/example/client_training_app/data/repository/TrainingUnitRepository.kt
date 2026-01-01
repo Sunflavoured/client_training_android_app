@@ -17,7 +17,7 @@ class TrainingUnitRepository(context: Context) {
         trainingUnitDao = database.trainingUnitDao()
     }
 
-    // --- VKLÁDÁNÍ ---
+    // --- INSERT ---
 
     suspend fun createTrainingUnit(unit: TrainingUnitEntity) {
         trainingUnitDao.insertTrainingUnit(unit)
@@ -27,7 +27,7 @@ class TrainingUnitRepository(context: Context) {
         trainingUnitDao.insertUnitExercise(exercise)
     }
 
-    // --- ČTENÍ ---
+    // --- SELECT ---
 
     fun getClientUnitsFlow(clientId: String): Flow<List<TrainingUnitEntity>> {
         return trainingUnitDao.getTrainingUnitsForClient(clientId)
@@ -40,7 +40,7 @@ class TrainingUnitRepository(context: Context) {
     suspend fun getTrainingUnitDetail(unitId: String): TrainingUnitWithExercises? {
         return trainingUnitDao.getTrainingUnitWithExercises(unitId)
     }
-    // Nová metoda pro uložení kompletního tréninku
+    //  metoda pro uložení kompletního tréninku
     suspend fun saveTrainingUnit(
         unit: TrainingUnitEntity,
         exercises: List<TrainingUnitExerciseEntity>
