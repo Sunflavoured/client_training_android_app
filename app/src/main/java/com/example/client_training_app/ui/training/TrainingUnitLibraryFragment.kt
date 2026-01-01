@@ -31,11 +31,10 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
 
     private fun setupRecyclerView() {
         adapter = TrainingUnitAdapter { unit ->
-            // Akce pro EDITACI existující jednotky
+            //  Navigace do DETAILU (náhled)
             val action = TrainingUnitLibraryFragmentDirections
-                .actionTrainingUnitLibraryFragmentToTrainingUnitEditorFragment(
-                    // Editujeme existující globální jednotku, ID je null
-                    clientId = null // Mohla bys zde předat i unit.clientId pro klientské šablony
+                .actionTrainingUnitLibraryFragmentToTrainingUnitDetailFragment(
+                    trainingUnitId = unit.id
                 )
             findNavController().navigate(action)
         }

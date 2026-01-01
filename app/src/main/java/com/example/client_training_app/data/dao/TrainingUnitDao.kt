@@ -5,10 +5,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.client_training_app.data.database.TrainingUnitWithExercises
 import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
 import kotlinx.coroutines.flow.Flow
+import com.example.client_training_app.data.database.TrainingUnitWithExercises
 
 @Dao
 interface TrainingUnitDao {

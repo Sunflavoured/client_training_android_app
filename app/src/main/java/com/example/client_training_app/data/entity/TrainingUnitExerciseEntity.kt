@@ -1,4 +1,4 @@
-package com.example.client_training_app.data.entity // Zkontroluj si svůj package name
+package com.example.client_training_app.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

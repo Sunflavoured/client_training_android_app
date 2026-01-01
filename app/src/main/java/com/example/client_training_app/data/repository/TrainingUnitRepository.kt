@@ -3,10 +3,10 @@ package com.example.client_training_app.data.repository
 import android.content.Context
 import com.example.client_training_app.data.dao.TrainingUnitDao
 import com.example.client_training_app.data.database.DatabaseInstance
-import com.example.client_training_app.data.database.TrainingUnitWithExercises
 import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
 import kotlinx.coroutines.flow.Flow
+import com.example.client_training_app.data.database.TrainingUnitWithExercises
 
 class TrainingUnitRepository(context: Context) {
 
@@ -37,7 +37,7 @@ class TrainingUnitRepository(context: Context) {
         return trainingUnitDao.getGlobalTrainingUnits()
     }
 
-    suspend fun getTrainingUnitDetail(unitId: String): TrainingUnitWithExercises? {
+    suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises? {
         return trainingUnitDao.getTrainingUnitWithExercises(unitId)
     }
     //  metoda pro uložení kompletního tréninku
