@@ -19,33 +19,33 @@ class ClientRepository(context: Context) {
     private val clientDao: ClientDao = DatabaseInstance.getDatabase(context).clientDao()
 
     // 1. Získání všech klientů jako Flow
-    fun getAllClientsFlow(): Flow<List<Client>> {
+    fun getAllClientsFlow(): Flow<List<`Client`>> {
         // Mapujeme seznam entit (ClientEntity) na seznam modelů (Client)
         return clientDao.getAllClients().map { entities ->
             entities.map { it.toClient() }
         }
     }
 
-    fun getClientByIdFlow(clientId: String): Flow<Client?> {
+    fun getClientByIdFlow(clientId: String): Flow<`Client`?> {
         // Použijeme .map ke konverzi Entity na aplikační model Client
         return clientDao.getClientByIdFlow(clientId)
             .map { entity -> entity?.toClient() }
     }
 
     // 2. Hledání klientů
-    fun searchClientsFlow(query: String): Flow<List<Client>> {
+    fun searchClientsFlow(query: String): Flow<List<`Client`>> {
         return clientDao.searchClients(query).map { entities ->
             entities.map { it.toClient() }
         }
     }
 
     // 3. Přidání nového klienta
-    suspend fun addClient(client: Client) {
+    suspend fun addClient(client: `Client`) {
         clientDao.insert(client.toEntity())
     }
 
     // 4. Získání klienta podle ID (pro detail)
-    suspend fun getClientById(clientId: String): Client? {
+    suspend fun getClientById(clientId: String): `Client`? {
         return clientDao.getClientById(clientId)?.toClient()
     }
 

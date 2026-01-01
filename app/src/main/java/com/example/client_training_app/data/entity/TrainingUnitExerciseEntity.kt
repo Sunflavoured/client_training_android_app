@@ -1,4 +1,4 @@
-package com.example.client_training_app.data.entity
+package com.example.client_training_app.data.entity // Zkontroluj si svůj package name
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -9,16 +9,16 @@ import androidx.room.PrimaryKey
     tableName = "training_unit_exercises",
     foreignKeys = [
         ForeignKey(
-            entity = TrainingUnitEntity::class, // Odkazujeme na novou entitu
+            entity = TrainingUnitEntity::class,
             parentColumns = ["id"],
-            childColumns = ["trainingUnitId"],  // Přejmenovaný sloupec
-            onDelete = ForeignKey.Companion.CASCADE
+            childColumns = ["trainingUnitId"],
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = ExerciseEntity::class,
             parentColumns = ["id"],
             childColumns = ["exerciseId"],
-            onDelete = ForeignKey.Companion.CASCADE
+            onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [Index("trainingUnitId"), Index("exerciseId")]
@@ -27,11 +27,24 @@ data class TrainingUnitExerciseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val trainingUnitId: String, // ID Tréninkové jednotky
-    val exerciseId: String,     // ID Cviku
+    val trainingUnitId: String,
+    val exerciseId: String,
+    val orderIndex: Int, // Pořadí v seznamu
 
-    val sets: Int,
-    val reps: String,
-    val weight: Double?,
-    val restSeconds: Int?
+    // --- DATA ---
+    val sets: String,
+    val reps: String?,
+    val weight: String?,
+    val time: String?,      // Nové
+    val distance: String?,  // Nové
+    val rir: String?,       // Nové
+    val rest: String?,
+
+    // --- KONFIGURACE (Booleans) ---
+    val isRepsEnabled: Boolean,
+    val isWeightEnabled: Boolean,
+    val isTimeEnabled: Boolean,
+    val isDistanceEnabled: Boolean,
+    val isRirEnabled: Boolean,
+    val isRestEnabled: Boolean
 )

@@ -98,7 +98,7 @@ class ProfilesFragment : Fragment() {
         updateUI(filteredList)
     }
 
-    private fun updateUI(clients: List<Client>) {
+    private fun updateUI(clients: List<`Client`>) {
         if (clients.isEmpty()) {
             binding.profileRecyclerView.visibility = View.GONE
             binding.emptyStateTextView.visibility = View.VISIBLE

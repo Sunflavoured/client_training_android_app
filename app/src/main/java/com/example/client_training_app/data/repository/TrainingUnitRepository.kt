@@ -40,4 +40,11 @@ class TrainingUnitRepository(context: Context) {
     suspend fun getTrainingUnitDetail(unitId: String): TrainingUnitWithExercises? {
         return trainingUnitDao.getTrainingUnitWithExercises(unitId)
     }
+    // Nová metoda pro uložení kompletního tréninku
+    suspend fun saveTrainingUnit(
+        unit: TrainingUnitEntity,
+        exercises: List<TrainingUnitExerciseEntity>
+    ) {
+        trainingUnitDao.saveTrainingUnitWithExercises(unit, exercises)
+    }
 }

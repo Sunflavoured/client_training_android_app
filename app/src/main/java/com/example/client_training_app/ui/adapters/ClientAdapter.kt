@@ -8,14 +8,14 @@ import com.example.client_training_app.model.Client
 
 class ClientAdapter(
     private var clients: List<Client>,
-    private val onClientClicked: (Client) -> Unit // Lambda pro akci po kliknutí
+    private val onClientClicked: (`Client`) -> Unit // Lambda pro akci po kliknutí
 ) : RecyclerView.Adapter<ClientAdapter.ClientViewHolder>() {
 
     // Vnitřní třída ViewHolder
     inner class ClientViewHolder(private val binding: ItemRecycleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(client: Client) {
+        fun bind(client: `Client`) {
             val fullName = "${client.firstName} ${client.lastName}"
             binding.tvName.text = fullName
 
@@ -38,7 +38,7 @@ class ClientAdapter(
     override fun getItemCount(): Int = clients.size
 
     // Metoda pro aktualizaci seznamu dat
-    fun updateClients(newClients: List<Client>) {
+    fun updateClients(newClients: List<`Client`>) {
         clients = newClients
         // Poznámka: Pro lepší optimalizaci použij DiffUtil, ale pro začátek stačí notifyDataSetChanged()
         notifyDataSetChanged()

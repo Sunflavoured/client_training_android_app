@@ -20,6 +20,8 @@ class ExerciseAdapter(
         // Metoda pro navázání dat cvičení na UI prvky
         fun bind(exercise: Exercise) {
             binding.tvName.text = exercise.name
+            binding.tvMuscleGroups.text = exercise.muscleGroups.joinToString(", ")
+
 
             // Nastavení posluchače kliknutí
             binding.root.setOnClickListener {

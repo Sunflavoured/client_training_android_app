@@ -21,7 +21,7 @@ import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
         MeasurementEntity::class,
         TrainingSessionEntity::class,
         ExerciseEntity::class],
-    version = 6, // <--- ZVÝŠENÍ VERZE
+    version = 8, // <--- ZVÝŠENÍ VERZE
     exportSchema = false
 )
 @TypeConverters(Converters::class)

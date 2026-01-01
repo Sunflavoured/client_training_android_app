@@ -33,4 +33,27 @@ interface TrainingUnitDao {
     @Transaction
     @Query("SELECT * FROM training_units WHERE id = :unitId")
     suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises?
+
+    // 1. Získání všech globálních jednotek (pro Knihovnu)
+    @Query("SELECT * FROM training_units WHERE clientId IS NULL")
+    fun getGlobalUnitsFlow(): Flow<List<TrainingUnitEntity>>
+
+    // 2. Pomocné vkládací metody (Private pro vnější svět, Public pro Room)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnit(unit: TrainingUnitEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnitExercises(exercises: List<TrainingUnitExerciseEntity>)
+
+    // 3. TRANSAKCE: Uloží trénink I jeho cviky najednou
+    @Transaction
+    suspend fun saveTrainingUnitWithExercises(
+        unit: TrainingUnitEntity,
+        exercises: List<TrainingUnitExerciseEntity>
+    ) {
+        // A) Uložíme hlavičku
+        insertUnit(unit)
+        // B) Uložíme cviky
+        insertUnitExercises(exercises)
+    }
 }

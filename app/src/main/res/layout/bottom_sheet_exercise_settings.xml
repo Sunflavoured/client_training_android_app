@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nastavení sledování"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <CheckBox android:id="@+id/cbReps" android:text="Opakování" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <CheckBox android:id="@+id/cbWeight" android:text="Váha (kg)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <CheckBox android:id="@+id/cbTime" android:text="Čas" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <CheckBox android:id="@+id/cbDistance" android:text="Vzdálenost" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <CheckBox android:id="@+id/cbRir" android:text="RIR (Reserva)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <CheckBox android:id="@+id/cbRest" android:text="Pauza (s)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+
+
+    <Button
+        android:id="@+id/btnApply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Použít"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

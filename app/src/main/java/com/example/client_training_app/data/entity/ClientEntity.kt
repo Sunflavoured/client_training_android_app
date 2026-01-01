@@ -29,7 +29,7 @@ fun Client.toEntity() = ClientEntity(
 )
 
 // PŘEVOD Z ClientEntity -> Client
-fun ClientEntity.toClient() = Client(
+fun ClientEntity.toClient() = `Client`(
     id = id,
     firstName = firstName,
     lastName = lastName,
