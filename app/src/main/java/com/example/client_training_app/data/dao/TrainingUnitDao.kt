@@ -13,47 +13,59 @@ import com.example.client_training_app.data.database.TrainingUnitWithExercises
 @Dao
 interface TrainingUnitDao {
 
-    // Vložení hlavičky (jednotky)
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertTrainingUnit(trainingUnit: TrainingUnitEntity)
+    // --- INSERT / UPDATE ---
 
-    // Vložení cviku do jednotky
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertUnitExercise(exercise: TrainingUnitExerciseEntity)
-
-    // 1. Seznam: Jednotky KONKRÉTNÍHO klienta
-    @Query("SELECT * FROM training_units WHERE clientId = :clientId")
-    fun getTrainingUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
-
-    // 2. Seznam: GLOBÁLNÍ jednotky (kde clientId je NULL)
-    @Query("SELECT * FROM training_units WHERE clientId IS NULL")
-    fun getGlobalTrainingUnits(): Flow<List<TrainingUnitEntity>>
-
-    // Načíst konkrétní jednotku KOMPLETNĚ i s cviky
-    @Transaction
-    @Query("SELECT * FROM training_units WHERE id = :unitId")
-    suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises?
-
-    // 1. Získání všech globálních jednotek (pro Knihovnu)
-    @Query("SELECT * FROM training_units WHERE clientId IS NULL")
-    fun getGlobalUnitsFlow(): Flow<List<TrainingUnitEntity>>
-
-    // 2. Pomocné vkládací metody (Private pro vnější svět, Public pro Room)
+    // Vložení nebo aktualizace hlavičky (OnConflictStrategy.REPLACE to řeší za nás)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUnit(unit: TrainingUnitEntity)
+    suspend fun insertOrUpdateUnit(unit: TrainingUnitEntity)
 
+    // Vložení seznamu cviků
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUnitExercises(exercises: List<TrainingUnitExerciseEntity>)
 
-    // 3. TRANSAKCE: Uloží trénink I jeho cviky najednou
+    // --- DELETE ---
+
+    @Query("DELETE FROM training_unit_exercises WHERE trainingUnitId = :unitId")
+    suspend fun deleteExercisesForUnit(unitId: String)
+
+    @Query("DELETE FROM training_units WHERE id = :unitId")
+    suspend fun deleteTrainingUnitById(unitId: String)
+
+    // --- TRANSAKCE (Logika ukládání) ---
+
+    // 1. Pro nový trénink (Insert)
     @Transaction
     suspend fun saveTrainingUnitWithExercises(
         unit: TrainingUnitEntity,
         exercises: List<TrainingUnitExerciseEntity>
     ) {
-        // A) Uložíme hlavičku
-        insertUnit(unit)
-        // B) Uložíme cviky
+        insertOrUpdateUnit(unit)
         insertUnitExercises(exercises)
     }
+
+    // 2. Pro editaci (Update = Smazat staré vazby + Vložit nové)
+    // OPRAVA: Musí to být 'suspend', protože volá jiné suspend funkce
+    @Transaction
+    suspend fun updateTrainingUnitWithExercises(unit: TrainingUnitEntity, exercises: List<TrainingUnitExerciseEntity>) {
+        // A) Aktualizuj hlavičku (změna názvu, poznámky)
+        insertOrUpdateUnit(unit)
+
+        // B) SMAŽ staré cviky (aby se nezdvojily)
+        deleteExercisesForUnit(unit.id)
+
+        // C) Vlož aktuální seznam cviků z editoru
+        insertUnitExercises(exercises)
+    }
+
+    // --- SELECT (Flows & Data) ---
+
+    @Query("SELECT * FROM training_units WHERE clientId = :clientId")
+    fun getTrainingUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
+
+    @Query("SELECT * FROM training_units WHERE clientId IS NULL")
+    fun getGlobalTrainingUnits(): Flow<List<TrainingUnitEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM training_units WHERE id = :unitId")
+    suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises?
 }

@@ -60,8 +60,8 @@ class TrainingUnitDetailFragment : Fragment(R.layout.fragment_training_unit_deta
 
                 // B) Seznam cviků
                 // POZOR: Musíme převést Entity na Model 'Exercise'
-                val exerciseModels = unitWithExercises.exercises.map { entity ->
-                    entity.toExercise()
+                val exerciseModels = unitWithExercises.exercises.map { detail ->
+                    detail.exercise.toExercise()
                 }
 
                 adapter.updateExercises(exerciseModels)
@@ -70,13 +70,14 @@ class TrainingUnitDetailFragment : Fragment(R.layout.fragment_training_unit_deta
     }
 
     private fun setupButtons(unitId: String) {
-        // Tlačítko Editovat (tužka) - přepne nás do Editoru
         binding.fabEdit.setOnClickListener {
             val action = TrainingUnitDetailFragmentDirections
                 .actionTrainingUnitDetailFragmentToTrainingUnitEditorFragment(
-                    clientId = null, // nebo unit.clientId, pokud to máš v datech
+                    clientId = null,
+                    trainingUnitIdToEdit = unitId
                 )
             findNavController().navigate(action)
         }
     }
-}
+    }
+

@@ -17,17 +17,25 @@ class TrainingUnitRepository(context: Context) {
         trainingUnitDao = database.trainingUnitDao()
     }
 
-    // --- INSERT ---
+    // --- INSERT / CREATE ---
 
-    suspend fun createTrainingUnit(unit: TrainingUnitEntity) {
-        trainingUnitDao.insertTrainingUnit(unit)
+    suspend fun saveTrainingUnit(
+        unit: TrainingUnitEntity,
+        exercises: List<TrainingUnitExerciseEntity>
+    ) {
+        trainingUnitDao.saveTrainingUnitWithExercises(unit, exercises)
     }
 
-    suspend fun addExerciseToUnit(exercise: TrainingUnitExerciseEntity) {
-        trainingUnitDao.insertUnitExercise(exercise)
+    // --- UPDATE (Tato metoda chyběla) ---
+    suspend fun updateTrainingUnit(
+        unit: TrainingUnitEntity,
+        exercises: List<TrainingUnitExerciseEntity>
+    ) {
+        // Voláme opravenou transakci v DAO
+        trainingUnitDao.updateTrainingUnitWithExercises(unit, exercises)
     }
 
-    // --- SELECT ---
+    // --- READ / SELECT ---
 
     fun getClientUnitsFlow(clientId: String): Flow<List<TrainingUnitEntity>> {
         return trainingUnitDao.getTrainingUnitsForClient(clientId)
@@ -40,11 +48,10 @@ class TrainingUnitRepository(context: Context) {
     suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises? {
         return trainingUnitDao.getTrainingUnitWithExercises(unitId)
     }
-    //  metoda pro uložení kompletního tréninku
-    suspend fun saveTrainingUnit(
-        unit: TrainingUnitEntity,
-        exercises: List<TrainingUnitExerciseEntity>
-    ) {
-        trainingUnitDao.saveTrainingUnitWithExercises(unit, exercises)
+
+    // --- DELETE ---
+
+    suspend fun deleteTrainingUnit(unitId: String) {
+        trainingUnitDao.deleteTrainingUnitById(unitId)
     }
 }

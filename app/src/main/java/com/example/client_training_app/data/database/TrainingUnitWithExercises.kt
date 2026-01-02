@@ -1,24 +1,20 @@
 package com.example.client_training_app.data.database
 
 import androidx.room.Embedded
-import androidx.room.Junction
 import androidx.room.Relation
-import com.example.client_training_app.data.entity.ExerciseEntity
 import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
 
 data class TrainingUnitWithExercises(
+    // Hlavička tréninku (Název tréninku, poznámka...)
     @Embedded val trainingUnit: TrainingUnitEntity,
 
+    // Seznam cviků v tomto tréninku
     @Relation(
-        parentColumn = "id",
-        entityColumn = "id",
-        associateBy = Junction(
-            value = TrainingUnitExerciseEntity::class,
-            parentColumn = "trainingUnitId",
-            entityColumn = "exerciseId"
-        )
+        entity = TrainingUnitExerciseEntity::class, // Říkáme Roomu: "Hledej ve vazební tabulce"
+        parentColumn = "id",            // ID tréninku
+        entityColumn = "trainingUnitId" // Sloupec v tabulce training_unit_exercises
     )
-
-    val exercises: List<ExerciseEntity>
+    // Vracíme seznam detailů (kde jsou i série), ne jen holé cviky
+    val exercises: List<TrainingUnitExerciseDetail>
 )
