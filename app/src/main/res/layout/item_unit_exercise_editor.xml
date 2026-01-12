@@ -46,7 +46,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_close_24"
+            android:src="@drawable/ic_delete_24"
             app:tint="@color/design_default_color_error"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
