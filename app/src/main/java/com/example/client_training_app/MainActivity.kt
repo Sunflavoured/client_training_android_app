@@ -25,36 +25,32 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         // Connect Toolbar to NavController
-        // This will show the back arrow when you navigate to other fragments
         NavigationUI.setupActionBarWithNavController(this, navController)
 
-        // Handle hamburger menu icon click (when on home screen)
+        // Handle hamburger menu / Back arrow click
         binding.topAppBar.setNavigationOnClickListener {
-            // TODO: Open navigation drawer or handle menu click
-            // For now, let's just show which fragment we're on
             when (navController.currentDestination?.id) {
                 R.id.homeFragment -> {
-                    // On home - hamburger menu clicked
-                    // TODO: Open drawer or show menu
+                    // prostor pro Hamburger menu (otevření šuplíku)
                 }
                 else -> {
-                    // On other screens - back button clicked
-                    navController.navigateUp()
+                    // Zavoláme systémové zpět.
+                    // To aktivuje OnBackPressedCallback ve tvém EditorFragmentu.
+                    onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        return navHostFragment.navController.navigateUp() || super.onSupportNavigateUp()
+        // I zde je lepší volat onBackPressed, aby byla logika jednotná,
+        // kdyby se náhodou listener nespustil (ale ten výše má přednost).
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
-    //Add menu items to the toolbar
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
     }
-
 }

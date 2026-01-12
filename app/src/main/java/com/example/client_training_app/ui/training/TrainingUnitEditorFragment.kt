@@ -4,11 +4,17 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,17 +50,19 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
 
         if (args.trainingUnitIdToEdit != null && savedInstanceState == null) {
             viewModel.loadUnitData(args.trainingUnitIdToEdit!!)
-            binding.btnSaveUnit.text = "Uložit změny"
-        } else {
+            binding.btnSaveUnit.text = "Uložit"
+        } else if (savedInstanceState == null) {
             // Pokud nevytváříme nový trénink (bez načítání dat), data jsou "načtená"
             isDataLoaded = true
         }
     }
 
+
+
     // --- SLEDOVÁNÍ ZMĚN ---
 
     private fun setupChangeTracking() {
-        binding.etUnitName.addTextChangedListener(object : TextWatcher {
+        val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // Změny se počítají pouze pokud už jsou data načtená
@@ -63,17 +71,10 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 }
             }
             override fun afterTextChanged(s: Editable?) {}
-        })
+        }
 
-        binding.etUnitNote.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (isDataLoaded) {
-                    hasUnsavedChanges = true
-                }
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        binding.etUnitName.addTextChangedListener(textWatcher)
+        binding.etUnitNote.addTextChangedListener(textWatcher)
     }
 
     // --- LOGIKA HLÍDÁNÍ ODCHODU ---
@@ -85,8 +86,9 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 if (hasUnsavedChanges) {
                     showUnsavedChangesDialog()
                 } else {
-                    // Pokud nejsou změny, jen se vrátíme zpět
-                    findNavController().popBackStack()
+                    // Pokud nejsou změny, vypneme callback a necháme systém navigovat
+                    isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
@@ -136,15 +138,11 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
         adapter = UnitExerciseEditorAdapter(
             onDataChanged = { updatedItem ->
                 viewModel.updateTemplateExercise(updatedItem)
-                if (isDataLoaded) {
-                    hasUnsavedChanges = true
-                }
+                hasUnsavedChanges = true
             },
             onDeleteClicked = { itemToDelete ->
                 viewModel.deleteTemplateExercise(itemToDelete)
-                if (isDataLoaded) {
-                    hasUnsavedChanges = true
-                }
+                hasUnsavedChanges = true
             },
             onSettingsClicked = { itemToEdit ->
                 // Otevřeme BottomSheet dialog
@@ -153,6 +151,7 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                     onSettingsChanged = { updatedSettings ->
                         // Když uživatel v dialogu klikne na "Použít", aktualizujeme ViewModel
                         viewModel.updateTemplateExercise(updatedSettings)
+                        hasUnsavedChanges = true
                     }
                 )
                 dialog.show(parentFragmentManager, "ExerciseSettingsBottomSheet")
@@ -168,8 +167,6 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
             (itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
         }
 
-        binding.rvAddedExercises.adapter = adapter
-        binding.rvAddedExercises.setHasFixedSize(true)
     }
 
     private fun setupButtons() {
@@ -197,6 +194,9 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                     isDataLoaded = true
                     hasUnsavedChanges = false
                 }, 100)
+            } else {
+                // Pokud už text máme (např. návrat z výběru cviku nebo rotace), data považujeme za načtená
+                isDataLoaded = true
             }
         }
 
@@ -213,9 +213,8 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
             ?.observe(viewLifecycleOwner) { exercise ->
                 if (exercise != null) {
                     viewModel.addExercise(exercise)
-                    if (isDataLoaded) {
                         hasUnsavedChanges = true
-                    }
+
                     findNavController().currentBackStackEntry?.savedStateHandle
                         ?.remove<Exercise>("selected_exercise")
                 }
