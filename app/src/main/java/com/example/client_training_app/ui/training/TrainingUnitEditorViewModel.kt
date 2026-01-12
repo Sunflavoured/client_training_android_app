@@ -59,21 +59,26 @@ class TrainingUnitEditorViewModel(application: Application) : AndroidViewModel(a
                         // K sériím/opakováním se dostaneš přes .trainingData
                         order = detail.trainingData.orderIndex,
 
+                        //základní
                         sets = detail.trainingData.sets ?: "3",
                         reps = detail.trainingData.reps ?: "10",
                         weight = detail.trainingData.weight,
 
-                        // Teď už ti 'time', 'distance' atd. budou fungovat:
+                        // extra
                         time = detail.trainingData.time,
                         distance = detail.trainingData.distance,
                         rir = detail.trainingData.rir,
+                        rest = detail.trainingData.rest,
+
+
 
                         // A stejně tak flagy:
                         isRepsEnabled = detail.trainingData.isRepsEnabled,
                         isWeightEnabled = detail.trainingData.isWeightEnabled,
                         isTimeEnabled = detail.trainingData.isTimeEnabled,
                         isDistanceEnabled = detail.trainingData.isDistanceEnabled,
-                        isRirEnabled = detail.trainingData.isRirEnabled
+                        isRirEnabled = detail.trainingData.isRirEnabled,
+                        isRestEnabled = detail.trainingData.isRestEnabled
                     )
                 }.sortedBy { it.order }
 
@@ -171,6 +176,27 @@ class TrainingUnitEditorViewModel(application: Application) : AndroidViewModel(a
             repository.updateTrainingUnit(unitEntity, exerciseEntities)
 
             onSuccess()
+        }
+    }
+    //smazání tréninkové jednotky
+    fun deleteTrainingUnit(unit: TrainingUnitEntity) {
+        viewModelScope.launch {
+            repository.deleteTrainingUnit(unit.id)
+            // Seznam se aktualizuje sám díky Flow
+        }
+    }
+
+    // --- 5. OBNOVENÍ (Pro Undo tlačítko) ---
+
+    fun restoreTrainingUnit(unit: TrainingUnitEntity) {
+        viewModelScope.launch {
+            // POZOR: Pokud při deleteTrainingUnit došlo k smazání cviků (Cascade),
+            // tento příkaz obnoví pouze hlavičku tréninku, ale bude prázdný (bez cviků).
+            // Pro plnohodnotné Undo bys musel před smazáním načíst i seznam cviků
+            // a v této metodě je uložit zpátky.
+
+            // Pro teď jen vložíme zpět jednotku (aby aplikace nespadla):
+            //repository.createTrainingUnit(unit) TODO
         }
     }
 }

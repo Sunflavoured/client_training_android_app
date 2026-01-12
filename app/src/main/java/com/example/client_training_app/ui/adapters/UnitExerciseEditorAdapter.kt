@@ -43,7 +43,7 @@ class UnitExerciseEditorAdapter(
             binding.containerRir.visibility = if (templateExercise.isRirEnabled) View.VISIBLE else View.GONE
             binding.containerRest.visibility = if (templateExercise.isRestEnabled) View.VISIBLE else View.GONE
 
-            // 3. Nastavíme HODNOTY - 🔥 OPRAVA SKÁKAJÍCÍHO KURZORU 🔥
+            // 3. Nastavíme HODNOTY -  OPRAVA SKÁKAJÍCÍHO KURZORU
             // Funkce setTextSilent zkontroluje, jestli se text liší, než ho přepíše
             setTextSilent(binding.etSets, templateExercise.sets.orEmpty())
             setTextSilent(binding.etReps, templateExercise.reps.orEmpty())

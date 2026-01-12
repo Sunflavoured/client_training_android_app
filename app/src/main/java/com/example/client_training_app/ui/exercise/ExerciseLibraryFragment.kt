@@ -18,7 +18,7 @@ import com.example.client_training_app.model.Exercise
 import com.example.client_training_app.ui.adapters.ExerciseAdapter
 import kotlinx.coroutines.launch
 
-class ExerciseFragment : Fragment() {
+class ExerciseLibraryFragment : Fragment() {
 
     private var _binding: FragmentExercisesBinding? = null
     private val binding get() = _binding!!
@@ -51,7 +51,7 @@ class ExerciseFragment : Fragment() {
     private fun setupRecyclerView() {
         // Inicializujeme adapter s prázdným seznamem
         adapter = ExerciseAdapter(emptyList()) { exercise ->
-            val action = ExerciseFragmentDirections
+            val action = ExerciseLibraryFragmentDirections
                 .actionExercisesFragmentToExerciseDetailFragment(exercise.id)
             findNavController().navigate(action)
         }

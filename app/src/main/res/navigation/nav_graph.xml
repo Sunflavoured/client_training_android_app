@@ -68,7 +68,7 @@
     <!-- Exercises -->
     <fragment
         android:id="@+id/exercisesFragment"
-        android:name="com.example.client_training_app.ui.exercise.ExerciseFragment"
+        android:name="com.example.client_training_app.ui.exercise.ExerciseLibraryFragment"
         android:label="Cviky">
         <action
             android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
