@@ -147,10 +147,27 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 }
             },
             onSettingsClicked = { itemToEdit ->
-                // Settings dialog...
+                // Otevřeme BottomSheet dialog
+                val dialog = com.example.client_training_app.ui.training.ExerciseSettingsBottomSheet(
+                    currentSettings = itemToEdit,
+                    onSettingsChanged = { updatedSettings ->
+                        // Když uživatel v dialogu klikne na "Použít", aktualizujeme ViewModel
+                        viewModel.updateTemplateExercise(updatedSettings)
+                    }
+                )
+                dialog.show(parentFragmentManager, "ExerciseSettingsBottomSheet")
             }
         )
-        binding.rvAddedExercises.layoutManager = LinearLayoutManager(requireContext())
+        // Nastavení, které opravilo bug kurzoru přeskakujícího na začátek řádku
+        binding.rvAddedExercises.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@TrainingUnitEditorFragment.adapter
+            // Optimalizace pro RecyclerView, pokud se nemění jeho velikost
+            setHasFixedSize(true)
+            // Vypneme animace při změně (aby neblikaly inputy při psaní)
+            (itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
+        }
+
         binding.rvAddedExercises.adapter = adapter
         binding.rvAddedExercises.setHasFixedSize(true)
     }
