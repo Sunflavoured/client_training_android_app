@@ -5,10 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.client_training_app.data.dao.ClientDao
 import com.example.client_training_app.data.dao.ExerciseDao
+import com.example.client_training_app.data.dao.ScheduledWorkoutDao
 import com.example.client_training_app.data.dao.TrainingUnitDao
 import com.example.client_training_app.data.entity.ClientEntity
 import com.example.client_training_app.data.entity.ExerciseEntity
 import com.example.client_training_app.data.entity.MeasurementEntity
+import com.example.client_training_app.data.entity.ScheduledWorkoutEntity
 import com.example.client_training_app.data.entity.TrainingSessionEntity
 import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
@@ -20,8 +22,9 @@ import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
         TrainingUnitExerciseEntity::class,
         MeasurementEntity::class,
         TrainingSessionEntity::class,
-        ExerciseEntity::class],
-    version = 8, // <--- ZVÝŠENÍ VERZE
+        ExerciseEntity::class,
+        ScheduledWorkoutEntity::class],
+    version = 9, // <--- ZVÝŠENÍ VERZE
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -30,4 +33,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun clientDao(): ClientDao // <--- PŘIDANÁ DAO pro Client
 
     abstract fun trainingUnitDao(): TrainingUnitDao
+    abstract fun scheduledWorkoutDao(): ScheduledWorkoutDao
 }
+
