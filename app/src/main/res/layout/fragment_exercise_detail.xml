@@ -1,159 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.core.widget.NestedScrollView
+
     xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
+
     android:background="?attr/android:colorBackground"
+
     android:fillViewport="true">
 
+
+
     <LinearLayout
+
         android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
+
         android:orientation="vertical"
+
         android:padding="16dp">
 
+
+
         <!-- Card s hlavními informacemi -->
+
         <com.google.android.material.card.MaterialCardView
+
             style="@style/Widget.TrainerApp.Card"
+
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
+
             android:layout_marginBottom="16dp">
 
+
+
             <LinearLayout
+
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content"
+
                 android:orientation="vertical"
+
                 android:padding="20dp">
+
+
 
                 <!-- Název cviku -->
+
                 <TextView
+
                     android:id="@+id/exerciseName"
+
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
+
                     android:text="Název cviku"
+
                     android:textAppearance="@style/TextAppearance.TrainerApp.Headline"
+
                     android:textSize="24sp"
+
                     android:layout_marginBottom="8dp" />
 
+
+
                 <!-- Kategorie -->
+
                 <LinearLayout
+
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
+
                     android:orientation="horizontal"
+
                     android:layout_marginTop="8dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Kategorie: "
-                        android:textAppearance="@style/TextAppearance.TrainerApp.Body"
-                        android:textStyle="bold" />
+
 
                     <TextView
-                        android:id="@+id/exerciseCategory"
+
                         android:layout_width="wrap_content"
+
                         android:layout_height="wrap_content"
-                        android:text="Síla"
+
+                        android:text="Kategorie: "
+
                         android:textAppearance="@style/TextAppearance.TrainerApp.Body"
+
+                        android:textStyle="bold" />
+
+
+
+                    <TextView
+
+                        android:id="@+id/exerciseCategory"
+
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content"
+
+                        android:text="Síla"
+
+                        android:textAppearance="@style/TextAppearance.TrainerApp.Body"
+
                         android:textColor="?attr/colorPrimary" />
 
+
+
                 </LinearLayout>
+
+
 
                 <!-- Je výchozí? -->
+
                 <LinearLayout
+
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
+
                     android:orientation="horizontal"
+
                     android:layout_marginTop="4dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Výchozí cvik: "
-                        android:textAppearance="@style/TextAppearance.TrainerApp.Body"
-                        android:textStyle="bold" />
+
 
                     <TextView
-                        android:id="@+id/exerciseIsDefault"
+
                         android:layout_width="wrap_content"
+
                         android:layout_height="wrap_content"
+
+                        android:text="Výchozí cvik: "
+
+                        android:textAppearance="@style/TextAppearance.TrainerApp.Body"
+
+                        android:textStyle="bold" />
+
+
+
+                    <TextView
+
+                        android:id="@+id/exerciseIsDefault"
+
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content"
+
                         android:text="Ano"
+
                         android:textAppearance="@style/TextAppearance.TrainerApp.Body" />
+
+
 
                 </LinearLayout>
 
+
+
             </LinearLayout>
 
+
+
         </com.google.android.material.card.MaterialCardView>
+
+
 
         <!-- Card s popisem -->
+
         <com.google.android.material.card.MaterialCardView
+
             style="@style/Widget.TrainerApp.Card"
+
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
+
             android:layout_marginBottom="16dp">
 
+
+
             <LinearLayout
+
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content"
+
                 android:orientation="vertical"
+
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Popis provedení"
-                    android:textAppearance="@style/TextAppearance.TrainerApp.Title"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="12dp" />
+
 
                 <TextView
-                    android:id="@+id/exerciseDescription"
+
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
+
+                    android:text="Popis provedení"
+
+                    android:textAppearance="@style/TextAppearance.TrainerApp.Title"
+
+                    android:textSize="18sp"
+
+                    android:layout_marginBottom="12dp" />
+
+
+
+                <TextView
+
+                    android:id="@+id/exerciseDescription"
+
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+
                     android:text="Popis cviku"
+
                     android:textAppearance="@style/TextAppearance.TrainerApp.Body"
+
                     android:lineSpacingExtra="4dp" />
 
+
+
             </LinearLayout>
 
+
+
         </com.google.android.material.card.MaterialCardView>
+
+
 
         <!-- Card se svalovými skupinami (jen pokud není prázdné) -->
+
         <com.google.android.material.card.MaterialCardView
+
             android:id="@+id/cardMuscleGroups"
+
             style="@style/Widget.TrainerApp.Card"
+
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
+
             android:layout_marginBottom="16dp">
 
+
+
             <LinearLayout
+
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content"
+
                 android:orientation="vertical"
+
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Zapojené svalové skupiny"
-                    android:textAppearance="@style/TextAppearance.TrainerApp.Title"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="12dp" />
+
 
                 <TextView
-                    android:id="@+id/exerciseMuscleGroups"
+
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
+
+                    android:text="Zapojené svalové skupiny"
+
+                    android:textAppearance="@style/TextAppearance.TrainerApp.Title"
+
+                    android:textSize="18sp"
+
+                    android:layout_marginBottom="12dp" />
+
+
+
+                <TextView
+
+                    android:id="@+id/exerciseMuscleGroups"
+
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+
                     android:text="Hrudník, Triceps, Ramena"
+
                     android:textAppearance="@style/TextAppearance.TrainerApp.Body"
+
                     android:textColor="?attr/colorSecondary" />
+
+
 
             </LinearLayout>
 
+
+
         </com.google.android.material.card.MaterialCardView>
 
+
+
     </LinearLayout>
+
+
 
 </androidx.core.widget.NestedScrollView>

@@ -4,20 +4,71 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.client_training_app.HomeFragment"
+        android:name="com.example.client_training_app.ui.home.HomeFragment"
         android:label="Trainer App" />
 
+    <!-- Profiles/Clients -->
     <fragment
         android:id="@+id/profilesFragment"
-        android:name="com.example.client_training_app.ProfilesFragment"
-        android:label="Profily" />
+        android:name="com.example.client_training_app.ui.client.ProfilesFragment"
+        android:label="Profily" >
+        <action
+            android:id="@+id/action_profilesFragment_to_clientDetailFragment"
+            app:destination="@id/clientDetailFragment">
+            <argument
+                android:name="clientId"
+                app:argType="string" />
+        </action>
+    <action
+        android:id="@+id/action_profilesFragment_to_addProfileFragment"
+        app:destination="@id/addProfileFragment" />
+    </fragment>
 
-
-
+    <!-- Add Profiles/Clients -->
+    <fragment
+        android:id="@+id/addProfileFragment"
+        android:name="com.example.client_training_app.ui.client.AddProfileFragment"
+        android:label="Nový profil klienta" />
 
     <fragment
+        android:id="@+id/clientDetailFragment"
+        android:name="com.example.client_training_app.ui.client.ClientDetailFragment"
+        android:label="Detail klienta">
+            <argument
+                android:name="clientId"
+                app:argType="string"/>
+            <action
+                android:id="@+id/action_clientDetailFragment_to_trainingCalendarFragment"
+                app:destination="@id/trainingCalendarFragment" />
+
+    </fragment>
+
+    <!-- Add Measurments -->
+        <fragment
+            android:id="@+id/addMeasurementFragment"
+            android:name="com.example.client_training_app.ui.client.AddMeasurementFragment"
+            android:label="Nové měření">
+
+            <argument
+                android:name="clientId"
+                app:argType="string"/>
+        </fragment>
+
+        <!-- Calendar -->
+        <fragment
+            android:id="@+id/trainingCalendarFragment"
+            android:name="com.example.client_training_app.ui.training.TrainingCalendarFragment"
+            android:label="Tréninkový kalendář">
+
+            <argument
+                android:name="clientId"
+                app:argType="string" />
+        </fragment>
+
+    <!-- Exercises -->
+    <fragment
         android:id="@+id/exercisesFragment"
-        android:name="com.example.client_training_app.ExerciseFragment"
+        android:name="com.example.client_training_app.ui.exercise.ExerciseLibraryFragment"
         android:label="Cviky">
         <action
             android:id="@+id/action_exercisesFragment_to_exerciseDetailFragment"
@@ -28,9 +79,38 @@
 
     </fragment>
 
+    <!-- Přidání treninkové jednotky -->
+    <fragment
+        android:id="@+id/trainingUnitEditorFragment"
+        android:name="com.example.client_training_app.ui.training.TrainingUnitEditorFragment"
+        android:label="Editor tréninku">
+
+        <argument
+            android:name="clientId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <argument
+            android:name="trainingUnitIdToEdit"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <action
+            android:id="@+id/action_trainingUnitEditorFragment_to_exercisePickerFragment"
+            app:destination="@id/exercisePickerFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/exercisePickerFragment"
+        android:name="com.example.client_training_app.ui.training.ExercisePickerFragment"
+        android:label="Vybrat cviky" />
+
     <fragment
         android:id="@+id/exerciseDetailFragment"
-        android:name="com.example.client_training_app.ExerciseDetailFragment"
+        android:name="com.example.client_training_app.ui.exercise.ExerciseDetailFragment"
         android:label="Detail cviku">
 
         <!-- Argument musí být uvnitř fragmentu -->
@@ -42,7 +122,7 @@
 
     <fragment
         android:id="@+id/addExerciseFragment"
-        android:name="com.example.client_training_app.AddExerciseFragment"
+        android:name="com.example.client_training_app.ui.exercise.AddExerciseFragment"
         android:label="Přidat cvik" >
         <action
             android:id="@+id/action_addExerciseFragment_to_selectMuscleGroupsFragment"
@@ -51,13 +131,41 @@
     
     <fragment
         android:id="@+id/selectMuscleGroupsFragment"
-        android:name="com.example.client_training_app.SelectMuscleGroupsFragment"
+        android:name="com.example.client_training_app.ui.exercise.SelectMuscleGroupsFragment"
         android:label="Vybrat svaly" >
 
         <argument
             android:name="currentSelection"
             app:argType="string[]" />
     </fragment>
+
+
+    <!-- Training Unit -->
+    <fragment
+        android:id="@+id/trainingUnitLibraryFragment"
+        android:name="com.example.client_training_app.ui.training.TrainingUnitLibraryFragment"
+        android:label="Knihovna tréninků">
+        <action
+            android:id="@+id/action_trainingUnitLibraryFragment_to_trainingUnitEditorFragment"
+            app:destination="@id/trainingUnitEditorFragment" />
+
+        <action
+            android:id="@+id/action_trainingUnitLibraryFragment_to_trainingUnitDetailFragment"
+            app:destination="@id/trainingUnitDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/trainingUnitDetailFragment"
+        android:name="com.example.client_training_app.ui.training.TrainingUnitDetailFragment"
+        android:label="Detail tréninku">
+        <argument
+            android:name="trainingUnitId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_trainingUnitDetailFragment_to_trainingUnitEditorFragment"
+            app:destination="@id/trainingUnitEditorFragment" />
+    </fragment>
+
 
 
 

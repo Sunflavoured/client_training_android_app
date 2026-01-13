@@ -78,16 +78,17 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- RecyclerView se seznamem cviků -->
+
+        <!-- Empty State (když nejsou žádné výsledky) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/exercisesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="8dp"
             android:clipToPadding="false"
+            android:padding="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <!-- Empty State (když nejsou žádné výsledky) -->
         <TextView
             android:id="@+id/emptyStateTextView"
             android:layout_width="match_parent"
