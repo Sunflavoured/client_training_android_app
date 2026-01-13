@@ -3,7 +3,7 @@ package com.example.client_training_app.data.repository
 import android.content.Context
 import com.example.client_training_app.data.dao.ClientDao
 import com.example.client_training_app.data.database.DatabaseInstance
-import com.example.client_training_app.data.entity.TrainingSessionEntity
+import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import com.example.client_training_app.data.entity.toClient
 import com.example.client_training_app.data.entity.toEntity
 import com.example.client_training_app.model.Client
@@ -70,11 +70,11 @@ class ClientRepository(context: Context) {
         }
     }
     /** Načtení tréninku podle clientId*/
-    fun getTrainingSessionsFlow(clientId: String): Flow<List<TrainingSessionEntity>> {
+    fun getTrainingSessionsFlow(clientId: String): Flow<List<WorkoutSessionEntity>> {
         return clientDao.getTrainingSessionsForClient(clientId)
     }
     /** Vložení tréninku */
-    suspend fun addTrainingSession(session: TrainingSessionEntity) {
+    suspend fun addTrainingSession(session: WorkoutSessionEntity) {
         clientDao.insertTrainingSession(session)
     }
 }

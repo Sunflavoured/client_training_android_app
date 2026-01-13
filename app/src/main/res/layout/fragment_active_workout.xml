@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvWorkoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Načítám trénink..."
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="18sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvActiveExercises"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:elevation="8dp">
+
+        <Button
+            android:id="@+id/btnFinishWorkout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dokončit trénink"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@color/white"
+            android:padding="12dp"/>
+    </FrameLayout>
+
+</LinearLayout>

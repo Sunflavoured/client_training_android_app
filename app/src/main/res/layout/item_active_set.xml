@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="4dp">
+
+    <TextView
+        android:id="@+id/tvSetNumber"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/black"/>
+
+    <EditText
+        android:id="@+id/etWeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="kg"
+        android:inputType="numberDecimal"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:background="@android:drawable/edit_text"/>
+
+    <EditText
+        android:id="@+id/etReps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="op."
+        android:inputType="number"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginHorizontal="4dp"
+        android:background="@android:drawable/edit_text"/>
+
+    <EditText
+        android:id="@+id/etTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="s"
+        android:inputType="number"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginHorizontal="4dp"
+        android:background="@android:drawable/edit_text"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/etDistance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="m"
+        android:inputType="numberDecimal"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginHorizontal="4dp"
+        android:background="@android:drawable/edit_text"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/etRir"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="RIR"
+        android:inputType="number"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:background="@android:drawable/edit_text"/>
+
+    <CheckBox
+        android:id="@+id/cbCompleted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

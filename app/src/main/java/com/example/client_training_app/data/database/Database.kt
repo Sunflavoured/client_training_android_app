@@ -7,13 +7,15 @@ import com.example.client_training_app.data.dao.ClientDao
 import com.example.client_training_app.data.dao.ExerciseDao
 import com.example.client_training_app.data.dao.ScheduledWorkoutDao
 import com.example.client_training_app.data.dao.TrainingUnitDao
+import com.example.client_training_app.data.dao.WorkoutSessionDao
 import com.example.client_training_app.data.entity.ClientEntity
 import com.example.client_training_app.data.entity.ExerciseEntity
 import com.example.client_training_app.data.entity.MeasurementEntity
 import com.example.client_training_app.data.entity.ScheduledWorkoutEntity
-import com.example.client_training_app.data.entity.TrainingSessionEntity
+import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
+import com.example.client_training_app.data.entity.WorkoutSetResultEntity
 
 @Database(
     entities = [
@@ -21,10 +23,12 @@ import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
         TrainingUnitEntity::class,
         TrainingUnitExerciseEntity::class,
         MeasurementEntity::class,
-        TrainingSessionEntity::class,
+        WorkoutSessionEntity::class,
         ExerciseEntity::class,
-        ScheduledWorkoutEntity::class],
-    version = 9, // <--- ZVÝŠENÍ VERZE
+        ScheduledWorkoutEntity::class,
+        WorkoutSetResultEntity::class],
+
+    version = 11, // <--- ZVÝŠENÍ VERZE
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -34,5 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun trainingUnitDao(): TrainingUnitDao
     abstract fun scheduledWorkoutDao(): ScheduledWorkoutDao
+
+    abstract fun workoutSessionDao(): WorkoutSessionDao
 }
 

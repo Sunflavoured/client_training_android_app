@@ -46,5 +46,6 @@ class ScheduleRepository(context: Context) {
     fun getAllScheduledWorkoutsFlow(clientId: String): Flow<List<ScheduledWorkoutEntity>> {
         return dao.getAllScheduledWorkouts(clientId)
     }
+    suspend fun markAsCompleted(id: Long) { dao.updateCompletionStatus(id, true) }
 
 }

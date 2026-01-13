@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.client_training_app.data.entity.ClientEntity
 import com.example.client_training_app.data.entity.MeasurementEntity
-import com.example.client_training_app.data.entity.TrainingSessionEntity
+import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -45,10 +45,9 @@ interface ClientDao {
 
     /** Vložení tréninku */
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertTrainingSession(session: TrainingSessionEntity)
+    suspend fun insertTrainingSession(session: WorkoutSessionEntity)
 
     // Načte tréninky pro konkrétního klienta
-    @Query("SELECT * FROM training_sessions WHERE clientId = :clientId")
-    fun getTrainingSessionsForClient(clientId: String): Flow<List<TrainingSessionEntity>>
-
+    @Query("SELECT * FROM workout_sessions WHERE clientId = :clientId")
+    fun getTrainingSessionsForClient(clientId: String): Flow<List<WorkoutSessionEntity>>
 }

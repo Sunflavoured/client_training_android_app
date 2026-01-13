@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.client_training_app.R
@@ -61,8 +62,18 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
     private fun setupRecyclerView() {
         // Inicializace adaptéru s lambdou pro kliknutí
         scheduleAdapter = ScheduledWorkoutAdapter { detail ->
-            // TODO: Po kliknutí otevřít detail naplánovaného tréninku nebo Active Workout
-            Toast.makeText(requireContext(), "Start: ${detail.trainingUnit.name}", Toast.LENGTH_SHORT).show()
+        val action = TrainingCalendarFragmentDirections
+            .actionTrainingCalendarFragmentToActiveWorkoutFragment(
+                // 1. ID šablony bereme z kliknuté položky (detail)
+                trainingUnitId = detail.trainingUnit.id,
+
+                // 2. ID klienta bereme z argumentů kalendáře
+                clientId = args.clientId,
+
+                // 3. ID naplánované události bereme z kliknuté položky
+                scheduledWorkoutId = detail.schedule.id
+            )
+        findNavController().navigate(action)
         }
 
         binding.rvTrainings.layoutManager = LinearLayoutManager(requireContext())
