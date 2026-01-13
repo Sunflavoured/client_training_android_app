@@ -1,20 +1,14 @@
-package com.example.client_training_app.ui.training
+package com.example.client_training_app.ui.training_unit
 
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -146,7 +140,7 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
             },
             onSettingsClicked = { itemToEdit ->
                 // Otevřeme BottomSheet dialog
-                val dialog = com.example.client_training_app.ui.training.ExerciseSettingsBottomSheet(
+                val dialog = com.example.client_training_app.ui.training_unit.ExerciseSettingsBottomSheet(
                     currentSettings = itemToEdit,
                     onSettingsChanged = { updatedSettings ->
                         // Když uživatel v dialogu klikne na "Použít", aktualizujeme ViewModel

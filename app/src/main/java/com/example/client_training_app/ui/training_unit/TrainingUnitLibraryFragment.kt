@@ -1,4 +1,4 @@
-package com.example.client_training_app.ui.training
+package com.example.client_training_app.ui.training_unit
 
 import android.os.Bundle
 import android.view.View
@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.client_training_app.R
-import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.repository.TrainingUnitRepository
 import com.example.client_training_app.databinding.FragmentTrainingUnitLibraryBinding // Nový layout
 import com.example.client_training_app.ui.adapters.TrainingUnitAdapter // Nový adaptér
@@ -16,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.client_training_app.ui.training.TrainingUnitLibraryFragmentDirections
 
 class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_library) {
 

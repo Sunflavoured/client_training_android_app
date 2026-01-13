@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground"
-    tools:context=".ui.training.TrainingUnitLibraryFragment">
+    tools:context=".ui.training_unit.TrainingUnitLibraryFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTrainingUnits"
