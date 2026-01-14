@@ -47,6 +47,10 @@ class TrainingUnitRepository(context: Context) {
     fun getGlobalUnitsFlow(): Flow<List<TrainingUnitEntity>> {
         return trainingUnitDao.getGlobalTrainingUnits()
     }
+    fun getAllUnitsFlow(): Flow<List<TrainingUnitEntity>> {
+        return trainingUnitDao.getAllTrainingUnits()
+    }
+
 
     suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises? {
         return trainingUnitDao.getTrainingUnitWithExercises(unitId)

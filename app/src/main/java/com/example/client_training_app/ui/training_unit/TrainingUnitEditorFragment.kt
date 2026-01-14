@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
@@ -37,21 +39,70 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
 
         setupRecyclerView()
         setupButtons()
+        setupClientDropdown() // <--- NOVÉ: Nastavení roletky
         setupExercisePickerListener()
         setupBackPressHandler()
         setupChangeTracking()
         observeViewModel()
 
         if (args.trainingUnitIdToEdit != null && savedInstanceState == null) {
+            // EDITACE EXISTUJÍCÍHO
             viewModel.loadUnitData(args.trainingUnitIdToEdit!!)
             binding.btnSaveUnit.text = "Uložit"
         } else if (savedInstanceState == null) {
-            // Pokud nevytváříme nový trénink (bez načítání dat), data jsou "načtená"
+            // NOVÝ TRÉNINK
             isDataLoaded = true
+
+            // Pokud přicházíme z profilu konkrétního klienta, chceme ho rovnou předvybrat
+            if (args.clientId != null) {
+                viewModel.selectedClientId.value = args.clientId
+            }
         }
     }
 
+    // --- NOVÉ: LOGIKA VÝBĚRU KLIENTA ---
 
+    private fun setupClientDropdown() {
+        // 1. Sledujeme seznam všech klientů
+        viewModel.clients.observe(viewLifecycleOwner) { clientList ->
+
+            // Vytvoříme seznam jmen pro adaptér (první je vždy "Globální")
+            val adapterItems = mutableListOf("Globální (pro všechny)")
+            adapterItems.addAll(clientList.map { it.lastName })
+
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, adapterItems)
+
+            // Najdeme AutoCompleteTextView v layoutu (ujisti se, že máš v XML ID 'actClientSelect')
+            // binding.actClientSelect je AutoCompleteTextView uvnitř TextInputLayout
+            (binding.actClientSelect as? AutoCompleteTextView)?.setAdapter(adapter)
+
+            // 2. Nastavíme listener pro kliknutí na položku v roletce
+            (binding.actClientSelect as? AutoCompleteTextView)?.setOnItemClickListener { _, _, position, _ ->
+                if (position == 0) {
+                    viewModel.selectedClientId.value = null // Globální
+                } else {
+                    // Klient je na indexu o 1 menším (protože 0 je "Globální")
+                    val selectedClient = clientList[position - 1]
+                    viewModel.selectedClientId.value = selectedClient.id
+                }
+
+                if (isDataLoaded) hasUnsavedChanges = true
+            }
+
+            // 3. Synchronizace textu roletky s aktuálně vybraným ID (např. při načtení dat)
+            // Musíme to udělat uvnitř observeru klientů, protože potřebujeme znát jejich jména
+            viewModel.selectedClientId.observe(viewLifecycleOwner) { selectedId ->
+                val textToDisplay = if (selectedId == null) {
+                    "Globální (pro všechny)"
+                } else {
+                    clientList.find { it.id == selectedId }?.lastName ?: "Globální (pro všechny)"
+                }
+
+                // setText(..., false) je důležité, aby se nespustil filtr
+                (binding.actClientSelect as? AutoCompleteTextView)?.setText(textToDisplay, false)
+            }
+        }
+    }
 
     // --- SLEDOVÁNÍ ZMĚN ---
 
@@ -59,7 +110,6 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Změny se počítají pouze pokud už jsou data načtená
                 if (isDataLoaded) {
                     hasUnsavedChanges = true
                 }
@@ -76,11 +126,9 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
     private fun setupBackPressHandler() {
         backCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Zobrazíme dialog pouze pokud jsou neuložené změny
                 if (hasUnsavedChanges) {
                     showUnsavedChangesDialog()
                 } else {
-                    // Pokud nejsou změny, vypneme callback a necháme systém navigovat
                     isEnabled = false
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
@@ -97,7 +145,6 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 performSave()
             }
             .setNegativeButton("Zahodit") { _, _ ->
-                // Vypneme hlídače a odejdeme
                 backCallback.isEnabled = false
                 findNavController().popBackStack()
             }
@@ -116,14 +163,11 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
             return
         }
 
-        viewModel.saveTrainingUnit(name, note, args.clientId) {
+        // ZMĚNA: Už neposíláme args.clientId, ViewModel si bere hodnotu ze 'selectedClientId'
+        viewModel.saveTrainingUnit(name, note) {
             Toast.makeText(requireContext(), "Uloženo!", Toast.LENGTH_SHORT).show()
-
-            // Vypneme hlídače a označíme, že už nejsou neuložené změny
             hasUnsavedChanges = false
             backCallback.isEnabled = false
-
-            // Vrátíme se zpět na předchozí obrazovku
             findNavController().popBackStack()
         }
     }
@@ -139,11 +183,9 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 hasUnsavedChanges = true
             },
             onSettingsClicked = { itemToEdit ->
-                // Otevřeme BottomSheet dialog
                 val dialog = com.example.client_training_app.ui.training_unit.ExerciseSettingsBottomSheet(
                     currentSettings = itemToEdit,
                     onSettingsChanged = { updatedSettings ->
-                        // Když uživatel v dialogu klikne na "Použít", aktualizujeme ViewModel
                         viewModel.updateTemplateExercise(updatedSettings)
                         hasUnsavedChanges = true
                     }
@@ -151,16 +193,13 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 dialog.show(parentFragmentManager, "ExerciseSettingsBottomSheet")
             }
         )
-        // Nastavení, které opravilo bug kurzoru přeskakujícího na začátek řádku
+
         binding.rvAddedExercises.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@TrainingUnitEditorFragment.adapter
-            // Optimalizace pro RecyclerView, pokud se nemění jeho velikost
             setHasFixedSize(true)
-            // Vypneme animace při změně (aby neblikaly inputy při psaní)
             (itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
         }
-
     }
 
     private fun setupButtons() {
@@ -183,13 +222,11 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
         viewModel.initialUnitName.observe(viewLifecycleOwner) { name ->
             if (binding.etUnitName.text.isNullOrEmpty()) {
                 binding.etUnitName.setText(name)
-                // Po nastavení dat z ViewModelu počkáme chvíli a pak povolíme sledování změn
                 binding.root.postDelayed({
                     isDataLoaded = true
                     hasUnsavedChanges = false
                 }, 100)
             } else {
-                // Pokud už text máme (např. návrat z výběru cviku nebo rotace), data považujeme za načtená
                 isDataLoaded = true
             }
         }
@@ -207,7 +244,7 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
             ?.observe(viewLifecycleOwner) { exercise ->
                 if (exercise != null) {
                     viewModel.addExercise(exercise)
-                        hasUnsavedChanges = true
+                    hasUnsavedChanges = true
 
                     findNavController().currentBackStackEntry?.savedStateHandle
                         ?.remove<Exercise>("selected_exercise")

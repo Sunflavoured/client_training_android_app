@@ -50,7 +50,7 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
         val repository = TrainingUnitRepository(requireContext())
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repository.getGlobalUnitsFlow().collectLatest { units ->
+            repository.getAllUnitsFlow().collectLatest { units ->
                 adapter.submitList(units)
 
                 // Logika pro Empty State

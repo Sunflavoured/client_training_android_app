@@ -48,8 +48,12 @@ class ActiveWorkoutAdapter(
 
             // 2. Vykreslení řádků
             binding.llSetsContainer.removeAllViews()
-            exercise.sets.forEach { setUi ->
-                addSetRow(setUi, exercise) // Předáváme i exercise, abychom znali konfiguraci
+            exercise.sets.forEachIndexed { index, setUi ->
+                // Zjistíme, jestli existuje předchozí série
+                val previousSet = if (index > 0) exercise.sets[index - 1] else null
+
+                // Předáme previousSet do metody addSetRow
+                addSetRow(setUi, exercise, previousSet)
             }
 
             binding.btnAddSet.setOnClickListener {
@@ -57,18 +61,56 @@ class ActiveWorkoutAdapter(
             }
         }
 
-        private fun addSetRow(setUi: ActiveSetUi, config: ActiveExerciseUi) {
+        private fun addSetRow(
+            setUi: ActiveSetUi,
+            config: ActiveExerciseUi,
+            previousSet: ActiveSetUi?
+        ) {
             val inflater = LayoutInflater.from(binding.root.context)
             val setView = inflater.inflate(R.layout.item_active_set, binding.llSetsContainer, false)
 
+            // Views
+            val btnCopy = setView.findViewById<View>(R.id.btnCopyPrevious) // <--- NOVÉ
             val tvSetNumber = setView.findViewById<TextView>(R.id.tvSetNumber)
             val etWeight = setView.findViewById<EditText>(R.id.etWeight)
             val etReps = setView.findViewById<EditText>(R.id.etReps)
-            val etTime = setView.findViewById<EditText>(R.id.etTime)     // Nové
-            val etDistance = setView.findViewById<EditText>(R.id.etDistance) // Nové
+            val etTime = setView.findViewById<EditText>(R.id.etTime)
+            val etDistance = setView.findViewById<EditText>(R.id.etDistance)
             val etRir = setView.findViewById<EditText>(R.id.etRir)
 
-            // A) Nastavení VIDITELNOSTI INPUTŮ podle konfigurace cviku
+
+            // --- 1. LOGIKA KOPÍROVACÍHO TLAČÍTKA ---
+            if (previousSet != null) {
+                btnCopy.visibility = View.VISIBLE
+                btnCopy.setOnClickListener {
+                    // A) Přepsat data v UI (EditTexty)
+                    // Zkopírujeme jen to, co je pro daný cvik povolené
+                    if (config.isWeightEnabled) etWeight.setText(previousSet.weight)
+                    if (config.isRepsEnabled) etReps.setText(previousSet.reps)
+                    if (config.isTimeEnabled) etTime.setText(previousSet.time)
+                    if (config.isDistanceEnabled) etDistance.setText(previousSet.distance)
+                    // RIR obvykle nekopírujeme, protože se mění s únavou, ale můžeš:
+                    // if (config.isRirEnabled) etRir.setText(previousSet.rir)
+
+                    // B) Přepsat data v Modelu (ActiveSetUi)
+                    // TextWatcher by to měl chytit, ale pro jistotu to nastavíme i přímo,
+                    // aby to bylo atomické a rychlé.
+                    setUi.weight = previousSet.weight
+                    setUi.reps = previousSet.reps
+                    setUi.time = previousSet.time
+                    setUi.distance = previousSet.distance
+                    // setUi.rir = previousSet.rir
+
+                    // Volitelné: Zobrazit Toast nebo malou animaci
+                    // Toast.makeText(setView.context, "Zkopírováno", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                // První série nemá z čeho kopírovat
+                btnCopy.visibility = View.INVISIBLE
+            }
+
+            // --- 2. ZBYTEK PŮVODNÍHO KÓDU ---
+            // A) Viditelnost inputů
             etWeight.isVisible = config.isWeightEnabled
             etReps.isVisible = config.isRepsEnabled
             etTime.isVisible = config.isTimeEnabled
