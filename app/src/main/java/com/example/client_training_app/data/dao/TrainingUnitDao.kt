@@ -62,10 +62,17 @@ interface TrainingUnitDao {
     @Query("SELECT * FROM training_units WHERE clientId = :clientId")
     fun getTrainingUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
 
+    @Query("SELECT * FROM training_units")
+    fun getAllTrainingUnits(): Flow<List<TrainingUnitEntity>>
+
     @Query("SELECT * FROM training_units WHERE clientId IS NULL")
     fun getGlobalTrainingUnits(): Flow<List<TrainingUnitEntity>>
 
     @Transaction
     @Query("SELECT * FROM training_units WHERE id = :unitId")
     suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises?
+
+    @Query("SELECT * FROM training_units WHERE clientId IS NULL OR clientId = :clientId")
+    fun getAvailableUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
+
 }

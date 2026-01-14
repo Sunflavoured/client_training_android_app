@@ -5,25 +5,27 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.client_training_app.data.entity.TrainingSessionEntity
+import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import com.example.client_training_app.databinding.ItemTrainingSessionBinding
 
 class TrainingSessionAdapter(
-    private val onItemClick: (TrainingSessionEntity) -> Unit
-) : ListAdapter<TrainingSessionEntity, TrainingSessionAdapter.TrainingViewHolder>(DiffCallback) {
+    private val onItemClick: (WorkoutSessionEntity) -> Unit
+) : ListAdapter<WorkoutSessionEntity, TrainingSessionAdapter.TrainingViewHolder>(DiffCallback) {
 
     inner class TrainingViewHolder(private val binding: ItemTrainingSessionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(session: TrainingSessionEntity) {
-            binding.tvTrainingName.text = session.name
-            binding.cbCompleted.isChecked = session.isCompleted
+        fun bind(session: WorkoutSessionEntity) {
+            binding.tvTrainingName.text = session.trainingName
+            val isFinished = session.endTime != null
+            binding.cbCompleted.isChecked = isFinished
 
-            if (session.isCompleted) {
+            if (isFinished) {
                 binding.tvTrainingStatus.text = "Dokončeno"
-                // Můžeme změnit barvu textu nebo styl
+                binding.tvTrainingStatus.setTextColor(android.graphics.Color.GREEN) // Volitelné
             } else {
-                binding.tvTrainingStatus.text = "Naplánováno"
+                binding.tvTrainingStatus.text = "Probíhá" // Nebo "Nedokončeno"
+                binding.tvTrainingStatus.setTextColor(android.graphics.Color.RED)
             }
 
             binding.root.setOnClickListener {
@@ -44,12 +46,12 @@ class TrainingSessionAdapter(
     }
 
     // Objekt pro porovnávání změn v seznamu (pro animace)
-    companion object DiffCallback : DiffUtil.ItemCallback<TrainingSessionEntity>() {
-        override fun areItemsTheSame(oldItem: TrainingSessionEntity, newItem: TrainingSessionEntity): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<WorkoutSessionEntity>() {
+        override fun areItemsTheSame(oldItem: WorkoutSessionEntity, newItem: WorkoutSessionEntity): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: TrainingSessionEntity, newItem: TrainingSessionEntity): Boolean {
+        override fun areContentsTheSame(oldItem: WorkoutSessionEntity, newItem: WorkoutSessionEntity): Boolean {
             return oldItem == newItem
         }
     }

@@ -1,4 +1,4 @@
-package com.example.client_training_app.ui.training
+package com.example.client_training_app.ui.training_unit
 
 import android.os.Bundle
 import android.view.View
