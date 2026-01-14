@@ -62,11 +62,6 @@ object DatabaseInstance {
     }
 
     private suspend fun fillWithDefaultExercises(context: Context) {
-        // Pozor: Zde musíme použít getDatabase(context), ale nesmíme se zacyklit.
-        // Protože už jsme uvnitř build procesu, je bezpečnější v této fázi
-        // spoléhat na to, že instance už je přiřazena nebo ji vytáhnout opatrně.
-        // V tomto případě je volání getDatabase(context) uvnitř coroutiny bezpečné,
-        // protože build() už doběhl.
 
         val database = getDatabase(context)
         val exerciseDao = database.exerciseDao()

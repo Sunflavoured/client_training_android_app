@@ -1,102 +1,462 @@
 [
-  {
-    "id": "squat_01",
-    "name": "Dřep",
-    "category": "STRENGTH",
-    "description": "Postav se do mírně rozkročeného postoje, nohy na šířku ramen. Zvedni hrudník, aktivuj core a začni klesat směrem dolů, jako bys chtěl sednout na židli. Kolena směřují ve směru špiček. Vrať se do výchozí polohy.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": ["Přední stehna", "Zadní stehna"],
-    "isDefault": true
-  },
-  {
-    "id": "pushup_01",
-    "name": "Klik",
-    "category": "STRENGTH",
-    "description": "Pozice na dlaních a špičkách, tělo v rovné linii. Ohni lokty a sniž hrudník téměř k zemi. Vystrč zpět do výchozí pozice. Lokty směřují dozadu, ne do stran.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": ["Hrudník", "Triceps", "Ramena"],
-    "isDefault": true
-  },
-  {
-    "id": "plank_01",
-    "name": "Prkno",
-    "category": "STRENGTH",
-    "description": "Pozice na předloktích a špičkách nohou. Tělo tvoří rovnou linii od hlavy po paty. Aktivuj core, nezvedej zadek nahoru ani ho nepouštěj dolů. Drž pozici.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": ["Břicho"],
-    "isDefault": true
-  },
-  {
-    "id": "pullup_01",
-    "name": "Shyb",
-    "category": "STRENGTH",
-    "description": "Chyť se hrazdy nadhmatem (hřbety rukou k sobě). Vytáhni se nahoru, až brada přesáhne hrazdu. Pomalu se spusť zpět dolů.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": ["Latissimus", "Biceps", "Rhombický sval"],
-    "isDefault": true
-  },
-  {
-    "id": "deadlift_01",
-    "name": "Mrtvý tah",
-    "category": "STRENGTH",
-    "description": "Postav se k činke, nohy na šířku ramen. Chyť se činky, záda rovná. Zvedni činku aktivací nohou a zadku, udržuj rovná záda. Spusť zpět kontrolovaně.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": ["Zadní stehna", "Spodní záda", "Latissimus"],
-    "isDefault": true
-  },
-  {
-    "id": "running_01",
-    "name": "Běh",
-    "category": "CARDIO",
-    "description": "Běžecká aktivita venku nebo na běžeckém pásu. Udržuj konstantní tempo přizpůsobené tvé kondici.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": [],
-    "isDefault": true
-  },
-  {
-    "id": "cycling_01",
-    "name": "Jízda na kole",
-    "category": "CARDIO",
-    "description": "Cyklistika venku nebo na stacionárním kole. Udržuj stabilní tempo a kadenci.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": [],
-    "isDefault": true
-  },
-  {
-    "id": "stretch_hamstring_01",
-    "name": "Protažení hamstringů",
-    "category": "MOBILITY",
-    "description": "Sed na zemi, nohy natažené před sebou. Pomalu se předkloň z boků směrem k prstům na nohou. Drž natažení 20-30 sekund.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": [],
-    "isDefault": true
-  },
-  {
-    "id": "shoulder_stretch_01",
-    "name": "Protažení ramen",
-    "category": "MOBILITY",
-    "description": "Stoj vzpřímeně. Přitáhni pravou paži přes hrudník k levému rameni. Levou rukou ji přidrž. Drž 20-30 sekund, pak prohoď strany.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": [],
-    "isDefault": true
-  },
-  {
-    "id": "cat_cow_01",
-    "name": "Kočka-kráva",
-    "category": "MOBILITY",
-    "description": "Pozice na čtyřech. Prohni záda dolů (kráva), hlavu nahoru. Pak vykleň záda nahoru (kočka), hlavu dolů. Střídej plynule.",
-    "mediaType": "NONE",
-    "mediaUrl": null,
-    "muscleGroups": [],
-    "isDefault": true
-  }
-]
+    {
+      "id": "chest_bench_press",
+      "name": "Bench Press",
+      "category": "STRENGTH",
+      "description": "Lehni si na lavici, uchop činku nadhmatem širším než ramena. Spusť činku kontrolovaně na střed hrudníku a dynamicky ji vytlač zpět nahoru.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hrudník", "Triceps", "Přední ramena"],
+      "isDefault": true
+    },
+    {
+      "id": "chest_push_up",
+      "name": "Klik",
+      "category": "STRENGTH",
+      "description": "Zaujměte polohu vzporu ležmo. Tělo držte v jedné přímce. Klesejte hrudníkem těsně nad zem a vytlačte se zpět do napnutých paží.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hrudník", "Triceps", "Přední ramena"],
+      "isDefault": true
+    },
+    {
+      "id": "chest_dip",
+      "name": "Klik na bradlech (Dips)",
+      "category": "STRENGTH",
+      "description": "Zavěste se na bradla. S mírným předklonem klesejte dolů, dokud nejsou lokty v úrovni ramen, poté se vytlačte zpět nahoru.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hrudník", "Triceps"],
+      "isDefault": true
+    },
+    {
+      "id": "chest_dumbbell_fly",
+      "name": "Rozpažování s jednoručkami",
+      "category": "STRENGTH",
+      "description": "Leh na lavici, jednoručky nad hrudníkem dlaněmi k sobě. S mírně pokrčenými lokty spouštějte činky obloukem do stran a vracejte zpět.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hrudník"],
+      "isDefault": true
+    },
+    {
+      "id": "chest_incline_dumbbell_press",
+      "name": "Tlaky s jednoručkami na šikmé lavici",
+      "category": "STRENGTH",
+      "description": "Leh na lavici se sklonem cca 30-45 stupňů. Vytlačujte jednoručky od ramen směrem vzhůru a k sobě.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Horní část hrudníku", "Triceps"],
+      "isDefault": true
+    },
+    {
+      "id": "chest_cable_crossover",
+      "name": "Stahování protisměrných kladek",
+      "category": "STRENGTH",
+      "description": "Ve stoji uchopte madla horních kladek. S mírným předklonem stahujte ruce obloukem před sebe, dokud se nedotknou.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hrudník"],
+      "isDefault": true
+    },
+    {
+      "id": "shoulder_overhead_press",
+      "name": "Tlak nad hlavu (Military Press)",
+      "category": "STRENGTH",
+      "description": "Ve stoji uchopte velkou činku na šířku ramen. Vytlačte činku z hrudníku přímo nad hlavu do propnutých paží.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Ramena", "Triceps"],
+      "isDefault": true
+    },
+    {
+      "id": "shoulder_dumbbell_lateral_raise",
+      "name": "Upažování s jednoručkami",
+      "category": "STRENGTH",
+      "description": "Ve stoji s jednoručkami podél těla zvedejte paže obloukem do stran až do úrovně ramen. Lokty mějte mírně pokrčené.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Boční ramena"],
+      "isDefault": true
+    },
+    {
+      "id": "shoulder_face_pull",
+      "name": "Face Pull",
+      "category": "STRENGTH",
+      "description": "Uchopte lanový nástavec kladky nastavené ve výši očí. Přitahujte lano k obličeji a zároveň rotujte ramena vzad.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Zadní ramena", "Rotátory manžety"],
+      "isDefault": true
+    },
+    {
+      "id": "shoulder_arnold_press",
+      "name": "Arnoldovy tlaky",
+      "category": "STRENGTH",
+      "description": "Tlaky s jednoručkami v sedě, začínáte s dlaněmi k obličeji. Během tlaku vzhůru rotujete dlaně tak, že nahoře směřují vpřed.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Ramena"],
+      "isDefault": true
+    },
+    {
+      "id": "shoulder_front_raise",
+      "name": "Předpažování",
+      "category": "STRENGTH",
+      "description": "Zvedejte činku nebo jednoručky před sebe do úrovně očí s nataženými pažemi.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední ramena"],
+      "isDefault": true
+    },
+    {
+      "id": "bicep_barbell_curl",
+      "name": "Bicepsový zdvih s velkou činkou",
+      "category": "STRENGTH",
+      "description": "Stoj spatný, podhmat na šířku ramen. S fixovanými lokty u těla zvedejte činku k hrudníku.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "bicep_dumbbell_curl",
+      "name": "Bicepsový zdvih s jednoručkami",
+      "category": "STRENGTH",
+      "description": "Střídavě nebo současně zvedejte jednoručky k ramenům. Možná je supinace (vytáčení) zápěstí v horní fázi.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "bicep_hammer_curl",
+      "name": "Kladivový zdvih",
+      "category": "STRENGTH",
+      "description": "Zdvihy s jednoručkami, kde dlaně směřují celou dobu k tělu (neutrální úchop).",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Biceps", "Předloktí"],
+      "isDefault": true
+    },
+    {
+      "id": "bicep_preacher_curl",
+      "name": "Bicepsový zdvih na Scottově lavici",
+      "category": "STRENGTH",
+      "description": "Zdvihy s oporou paží o lavici, což eliminuje pomoc ostatních svalů a izoluje biceps.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "tricep_pushdown",
+      "name": "Stahování horní kladky",
+      "category": "STRENGTH",
+      "description": "Uchopte adaptér kladky nadhmatem. S lokty fixovanými u těla stlačujte kladku dolů do propnutí paží.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Triceps"],
+      "isDefault": true
+    },
+    {
+      "id": "tricep_skull_crushers",
+      "name": "Francouzské tlaky (Skull Crushers)",
+      "category": "STRENGTH",
+      "description": "Leh na lavici, činka v natažených rukou. Pokrčením v loktech spouštějte činku k čelu a zpět.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Triceps"],
+      "isDefault": true
+    },
+    {
+      "id": "tricep_overhead_extension",
+      "name": "Extenze tricepsu nad hlavou",
+      "category": "STRENGTH",
+      "description": "V sedě nebo ve stoji držte činku za hlavou a vytlačujte ji nahoru do propnutí paží.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Triceps"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_squat",
+      "name": "Dřep",
+      "category": "STRENGTH",
+      "description": "Postav se do mírně rozkročeného postoje. Klesej dolů s rovnými zády, jako bys chtěl sednout na židli. Kolena směřují ve směru špiček.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední stehna", "Zadní stehna", "Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_front_squat",
+      "name": "Čelní dřep",
+      "category": "STRENGTH",
+      "description": "Varianta dřepu s činkou drženou vpředu na ramenou. Více zatěžuje přední stehna a vyžaduje vzpřímený trup.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední stehna", "Core"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_lunge",
+      "name": "Výpady",
+      "category": "STRENGTH",
+      "description": "Vykročte jednou nohou vpřed a klesejte, dokud se zadní koleno téměř nedotkne země. Vraťte se zpět a vystřídejte nohy.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední stehna", "Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_bulgarian_split_squat",
+      "name": "Bulharský dřep",
+      "category": "STRENGTH",
+      "description": "Dřep na jedné noze, přičemž zadní noha je vyložena na lavičce za vámi.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední stehna", "Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_press",
+      "name": "Leg Press",
+      "category": "STRENGTH",
+      "description": "Tlak nohama na stroji. Umístěte nohy na plošinu a vytlačujte zátěž, aniž byste zcela propnuli kolena.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední stehna", "Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_romanian_deadlift",
+      "name": "Rumunský mrtvý tah",
+      "category": "STRENGTH",
+      "description": "S mírně pokrčenými koleny se předklánějte s činkou, držte rovná záda. Pohyb vychází z kyčlí.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Zadní stehna", "Hýždě", "Spodní záda"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_extension",
+      "name": "Předkopávání",
+      "category": "STRENGTH",
+      "description": "Cvik na stroji izolující přední stranu stehen. Zvedejte válec nohama do propnutí.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Přední stehna"],
+      "isDefault": true
+    },
+    {
+      "id": "leg_curl",
+      "name": "Zakopávání",
+      "category": "STRENGTH",
+      "description": "Cvik na stroji (v leže nebo v sedě) izolující zadní stranu stehen. Krčte kolena proti odporu.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Zadní stehna"],
+      "isDefault": true
+    },
+    {
+      "id": "back_deadlift",
+      "name": "Mrtvý tah",
+      "category": "STRENGTH",
+      "description": "Zvedání činky ze země do vzpřímeného postoje. Klíčová je technika rovných zad a zapojení celého těla.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Záda", "Zadní stehna", "Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "back_pull_up",
+      "name": "Shyb na hrazdě",
+      "category": "STRENGTH",
+      "description": "Zavěste se na hrazdu nadhmatem a přitáhněte se hrudníkem k tyči.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Záda (křídla)", "Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "back_chin_up",
+      "name": "Shyb podhmatem",
+      "category": "STRENGTH",
+      "description": "Shyby dlaněmi k sobě. Více zapojují bicepsy než klasické shyby.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Záda", "Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "back_barbell_row",
+      "name": "Přítahy velké činky v předklonu",
+      "category": "STRENGTH",
+      "description": "V předklonu s rovnými zády přitahujte velkou činku k pasu.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Záda", "Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "back_lat_pulldown",
+      "name": "Stahování horní kladky",
+      "category": "STRENGTH",
+      "description": "V sedě stahujte adaptér kladky na hrudník. Soustřeďte se na práci zádových svalů, ne paží.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Záda (křídla)"],
+      "isDefault": true
+    },
+    {
+      "id": "back_seated_row",
+      "name": "Veslování na spodní kladce",
+      "category": "STRENGTH",
+      "description": "V sedě přitahujte držák spodní kladky k pasu, lopatky stahujte k sobě.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Střed zad", "Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "back_dumbbell_row",
+      "name": "Přítahy jednoručky v kleče",
+      "category": "STRENGTH",
+      "description": "Opřete se jednou rukou a kolenem o lavici. Druhou rukou přitahujte jednoručku k boku.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Záda (křídla)", "Biceps"],
+      "isDefault": true
+    },
+    {
+      "id": "back_hyperextension",
+      "name": "Hyperextenze",
+      "category": "STRENGTH",
+      "description": "Cvik na lavici na vzpřimovače páteře. Z předklonu zvedejte trup do roviny s nohama.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Spodní záda"],
+      "isDefault": true
+    },
+    {
+      "id": "glute_hip_thrust",
+      "name": "Hip Thrust (Zvedání pánve)",
+      "category": "STRENGTH",
+      "description": "Opřete se lopatkami o lavici, činku položte přes boky. Zvedejte pánev nahoru zatnutím hýždí.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "glute_cable_kickback",
+      "name": "Zanožování na kladce",
+      "category": "STRENGTH",
+      "description": "S kotníkem upevněným ke spodní kladce zanožujte nohu dozadu zatnutím hýždí.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Hýždě"],
+      "isDefault": true
+    },
+    {
+      "id": "ab_plank",
+      "name": "Plank (Prkno)",
+      "category": "STRENGTH",
+      "description": "Výdrž ve vzporu na předloktí. Tělo je zpevněné v jedné rovině, neprohýbejte se v bedrech.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Břicho", "Core"],
+      "isDefault": true
+    },
+    {
+      "id": "ab_crunch",
+      "name": "Zkracovačky",
+      "category": "STRENGTH",
+      "description": "V lehu na zádech s pokrčenými koleny zvedejte lopatky od země stahováním břišních svalů.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Břicho"],
+      "isDefault": true
+    },
+    {
+      "id": "ab_leg_raise",
+      "name": "Zvedání nohou ve visu",
+      "category": "STRENGTH",
+      "description": "Ve visu na hrazdě zvedejte natažené nebo pokrčené nohy směrem k hrudníku.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Spodní břicho"],
+      "isDefault": true
+    },
+    {
+      "id": "ab_russian_twist",
+      "name": "Ruský twist",
+      "category": "STRENGTH",
+      "description": "V sedě s mírně zakloněným trupem a zvednutými nohami rotujte trup ze strany na stranu.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Šikmé břišní svaly"],
+      "isDefault": true
+    },
+    {
+      "id": "ab_wheel_rollout",
+      "name": "Rolování s kolečkem",
+      "category": "STRENGTH",
+      "description": "V kleče rolujte kolečko vpřed, dokud udržíte rovná záda, a poté se vraťte zpět silou břicha.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Břicho", "Core"],
+      "isDefault": true
+    },
+    {
+      "id": "calves_standing_raise",
+      "name": "Výpony ve stoji",
+      "category": "STRENGTH",
+      "description": "Zvedání pat nad zem ve stoji (na stroji nebo s činkou).",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Lýtka"],
+      "isDefault": true
+    },
+    {
+      "id": "calves_seated_raise",
+      "name": "Výpony v sedě",
+      "category": "STRENGTH",
+      "description": "Zvedání pat v sedě na stroji. Cílí více na šikmý sval lýtkový.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Lýtka"],
+      "isDefault": true
+    },
+    {
+      "id": "forearm_wrist_curl",
+      "name": "Klopení zápěstí",
+      "category": "STRENGTH",
+      "description": "S předloktím opřeným o lavici a dlaněmi vzhůru ohýbejte zápěstí s činkou nahoru a dolů.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Předloktí"],
+      "isDefault": true
+    },
+    {
+      "id": "cardio_rowing_machine",
+      "name": "Veslovací trenažér",
+      "category": "CARDIO",
+      "description": "Komplexní kardio cvičení imitující veslování. Zabírá celé tělo.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Celé tělo", "Kardio"],
+      "isDefault": true
+    },
+    {
+      "id": "cardio_stationary_bike",
+      "name": "Rotoped",
+      "category": "CARDIO",
+      "description": "Jízda na stacionárním kole. Šetrné ke kloubům.",
+      "mediaType": "NONE",
+      "mediaUrl": null,
+      "muscleGroups": ["Nohy", "Kardio"],
+      "isDefault": true
+    }
+  ]

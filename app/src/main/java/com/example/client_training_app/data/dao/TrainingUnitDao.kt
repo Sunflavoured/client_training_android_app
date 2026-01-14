@@ -44,7 +44,6 @@ interface TrainingUnitDao {
     }
 
     // 2. Pro editaci (Update = Smazat staré vazby + Vložit nové)
-    // OPRAVA: Musí to být 'suspend', protože volá jiné suspend funkce
     @Transaction
     suspend fun updateTrainingUnitWithExercises(unit: TrainingUnitEntity, exercises: List<TrainingUnitExerciseEntity>) {
         // A) Aktualizuj hlavičku (změna názvu, poznámky)

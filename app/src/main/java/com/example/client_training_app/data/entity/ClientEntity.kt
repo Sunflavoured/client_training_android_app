@@ -21,7 +21,6 @@ fun Client.toEntity() = ClientEntity(
     id = id,
     firstName = firstName,
     lastName = lastName,
-    // Mapujeme birthDate
     birthDate = birthDate,
     email = email,
     phone = phone,
@@ -29,11 +28,10 @@ fun Client.toEntity() = ClientEntity(
 )
 
 // PŘEVOD Z ClientEntity -> Client
-fun ClientEntity.toClient() = `Client`(
+fun ClientEntity.toClient() = Client(
     id = id,
     firstName = firstName,
     lastName = lastName,
-    // Mapujeme birthDate
     birthDate = birthDate,
     email = email,
     phone = phone,

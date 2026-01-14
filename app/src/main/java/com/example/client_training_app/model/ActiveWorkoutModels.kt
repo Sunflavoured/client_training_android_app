@@ -22,5 +22,5 @@ data class ActiveSetUi(
     var rir: String = "",
     var time: String = "",
     var distance: String = "",
-    var isCompleted: Boolean = false // Zaškrtávátko
+    var isCompleted: Boolean = false
 )

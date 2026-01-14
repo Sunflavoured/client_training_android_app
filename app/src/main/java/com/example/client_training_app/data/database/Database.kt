@@ -31,6 +31,7 @@ import com.example.client_training_app.data.entity.WorkoutSetResultEntity
     version = 14, // <--- ZVÝŠENÍ VERZE
     exportSchema = false
 )
+// Deklarace konvertoru
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao

@@ -56,13 +56,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Material + androidx (you might have duplicates here with libs.material above)
-    implementation("com.google.android.material:material:1.11.0") // Updated version
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.recyclerview:recyclerview:1.3.2") // Updated version
+    implementation("com.google.android.material:material:1.13.0") // Updated version
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.recyclerview:recyclerview:1.4.0") // Updated version
 
     // Navigation Component - Updated versions
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.6")
 
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
@@ -75,15 +75,15 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
 
     //lifecycle a corountines
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
-    implementation("androidx.fragment:fragment-ktx:1.8.2")
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
 
     // Moderní kalendář
-    implementation("com.kizitonwose.calendar:view:2.5.0")
+    implementation("com.kizitonwose.calendar:view:2.9.0")
 
     // Pro práci s datem (Java Time API desugaring - pro starší Androidy, jistota)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
-
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0")
 }
