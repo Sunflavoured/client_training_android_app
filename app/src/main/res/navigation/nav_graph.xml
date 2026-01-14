@@ -73,6 +73,10 @@
         android:id="@+id/activeWorkoutFragment"
         android:name="com.example.client_training_app.ui.active_workout.ActiveWorkoutFragment"
         android:label="Aktivní trénink">
+        <argument
+            android:name="trainingTitle"
+            app:argType="string"
+            android:defaultValue="Trénink" />
 
         <argument
             android:name="trainingUnitId"

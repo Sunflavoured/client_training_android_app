@@ -56,7 +56,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="m"
+        android:hint="km"
         android:inputType="numberDecimal"
         android:textSize="14sp"
         android:gravity="center"
@@ -75,9 +75,6 @@
         android:gravity="center"
         android:background="@android:drawable/edit_text"/>
 
-    <CheckBox
-        android:id="@+id/cbCompleted"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    />
 
 </LinearLayout>

@@ -25,7 +25,7 @@ class ActiveWorkoutAdapter(
 
         fun bind(exercise: ActiveExerciseUi, exerciseIndex: Int) {
             binding.tvExerciseName.text = exercise.exerciseName
-            binding.tvTarget.text = "Cíl: ${exercise.targetNote ?: "Bez poznámky"}"
+            binding.tvTarget.text = "${exercise.targetNote ?: "Bez poznámky"}"
 
             // 1. NASTAVENÍ VIDITELNOSTI HLAVIČEK (Nadpisy sloupců)
             // Používáme findViewById, protože v bindingu cardview nemusí být ID vidět přímo, pokud nejsou v data classu
@@ -67,7 +67,6 @@ class ActiveWorkoutAdapter(
             val etTime = setView.findViewById<EditText>(R.id.etTime)     // Nové
             val etDistance = setView.findViewById<EditText>(R.id.etDistance) // Nové
             val etRir = setView.findViewById<EditText>(R.id.etRir)
-            val cbCompleted = setView.findViewById<CheckBox>(R.id.cbCompleted)
 
             // A) Nastavení VIDITELNOSTI INPUTŮ podle konfigurace cviku
             etWeight.isVisible = config.isWeightEnabled
@@ -83,7 +82,6 @@ class ActiveWorkoutAdapter(
             etTime.setText(setUi.time)         // Nové
             etDistance.setText(setUi.distance) // Nové
             etRir.setText(setUi.rir)
-            cbCompleted.isChecked = setUi.isCompleted
 
             // C) Ukládání hodnot (TextWatchers)
             if (config.isWeightEnabled) etWeight.addSimpleTextWatcher { setUi.weight = it }
@@ -92,15 +90,7 @@ class ActiveWorkoutAdapter(
             if (config.isDistanceEnabled) etDistance.addSimpleTextWatcher { setUi.distance = it } // Nové
             if (config.isRirEnabled) etRir.addSimpleTextWatcher { setUi.rir = it }
 
-            // Barvičky a Checkbox
-            cbCompleted.setOnCheckedChangeListener { _, isChecked ->
-                setUi.isCompleted = isChecked
-                if (isChecked) setView.setBackgroundColor(0x224CAF50)
-                else setView.setBackgroundColor(0x00000000)
-            }
-            if (setUi.isCompleted) setView.setBackgroundColor(0x224CAF50)
-
-            binding.llSetsContainer.addView(setView)
+           binding.llSetsContainer.addView(setView)
         }
     }
 

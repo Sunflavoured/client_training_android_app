@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
             entity = TrainingUnitEntity::class, // Odkaz na Šablonu tréninku
             parentColumns = ["id"],
             childColumns = ["trainingUnitId"],
-            onDelete = ForeignKey.CASCADE // Smažeš šablonu -> smaže se z kalendáře
+            onDelete = ForeignKey.NO_ACTION // Smažeš šablonu -> smaže se z kalendáře
         )
     ],
     indices = [

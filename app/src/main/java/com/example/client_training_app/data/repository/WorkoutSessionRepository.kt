@@ -30,4 +30,14 @@ class WorkoutRepository(context: Context) {
     fun getExerciseHistoryFlow(clientId: String, exerciseId: String): Flow<List<WorkoutSetResultEntity>> {
         return dao.getHistoryForExercise(clientId, exerciseId)
     }
+
+    // 1. Zjistit, jestli už k tomuto plánu (z kalendáře) existuje rozdělaný/hotový trénink
+    suspend fun getSessionByScheduleId(scheduleId: Long): WorkoutSessionEntity? {
+        return dao.getSessionByScheduleId(scheduleId)
+    }
+
+    // 2. Načíst série pro konkrétní trénink (abychom mohli předvyplnit data při editaci)
+    suspend fun getSetsForSession(sessionId: String): List<WorkoutSetResultEntity> {
+        return dao.getSetsForSession(sessionId)
+    }
 }

@@ -28,7 +28,7 @@ import com.example.client_training_app.data.entity.WorkoutSetResultEntity
         ScheduledWorkoutEntity::class,
         WorkoutSetResultEntity::class],
 
-    version = 11, // <--- ZVÝŠENÍ VERZE
+    version = 14, // <--- ZVÝŠENÍ VERZE
     exportSchema = false
 )
 @TypeConverters(Converters::class)

@@ -27,6 +27,7 @@ import androidx.room.PrimaryKey
 data class WorkoutSessionEntity(
     @PrimaryKey
     val id: String, // UUID generované při startu tréninku
+    val scheduledWorkoutId: Long? = null,
 
     val clientId: String,
     val trainingUnitId: String?, // Může být null, pokud je to "Freestyle" trénink bez šablony

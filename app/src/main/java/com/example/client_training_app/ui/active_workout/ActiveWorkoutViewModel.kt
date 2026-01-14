@@ -9,10 +9,9 @@ import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import com.example.client_training_app.data.entity.WorkoutSetResultEntity
 import com.example.client_training_app.data.repository.ScheduleRepository
 import com.example.client_training_app.data.repository.TrainingUnitRepository
-import com.example.client_training_app.data.repository.WorkoutRepository
+import com.example.client_training_app.data.repository.WorkoutRepository // Ujisti se, že se jmenuje takto (nebo WorkoutSessionRepository)
 import com.example.client_training_app.model.ActiveExerciseUi
 import com.example.client_training_app.model.ActiveSetUi
-import com.example.client_training_app.model.toExercise
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -22,20 +21,28 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
     private val workoutRepository = WorkoutRepository(application)
     private val scheduleRepository = ScheduleRepository(application)
 
-    // UI State - Seznam cviků k odškrtání
+    private val _trainingNote = MutableLiveData<String?>()
+    val trainingNote: LiveData<String?> = _trainingNote
+
+    // UI State
     private val _activeExercises = MutableLiveData<List<ActiveExerciseUi>>()
     val activeExercises: LiveData<List<ActiveExerciseUi>> = _activeExercises
 
-    // Událost: Trénink dokončen (pro navigaci pryč)
     private val _isFinished = MutableLiveData<Boolean>()
     val isFinished: LiveData<Boolean> = _isFinished
 
-    // Metadata
+    // Metadata pro uložení
     private var trainingStartTime: Long = 0
     private var currentClientId: String = ""
     private var currentTrainingUnitId: String? = null
     private var currentTrainingName: String = ""
-    private var scheduledWorkoutId: Long? = null // Pokud jdeme z kalendáře
+
+    // ID z kalendáře (pokud existuje)
+    private var scheduledWorkoutId: Long? = null
+
+    // ID samotného tréninku (Session)
+    // Pokud editujeme, bude to ID z databáze. Pokud je nový, vygenerujeme ho.
+    private var currentSessionId: String = UUID.randomUUID().toString()
 
     fun startWorkout(trainingUnitId: String, clientId: String, scheduleId: Long?) {
         trainingStartTime = System.currentTimeMillis()
@@ -44,90 +51,164 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
         scheduledWorkoutId = scheduleId
 
         viewModelScope.launch {
-            val unitWithExercises = unitRepository.getTrainingUnitWithExercises(trainingUnitId)
+            // 1. Zkusíme zjistit, jestli už k tomuto plánu existuje historie (Editace)
+            // (Musíš mít v repo metodu getSessionByScheduleId - viz poznámka pod kódem)
+            var existingSession: WorkoutSessionEntity? = null
 
-            if (unitWithExercises != null) {
-                currentTrainingName = unitWithExercises.trainingUnit.name
+            if (scheduleId != null) {
+                // POZOR: Tuto metodu musíš mít v Repository/DAO, pokud ti svítí červeně, viz níže
+                existingSession = workoutRepository.getSessionByScheduleId(scheduleId)
+            }
 
-                // MAGIE: Převedeme šablonu na Active UI modely
-                val uiList = unitWithExercises.exercises.map { detail ->
-                    val template = detail.trainingData
-
-                    // 1. Zjistíme, kolik sérií bylo v plánu (default 3)
-                    val targetSets = template.sets.toIntOrNull() ?: 3
-
-                    // 2. Vytvoříme předvyplněné řádky
-                    val prefilledSets = MutableList(targetSets) { index ->
-                        ActiveSetUi(
-                            setNumber = index + 1,
-                            // Můžeme předvyplnit váhu z minula? (To je advanced feature na později)
-                            // Pro teď necháme prázdné
-                        )
-                    }
-
-                    // 3. Sestavíme objekt cviku
-                    ActiveExerciseUi(
-                        exerciseId = detail.exercise.id,
-                        exerciseName = detail.exercise.name,
-                        targetNote = "${template.sets}x${template.reps} ${template.weight ?: ""} ${template.rir?.let { "RIR $it" } ?: ""}",
-                        sets = prefilledSets,
-
-                        // Konfigurace sloupců
-                        isRepsEnabled = template.isRepsEnabled,
-                        isWeightEnabled = template.isWeightEnabled,
-                        isTimeEnabled = template.isTimeEnabled,
-                        isDistanceEnabled = template.isDistanceEnabled,
-                        isRirEnabled = template.isRirEnabled
-                    )
-                }
-
-                _activeExercises.value = uiList
+            if (existingSession != null) {
+                // --- SCÉNÁŘ A: Editace existujícího tréninku ---
+                currentSessionId = existingSession.id // Použijeme existující ID pro přepis
+                currentTrainingName = existingSession.trainingName
+                loadFromHistory(existingSession)
+            } else {
+                // --- SCÉNÁŘ B: Nový trénink (Šablona) ---
+                currentSessionId = UUID.randomUUID().toString() // Nové ID
+                loadFromTemplate(trainingUnitId)
             }
         }
     }
 
-    // Uživatel klikl na "+ Přidat sérii"
+    // --- Logika načtení prázdné šablony ---
+    private suspend fun loadFromTemplate(unitId: String) {
+        val unitWithExercises = unitRepository.getTrainingUnitWithExercises(unitId)
+
+        if (unitWithExercises != null) {
+            currentTrainingName = unitWithExercises.trainingUnit.name
+            _trainingNote.value = unitWithExercises.trainingUnit.note
+
+            val uiList = unitWithExercises.exercises.map { detail ->
+                val template = detail.trainingData
+                val targetSets = template.sets.toIntOrNull() ?: 3
+
+                val prefilledSets = MutableList(targetSets) { index ->
+                    ActiveSetUi(setNumber = index + 1)
+                }
+
+                ActiveExerciseUi(
+                    exerciseId = detail.exercise.id,
+                    exerciseName = detail.exercise.name,
+                    targetNote = buildString {
+                        append("🎯 Cíl: ${template.sets}")
+
+                        if (template.isRepsEnabled) append("x ${template.reps ?: "?"} op.")
+                        if (template.isTimeEnabled) append("x ${template.time ?: "?"} s")
+                        if (template.isDistanceEnabled) append("x ${template.distance ?: "?"} km")
+                        if (template.isWeightEnabled && !template.weight.isNullOrEmpty()) {
+                            append(" @ ${template.weight} kg") }
+                        if (template.isRirEnabled && !template.rir.isNullOrEmpty()) {
+                            append(" | RIR ${template.rir}") }
+                        if (template.isRestEnabled) append(" | Pauza: ${template.rest ?: "?"} s")
+                    },
+                    sets = prefilledSets,
+
+                    // Konfigurace
+                    isRepsEnabled = template.isRepsEnabled,
+                    isWeightEnabled = template.isWeightEnabled,
+                    isTimeEnabled = template.isTimeEnabled,
+                    isDistanceEnabled = template.isDistanceEnabled,
+                    isRirEnabled = template.isRirEnabled
+                )
+            }
+            _activeExercises.value = uiList
+        }
+    }
+
+    // --- Logika načtení historie (Editace) ---
+    private suspend fun loadFromHistory(session: WorkoutSessionEntity) {
+        // 1. Načteme hotové série z DB
+        // (Metodu getSetsForSession musíš mít v repo)
+        val results = workoutRepository.getSetsForSession(session.id)
+
+        // 2. Načteme i šablonu, abychom věděli názvy cviků a konfiguraci (sloupečky)
+        val unitWithExercises = unitRepository.getTrainingUnitWithExercises(session.trainingUnitId ?: "")
+
+        if (unitWithExercises != null) {
+            _trainingNote.value = unitWithExercises.trainingUnit.note
+            // Seskupíme výsledky podle ID cviku, aby se nám lépe hledaly
+            val resultsByExercise = results.groupBy { it.exerciseId }
+
+            val uiList = unitWithExercises.exercises.map { detail ->
+                val template = detail.trainingData
+
+                // Najdeme hotové série pro tento cvik
+                val historySets = resultsByExercise[detail.exercise.id] ?: emptyList()
+
+                // Převedeme DB entity na UI modely
+                val activeSets = if (historySets.isNotEmpty()) {
+                    historySets.map { res ->
+                        ActiveSetUi(
+                            setNumber = res.setNumber,
+                            weight = res.weight ?: "",
+                            reps = res.reps ?: "",
+                            time = res.time ?: "",
+                            distance = res.distance ?: "",
+                            rir = res.rir ?: "",
+                            isCompleted = res.isCompleted
+                        )
+                    }.toMutableList()
+                } else {
+                    // Pokud v historii pro tento cvik nic není (divné, ale možné), dáme prázdné
+                    MutableList(template.sets.toIntOrNull() ?: 3) { ActiveSetUi(setNumber = it + 1) }
+                }
+
+                ActiveExerciseUi(
+                    exerciseId = detail.exercise.id,
+                    exerciseName = detail.exercise.name,
+                    targetNote = "Upravit záznam", // Nebo původní note
+                    sets = activeSets,
+
+                    // Konfigurace bereme ze šablony
+                    isRepsEnabled = template.isRepsEnabled,
+                    isWeightEnabled = template.isWeightEnabled,
+                    isTimeEnabled = template.isTimeEnabled,
+                    isDistanceEnabled = template.isDistanceEnabled,
+                    isRirEnabled = template.isRirEnabled
+                )
+            }
+            _activeExercises.value = uiList
+        }
+    }
+
     fun addSet(exerciseIndex: Int) {
         val currentList = _activeExercises.value ?: return
         val exercise = currentList[exerciseIndex]
-
         val newSetNumber = exercise.sets.size + 1
         exercise.sets.add(ActiveSetUi(setNumber = newSetNumber))
 
-        // Musíme "šťouchnout" do LiveData, aby se UI překreslilo
-        _activeExercises.value = currentList
-        // Poznámka: U RecyclerView adaptéru to někdy nestačí, pokud je reference stejná. 
-        // Ve Fragmentu to vyřešíme voláním adapter.notifyDataSetChanged() nebo vytvořením nové kopie listu.
+        // Vynutíme update (vytvoříme novou referenci listu, aby LiveData zareagovala)
+        _activeExercises.value = currentList.toList()
     }
 
-    // Uložení tréninku
     fun finishWorkout() {
         val exercises = _activeExercises.value ?: return
         val endTime = System.currentTimeMillis()
-        val sessionId = UUID.randomUUID().toString()
 
         viewModelScope.launch {
-            // 1. Vytvoříme Hlavičku (Session)
+            // 1. Hlavička (používáme currentSessionId - buď nové, nebo to co editujeme)
             val sessionEntity = WorkoutSessionEntity(
-                id = sessionId,
+                id = currentSessionId,
                 clientId = currentClientId,
                 trainingUnitId = currentTrainingUnitId,
+                scheduledWorkoutId = scheduledWorkoutId, // <--- Ukládáme vazbu na kalendář
                 trainingName = currentTrainingName,
                 startTime = trainingStartTime,
                 endTime = endTime
             )
 
-            // 2. Vytvoříme Výsledky (Sets)
+            // 2. Výsledky
             val resultEntities = mutableListOf<WorkoutSetResultEntity>()
 
             exercises.forEach { exerciseUi ->
                 exerciseUi.sets.forEach { setUi ->
-                    // Uložíme jen ty série, kde je alespoň něco vyplněno nebo jsou "hotové"
-                    // (Abychom neukládali prázdné řádky, pokud je uživatel přeskočil)
+                    // Ukládáme jen smysluplná data
                     if (setUi.isCompleted || setUi.weight.isNotEmpty() || setUi.reps.isNotEmpty() || setUi.time.isNotEmpty()) {
-
                         resultEntities.add(WorkoutSetResultEntity(
-                            sessionId = sessionId,
+                            sessionId = currentSessionId,
                             exerciseId = exerciseUi.exerciseId,
                             setNumber = setUi.setNumber,
                             weight = setUi.weight,
@@ -141,10 +222,10 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                 }
             }
 
-            // 3. Uložíme do DB
+            // 3. Uložení (DAO používá @Insert(onConflict = REPLACE), takže to funguje i pro update)
             workoutRepository.saveWorkout(sessionEntity, resultEntities)
 
-            // 4. Pokud to byl naplánovaný trénink z kalendáře, označíme ho jako splněný
+            // 4. Odškrtnutí v kalendáři
             scheduledWorkoutId?.let { id ->
                 scheduleRepository.markAsCompleted(id)
             }

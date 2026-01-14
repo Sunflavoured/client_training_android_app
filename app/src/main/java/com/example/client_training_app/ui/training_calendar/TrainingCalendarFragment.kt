@@ -64,14 +64,15 @@ class TrainingCalendarFragment : Fragment(R.layout.fragment_training_calendar) {
         scheduleAdapter = ScheduledWorkoutAdapter { detail ->
         val action = TrainingCalendarFragmentDirections
             .actionTrainingCalendarFragmentToActiveWorkoutFragment(
-                // 1. ID šablony bereme z kliknuté položky (detail)
+                // 1. ID a název šablony bereme z kliknuté položky (detail)
                 trainingUnitId = detail.trainingUnit.id,
-
+                trainingTitle = detail.trainingUnit.name,
                 // 2. ID klienta bereme z argumentů kalendáře
                 clientId = args.clientId,
 
                 // 3. ID naplánované události bereme z kliknuté položky
                 scheduledWorkoutId = detail.schedule.id
+
             )
         findNavController().navigate(action)
         }

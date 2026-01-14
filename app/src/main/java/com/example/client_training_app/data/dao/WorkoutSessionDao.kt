@@ -44,4 +44,8 @@ interface WorkoutSessionDao {
         ORDER BY session.startTime DESC
     """)
     fun getHistoryForExercise(clientId: String, exerciseId: String): Flow<List<WorkoutSetResultEntity>>
+
+    // načtení plánovaého tréninku podle ID, aby měl předvyplněná data
+    @Query("SELECT * FROM workout_sessions WHERE scheduledWorkoutId = :scheduleId LIMIT 1")
+    suspend fun getSessionByScheduleId(scheduleId: Long): WorkoutSessionEntity?
 }
