@@ -1,6 +1,7 @@
 package com.example.client_training_app.ui.exercise
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import com.example.client_training_app.model.Exercise // Tvůj model
 import com.example.client_training_app.utils.YouTubeUtils
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener // DŮLEŽITÝ IMPORT
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import kotlinx.coroutines.launch
 
 class ExerciseDetailFragment : Fragment() {
@@ -35,7 +38,7 @@ class ExerciseDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 1. Přidání observeru pro YouTube přehrávač (řeší životní cyklus)
-        lifecycle.addObserver(binding.youtubePlayerView)
+        viewLifecycleOwner.lifecycle.addObserver(binding.youtubePlayerView)
 
         val exerciseId = args.exerciseId
         val repository = ExerciseRepository(requireContext())
@@ -47,7 +50,7 @@ class ExerciseDetailFragment : Fragment() {
             if (exercise != null) {
                 // Teprve TEĎ, když máme data, můžeme volat nastavovací metody
                 setupTextData(exercise)
-                setupVideo(exercise.mediaUrl)
+               // setupVideo(exercise.mediaUrl) TODO: Vyřešit chybu 152
             } else {
                 binding.exerciseName.text = "Cvik nenalezen"
             }
@@ -72,7 +75,7 @@ class ExerciseDetailFragment : Fragment() {
     }
 
     // Pomocná metoda pro nastavení videa
-    private fun setupVideo(url: String?) {
+    /*private fun setupVideo(url: String?) {
         if (url.isNullOrBlank()) {
             binding.youtubePlayerView.visibility = View.GONE
             return
@@ -83,17 +86,32 @@ class ExerciseDetailFragment : Fragment() {
         if (videoId != null) {
             binding.youtubePlayerView.visibility = View.VISIBLE
 
-            // Tady vznikala chyba s Listenerem - teď už máme import, takže to bude fungovat
-            binding.youtubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            // 1. Vytvoříme možnosti přehrávače s parametrem ORIGIN
+            // "https://www.youtube.com" funguje jako univerzální klíč pro většinu videí
+            val iFramePlayerOptions = IFramePlayerOptions.Builder()
+                .controls(1)
+                .fullscreen(0) // 0 = tlačítko full screen skryté (řešíš ho sama nebo vůbec)
+                .origin("https://www.youtube.com") // <--- TOTO OPRAVUJE CHYBU 152
+                .build()
+
+            // 2. Inicializujeme přehrávač MANUÁLNĚ s těmito možnostmi
+            binding.youtubePlayerView.initialize(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
-                    // cueVideo načte video, ale nespustí ho automaticky (šetří data)
+                    // videoId z databáze (např. "SCVCLChPQFY")
                     youTubePlayer.cueVideo(videoId, 0f)
                 }
-            })
+
+                override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
+                    super.onError(youTubePlayer, error)
+                    // Logování chyby pro jistotu
+                    android.util.Log.e("YOUTUBE", "Chyba: ${error.name}")
+                }
+            }, iFramePlayerOptions) // <--- Předáváme options sem
+
         } else {
             binding.youtubePlayerView.visibility = View.GONE
         }
-    }
+    }*/
 
     override fun onDestroyView() {
         // Přehrávač uvolníme PŘEDTÍM, než zničíme binding

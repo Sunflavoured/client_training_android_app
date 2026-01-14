@@ -174,7 +174,7 @@
             android:id="@+id/youtube_player_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:autoPlay="false"
+            app:enableAutomaticInitialization="false"
             android:visibility="gone" />
 
         <!-- Card s popisem -->
