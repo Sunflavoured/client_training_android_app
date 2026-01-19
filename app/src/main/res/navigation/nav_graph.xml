@@ -151,19 +151,6 @@
         android:id="@+id/addExerciseFragment"
         android:name="com.example.client_training_app.ui.exercise.AddExerciseFragment"
         android:label="Přidat cvik" >
-        <action
-            android:id="@+id/action_addExerciseFragment_to_selectMuscleGroupsFragment"
-            app:destination="@id/selectMuscleGroupsFragment" />
-    </fragment>
-    
-    <fragment
-        android:id="@+id/selectMuscleGroupsFragment"
-        android:name="com.example.client_training_app.ui.exercise.SelectMuscleGroupsFragment"
-        android:label="Vybrat svaly" >
-
-        <argument
-            android:name="currentSelection"
-            app:argType="string[]" />
     </fragment>
 
 

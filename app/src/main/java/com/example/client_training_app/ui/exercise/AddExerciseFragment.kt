@@ -11,7 +11,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.client_training_app.R
-import com.example.client_training_app.ui.exercise.SelectMuscleGroupsFragment
 import com.example.client_training_app.data.repository.ExerciseRepository
 import com.example.client_training_app.databinding.FragmentAddExerciseBinding
 import com.example.client_training_app.model.Exercise
@@ -39,7 +38,6 @@ class AddExerciseFragment : Fragment() {
         setupCategoryDropdown()
         setupMuscleGroupsDropdown()  // ← NOVÁ FUNKCE
         setupSaveButton()
-        setupResultListener()
 
         return binding.root
     }
@@ -64,40 +62,36 @@ class AddExerciseFragment : Fragment() {
         }
     }
 
-    // ← NOVÁ FUNKCE: Nastavení "fake" dropdownu pro svalové skupiny
+    // Nastavení Bottomsheetu pro výběr svalových partií
     private fun setupMuscleGroupsDropdown() {
-        // Zakážeme normální chování AutoCompleteTextView
+        // Nastavení vzhledu "dropdownu"
         binding.actvMuscleGroups.keyListener = null
+        binding.actvMuscleGroups.isFocusable = false
+        binding.actvMuscleGroups.isClickable = true
 
-        // Po kliknutí otevřeme NOVÝ FRAGMENT
-        val clickListener = View.OnClickListener {
-            // Převedeme náš seznam na pole pro poslání jako argument
-            val currentSelection = selectedMuscleGroups.toTypedArray()
+        val showBottomSheet = {
+            // Vytvoříme a zobrazíme BottomSheet
+            val bottomSheet = MuscleGroupBottomSheet(
+                preSelectedMuscles = selectedMuscleGroups // Pošleme tam, co už máme vybráno
+            ) { newSelection ->
+                // TOTO JE CALLBACK - Zavolá se, když uživatel klikne "Potvrdit"
 
-            // Použijeme vygenerovanou akci (nezapomeň rebuildnout projekt!)
-            val action = AddExerciseFragmentDirections
-                .actionAddExerciseFragmentToSelectMuscleGroupsFragment(currentSelection)
+                selectedMuscleGroups.clear()
+                selectedMuscleGroups.addAll(newSelection)
 
-            findNavController().navigate(action)
-        }
-
-        binding.actvMuscleGroups.setOnClickListener(clickListener)
-        binding.tilMuscleGroups.setEndIconOnClickListener(clickListener)
-    }
-
-    private fun setupResultListener() {
-        // posloucháme výsledky podle klíče
-        setFragmentResultListener(SelectMuscleGroupsFragment.Companion.REQUEST_KEY) { requestKey, bundle ->
-            val newList = bundle.getStringArrayList(SelectMuscleGroupsFragment.Companion.BUNDLE_KEY)
-
-            selectedMuscleGroups.clear()
-            if (newList != null) {
-                selectedMuscleGroups.addAll(newList)
+                updateMuscleGroupsDisplay()
             }
 
-            updateMuscleGroupsDisplay()
+            bottomSheet.show(parentFragmentManager, "MuscleGroupBottomSheet")
         }
+
+        // Kliknutí na Textové pole i na Ikonku šipky spustí to samé
+        binding.actvMuscleGroups.setOnClickListener { showBottomSheet() }
+        binding.tilMuscleGroups.setEndIconOnClickListener { showBottomSheet() }
+        binding.tilMuscleGroups.setOnClickListener { showBottomSheet() } // Pojistka
     }
+
+
 
     // Aktualizuj text v "dropdownu"
     private fun updateMuscleGroupsDisplay() {
