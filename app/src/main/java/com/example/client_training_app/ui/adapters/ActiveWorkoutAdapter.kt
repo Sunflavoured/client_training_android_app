@@ -3,12 +3,14 @@ package com.example.client_training_app.ui.adapters
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.PopupMenu // Pro kontextové menu
 import android.widget.TextView
-import androidx.core.view.isVisible // Důležité pro snadné .isVisible = true/false
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.client_training_app.R
 import com.example.client_training_app.databinding.ItemActiveExerciseBinding
@@ -17,7 +19,9 @@ import com.example.client_training_app.model.ActiveSetUi
 
 class ActiveWorkoutAdapter(
     private var exercises: List<ActiveExerciseUi>,
-    private val onAddSetClicked: (exerciseIndex: Int) -> Unit
+    private val onAddSetClicked: (exerciseIndex: Int) -> Unit,
+    private val onDragStart: (RecyclerView.ViewHolder) -> Unit,
+    private val onSubstituteClicked: (exerciseIndex: Int) -> Unit
 ) : RecyclerView.Adapter<ActiveWorkoutAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemActiveExerciseBinding) :
@@ -27,13 +31,26 @@ class ActiveWorkoutAdapter(
             binding.tvExerciseName.text = exercise.exerciseName
             binding.tvTarget.text = "${exercise.targetNote ?: "Bez poznámky"}"
 
-            // 1. NASTAVENÍ VIDITELNOSTI HLAVIČEK (Nadpisy sloupců)
-            // Používáme findViewById, protože v bindingu cardview nemusí být ID vidět přímo, pokud nejsou v data classu
-            // Ale pokud používáš ViewBinding, měly by být dostupné:
+            // --- 1. DRAG HANDLE LOGIKA ---
+            // Binding by měl mít přístup přímo k ivDragHandle, pokud je v XML
+            binding.ivDragHandle.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    onDragStart(this) // Řekneme Fragmentu: "Začni přesunovat tento řádek"
+                }
+                false
+            }
 
-            // Poznámka: Aby toto fungovalo, musíš přidat ID do item_active_exercise.xml (hWeight, hReps...)
-            // Pokud ViewBinding hlásí chybu, zkus binding.root.findViewById<TextView>(R.id.hWeight)
+            // --- 2. MENU LOGIKA (Substitute) ---
+            binding.ivMenu.setOnClickListener { view ->
+                showPopupMenu(view, exerciseIndex)
+            }
 
+            // --- 3. NASTAVENÍ VIDITELNOSTI HLAVIČEK ---
+            // ViewBinding negarantuje, že najde ID uvnitř include/merged layoutů nebo pokud jsou ID stejná.
+            // Pro jistotu použijeme binding.root.findViewById, nebo binding.hWeight pokud je vidí.
+
+            // Poznámka: Pokud máš v ItemActiveExerciseBinding ID jako hWeight, použij binding.hWeight
+            // Pokud je nemůže najít, použij findViewById:
             val hWeight = binding.root.findViewById<TextView>(R.id.hWeight)
             val hReps = binding.root.findViewById<TextView>(R.id.hReps)
             val hTime = binding.root.findViewById<TextView>(R.id.hTime)
@@ -46,19 +63,33 @@ class ActiveWorkoutAdapter(
             hDistance.isVisible = exercise.isDistanceEnabled
             hRir.isVisible = exercise.isRirEnabled
 
-            // 2. Vykreslení řádků
+            // --- 4. VYKRESLENÍ ŘÁDKŮ SÉRIÍ ---
             binding.llSetsContainer.removeAllViews()
             exercise.sets.forEachIndexed { index, setUi ->
-                // Zjistíme, jestli existuje předchozí série
                 val previousSet = if (index > 0) exercise.sets[index - 1] else null
-
-                // Předáme previousSet do metody addSetRow
                 addSetRow(setUi, exercise, previousSet)
             }
 
             binding.btnAddSet.setOnClickListener {
                 onAddSetClicked(exerciseIndex)
             }
+        }
+
+        private fun showPopupMenu(view: View, index: Int) {
+            val popup = PopupMenu(view.context, view)
+            popup.menu.add("Nahradit cvik (Substitute)")
+            // popup.menu.add("Smazat cvik") // Můžeš přidat později
+
+            popup.setOnMenuItemClickListener { item ->
+                when (item.title) {
+                    "Nahradit cvik (Substitute)" -> {
+                        onSubstituteClicked(index)
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
         }
 
         private fun addSetRow(
@@ -70,7 +101,7 @@ class ActiveWorkoutAdapter(
             val setView = inflater.inflate(R.layout.item_active_set, binding.llSetsContainer, false)
 
             // Views
-            val btnCopy = setView.findViewById<View>(R.id.btnCopyPrevious) // <--- NOVÉ
+            val btnCopy = setView.findViewById<View>(R.id.btnCopyPrevious)
             val tvSetNumber = setView.findViewById<TextView>(R.id.tvSetNumber)
             val etWeight = setView.findViewById<EditText>(R.id.etWeight)
             val etReps = setView.findViewById<EditText>(R.id.etReps)
@@ -78,61 +109,53 @@ class ActiveWorkoutAdapter(
             val etDistance = setView.findViewById<EditText>(R.id.etDistance)
             val etRir = setView.findViewById<EditText>(R.id.etRir)
 
-
-            // --- 1. LOGIKA KOPÍROVACÍHO TLAČÍTKA ---
+            // --- LOGIKA KOPÍROVACÍHO TLAČÍTKA ---
             if (previousSet != null) {
                 btnCopy.visibility = View.VISIBLE
                 btnCopy.setOnClickListener {
-                    // A) Přepsat data v UI (EditTexty)
-                    // Zkopírujeme jen to, co je pro daný cvik povolené
-                    if (config.isWeightEnabled) etWeight.setText(previousSet.weight)
-                    if (config.isRepsEnabled) etReps.setText(previousSet.reps)
-                    if (config.isTimeEnabled) etTime.setText(previousSet.time)
-                    if (config.isDistanceEnabled) etDistance.setText(previousSet.distance)
-                    // RIR obvykle nekopírujeme, protože se mění s únavou, ale můžeš:
-                    // if (config.isRirEnabled) etRir.setText(previousSet.rir)
-
-                    // B) Přepsat data v Modelu (ActiveSetUi)
-                    // TextWatcher by to měl chytit, ale pro jistotu to nastavíme i přímo,
-                    // aby to bylo atomické a rychlé.
-                    setUi.weight = previousSet.weight
-                    setUi.reps = previousSet.reps
-                    setUi.time = previousSet.time
-                    setUi.distance = previousSet.distance
-                    // setUi.rir = previousSet.rir
-
-                    // Volitelné: Zobrazit Toast nebo malou animaci
-                    // Toast.makeText(setView.context, "Zkopírováno", Toast.LENGTH_SHORT).show()
+                    if (config.isWeightEnabled) {
+                        etWeight.setText(previousSet.weight)
+                        setUi.weight = previousSet.weight
+                    }
+                    if (config.isRepsEnabled) {
+                        etReps.setText(previousSet.reps)
+                        setUi.reps = previousSet.reps
+                    }
+                    if (config.isTimeEnabled) {
+                        etTime.setText(previousSet.time)
+                        setUi.time = previousSet.time
+                    }
+                    if (config.isDistanceEnabled) {
+                        etDistance.setText(previousSet.distance)
+                        setUi.distance = previousSet.distance
+                    }
                 }
             } else {
-                // První série nemá z čeho kopírovat
                 btnCopy.visibility = View.INVISIBLE
             }
 
-            // --- 2. ZBYTEK PŮVODNÍHO KÓDU ---
-            // A) Viditelnost inputů
+            // --- NASTAVENÍ HODNOT ---
             etWeight.isVisible = config.isWeightEnabled
             etReps.isVisible = config.isRepsEnabled
             etTime.isVisible = config.isTimeEnabled
             etDistance.isVisible = config.isDistanceEnabled
             etRir.isVisible = config.isRirEnabled
 
-            // B) Vyplnění hodnot
             tvSetNumber.text = setUi.setNumber.toString()
             etWeight.setText(setUi.weight)
             etReps.setText(setUi.reps)
-            etTime.setText(setUi.time)         // Nové
-            etDistance.setText(setUi.distance) // Nové
+            etTime.setText(setUi.time)
+            etDistance.setText(setUi.distance)
             etRir.setText(setUi.rir)
 
-            // C) Ukládání hodnot (TextWatchers)
+            // --- TEXT WATCHERS (Ukládání) ---
             if (config.isWeightEnabled) etWeight.addSimpleTextWatcher { setUi.weight = it }
             if (config.isRepsEnabled) etReps.addSimpleTextWatcher { setUi.reps = it }
-            if (config.isTimeEnabled) etTime.addSimpleTextWatcher { setUi.time = it }         // Nové
-            if (config.isDistanceEnabled) etDistance.addSimpleTextWatcher { setUi.distance = it } // Nové
+            if (config.isTimeEnabled) etTime.addSimpleTextWatcher { setUi.time = it }
+            if (config.isDistanceEnabled) etDistance.addSimpleTextWatcher { setUi.distance = it }
             if (config.isRirEnabled) etRir.addSimpleTextWatcher { setUi.rir = it }
 
-           binding.llSetsContainer.addView(setView)
+            binding.llSetsContainer.addView(setView)
         }
     }
 

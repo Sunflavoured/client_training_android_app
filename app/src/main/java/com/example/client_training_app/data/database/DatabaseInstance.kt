@@ -26,8 +26,8 @@ object DatabaseInstance {
                 AppDatabase::class.java,
                 "training_database"
             )
-                // .fallbackToDestructiveMigration() // Smaže DB při změně verze
-                .fallbackToDestructiveMigration()
+                // Smaže DB při změně verze
+                //.fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
                     // 1. Volá se při prvním vytvoření souboru DB
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -38,14 +38,14 @@ object DatabaseInstance {
                         }
                     }
 
-                    // 2. Volá se, když proběhne destruktivní migrace (zvýšení verze + smazání dat)
+                    /*// 2. Volá se, když proběhne destruktivní migrace (zvýšení verze + smazání dat)
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                         super.onDestructiveMigration(db)
                         Log.d("DatabaseInstance", "onDestructiveMigration: Plním databázi po migraci")
                         CoroutineScope(Dispatchers.IO).launch {
                             fillWithDefaultExercises(context)
                         }
-                    }
+                    }*/
 
                     // 3. (Volitelné) Pojistka: Volá se při každém otevření
                     override fun onOpen(db: SupportSQLiteDatabase) {

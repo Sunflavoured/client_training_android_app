@@ -73,6 +73,10 @@
         android:id="@+id/activeWorkoutFragment"
         android:name="com.example.client_training_app.ui.active_workout.ActiveWorkoutFragment"
         android:label="Aktivní trénink">
+        <action
+            android:id="@+id/action_activeWorkoutFragment_to_exercisePickerFragment"
+            app:destination="@id/exercisePickerFragment" />
+
         <argument
             android:name="trainingTitle"
             app:argType="string"

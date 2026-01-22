@@ -1,60 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fillViewport="true"
     android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@color/white"
-        android:elevation="4dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
 
-        <TextView
-            android:id="@+id/tvWorkoutTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Načítám trénink..."
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:padding="16dp"
+            android:background="@color/white"
+            android:elevation="4dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvTrainingNote"
+            <TextView
+                android:id="@+id/tvWorkoutTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Full Body Trénink A"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvTrainingNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Poznámka: Dneska se zaměř na techniku dřepu."
+                android:textColor="#757575"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvActiveExercises"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#757575"
-            android:textSize="14sp"
+            android:nestedScrollingEnabled="false"
             android:layout_marginTop="8dp"
-            />
+            tools:itemCount="3"
+            tools:listitem="@layout/item_active_exercise"/>
+
+        <LinearLayout
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <Button
+                android:id="@+id/btnAddExtraExercise"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+ Přidat další cvik"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnFinishWorkout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Dokončit trénink"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+        </LinearLayout>
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvActiveExercises"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingBottom="80dp"
-        android:clipToPadding="false"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@color/white"
-        android:elevation="8dp">
-
-        <Button
-            android:id="@+id/btnFinishWorkout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dokončit trénink"
-            android:backgroundTint="#4CAF50"
-            android:textColor="@color/white"
-            android:padding="12dp"/>
-    </FrameLayout>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -32,19 +32,21 @@
     <EditText
         android:id="@+id/etWeight"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
+        android:padding="0dp"
         android:hint="kg"
         android:inputType="numberDecimal"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:gravity="center"
         android:background="@android:drawable/edit_text"/>
 
     <EditText
         android:id="@+id/etReps"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
+        android:padding="0dp"
         android:hint="op."
         android:inputType="number"
         android:textSize="14sp"
@@ -55,8 +57,9 @@
     <EditText
         android:id="@+id/etTime"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
+        android:padding="0dp"
         android:hint="s"
         android:inputType="number"
         android:textSize="14sp"
@@ -68,8 +71,9 @@
     <EditText
         android:id="@+id/etDistance"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
+        android:padding="0dp"
         android:hint="km"
         android:inputType="numberDecimal"
         android:textSize="14sp"
@@ -81,8 +85,9 @@
     <EditText
         android:id="@+id/etRir"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_weight="1"
+        android:padding="0dp"
         android:hint="RIR"
         android:inputType="number"
         android:textSize="14sp"

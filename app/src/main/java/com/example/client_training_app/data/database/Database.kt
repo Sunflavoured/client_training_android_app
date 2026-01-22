@@ -1,5 +1,6 @@
 package com.example.client_training_app.data.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -28,8 +29,11 @@ import com.example.client_training_app.data.entity.WorkoutSetResultEntity
         ScheduledWorkoutEntity::class,
         WorkoutSetResultEntity::class],
 
-    version = 14, // <--- ZVÝŠENÍ VERZE
-    exportSchema = false
+    version = 2, // <--- ZVÝŠENÍ VERZE
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ],
+    exportSchema = true
 )
 // Deklarace konvertoru
 @TypeConverters(Converters::class)

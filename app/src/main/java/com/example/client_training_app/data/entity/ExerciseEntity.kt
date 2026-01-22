@@ -16,5 +16,6 @@ data class ExerciseEntity(
     val mediaType: String, // Uložíme jako String (např. "NONE")
     val mediaUrl: String?,
     val muscleGroups: List<String>, // Room to převede pomocí Converters
-    val isDefault: Boolean = false
+    val isDefault: Boolean = false,
+    val testPoznamka: String? = null
 )
