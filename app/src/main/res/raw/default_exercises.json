@@ -49,6 +49,156 @@
       "muscleGroups": ["Horní část hrudníku", "Triceps"],
       "isDefault": true
     },
+  {
+    "id": "goblet_squat",
+    "name": "Goblet dřep",
+    "category": "STRENGTH",
+    "description": "Drž závaží (jednoručku nebo kettlebell) na hrudníku. S rovnými zády a vypnutým hrudníkem proveď hluboký dřep, lokty se snaž dostat mezi kolena.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna", "Hýždě", "Břicho"],
+    "isDefault": true
+  },
+  {
+    "id": "single_arm_cable_row",
+    "name": "Přítahy na kladce jednoruč",
+    "category": "STRENGTH",
+    "description": "Postav se čelem ke kladce, mírně pokrč kolena. Přitahuj madlo k boku těla, soustřeď se na práci zádových svalů a neotáčej trup.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Latissimus", "Biceps", "Rhombický sval"],
+    "isDefault": true
+  },
+  {
+    "id": "foam_roll_chest",
+    "name": "Masáž prsních svalů válcem",
+    "category": "MOBILITY",
+    "description": "Lehni si na břicho a umísti masážní válec pod prsní sval (blízko podpaží). Paži natáhni do strany a pomalými pohyby roluj po svalu. Můžeš také paží hýbat nahoru a dolů pro větší efekt.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Hrudník"],
+    "isDefault": true
+  },
+  {
+    "id": "weighted_ankle_stretch",
+    "name": "Protažení kotníku se závažím",
+    "category": "MOBILITY",
+    "description": "V kleče na jednom koleni (pozice výpadu) si polož závaží (kettlebell nebo kotouč) na stehno přední nohy těsně za koleno. Tlač koleno vpřed přes špičku, ale patu drž stále na zemi.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Lýtka"],
+    "isDefault": true
+  },
+  {
+    "id": "foam_roll_glutes",
+    "name": "Masáž hýždí válcem",
+    "category": "MOBILITY",
+    "description": "Sedni si na válec. Jednu nohu překřiž přes druhou (kotník na koleno). Nakloň se vahou na stranu hýždě pokrčené nohy a roluj přes bolestivá místa.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Hýždě"],
+    "isDefault": true
+  },
+  {
+    "id": "figure_four_glute_stretch",
+    "name": "Protažení hýždí v leže (Čtyřka)",
+    "category": "MOBILITY",
+    "description": "Lehni si na záda. Kotník jedné nohy polož na koleno druhé (vytvoř tvar čísla 4). Chytni spodní nohu pod kolenem oběma rukama a přitáhni ji k hrudníku, dokud neucítíš tah v hýždi.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Hýždě"],
+    "isDefault": true
+  },
+  {
+    "id": "shoulder_pass_throughs",
+    "name": "Rotace ramen s tyčí",
+    "category": "MOBILITY",
+    "description": "Uchop tyč nebo gumu velmi širokým úchopem. S propnutými lokty přenášej tyč obloukem přes hlavu až k hýždím a zpět. Pokud se lokty krčí, rozšiř úchop.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Ramena", "Hrudník"],
+    "isDefault": true
+  },
+  {
+    "id": "cossack_squat",
+    "name": "Cossack dřep",
+    "category": "STRENGTH",
+    "description": "Ze širokého postoje přeneste váhu na jednu nohu a klesni do dřepu, zatímco druhá noha zůstává natažená. Vrať se do středu a opakuj na druhou stranu.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna", "Hýždě", "Zadní stehna"],
+    "isDefault": true
+  },
+  {
+    "id": "overhead_triceps_extension_single",
+    "name": "Extenze tricepsu za hlavou jednoruč",
+    "category": "STRENGTH",
+    "description": "V sedě nebo ve stoji vzpaž ruku s činkou. Pokrčením v lokti spusť činku za hlavu a tahem tricepsu ji vytlač zpět do propnuté paže.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Triceps"],
+    "isDefault": true
+  },
+  {
+    "id": "jump_rope",
+    "name": "Skákání přes švihadlo",
+    "category": "CARDIO",
+    "description": "Skákej snožmo přes švihadlo v pravidelném rytmu. Dopady tlum přes špičky, drž zpevněný střed těla.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Lýtka", "Přední stehna", "Ramena"],
+    "isDefault": true
+  },
+  {
+    "id": "running",
+    "name": "Běh",
+    "category": "CARDIO",
+    "description": "Klasický běh v mírném až středním tempu. Soustřeď se na pravidelné dýchání a přirozený pohyb paží.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna", "Zadní stehna", "Lýtka", "Hýždě"],
+    "isDefault": true
+  },
+  {
+    "id": "lateral_box_step_up",
+    "name": "Výstup na bednu ze strany",
+    "category": "STRENGTH",
+    "description": "Postav se bokem k bedně. Polož bližší nohu na bednu a silou stehna a hýždě se vytáhni nahoru. Druhou nohu jen přinož, neodrážej se s ní.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna", "Hýždě"],
+    "isDefault": true
+  },
+  {
+    "id": "t_bar_row",
+    "name": "T-bar přítah v překlonu",
+    "category": "STRENGTH",
+    "description": "V předklonu s rovnými zády uchop T-osu. Přitahuj závaží k hrudníku/břichu stahováním lopatek k sobě. Spodní záda drž zpevněná.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Latissimus", "Rhombický sval", "Biceps", "Spodní záda"],
+    "isDefault": true
+  },
+  {
+    "id": "windmill",
+    "name": "Windmill",
+    "category": "STRENGTH",
+    "description": "Vzpaž ruku se závažím a vytoč špičky nohou od ní. S pohledem upřeným na závaží se ukláněj v boku a dotkni se volnou rukou země u vnitřní strany nohy.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Ramena", "Břicho", "Hýždě", "Zadní stehna"],
+    "isDefault": true
+  },
+  {
+    "id": "farmers_carry",
+    "name": "Farmers Carry",
+    "category": "STRENGTH",
+    "description": "Uchop těžké činky nebo kettlebely do obou rukou. S vypnutým hrudníkem a zataženými rameny jdi kontrolovanou chůzí vpřed.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Břicho", "Ramena", "Přední stehna", "Spodní záda"],
+    "isDefault": true
+  },
     {
       "id": "chest_cable_crossover",
       "name": "Stahování protisměrných kladek",
