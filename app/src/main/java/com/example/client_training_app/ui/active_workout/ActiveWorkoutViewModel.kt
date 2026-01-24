@@ -94,6 +94,7 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
             if (template.isRirEnabled && !template.rir.isNullOrEmpty()) {
                 append(" (RIR ${template.rir})")
             }
+            if (template.isRestEnabled) append(" | Pauza: ${template.rest} s")
         }
     }
     // --- Logika načtení prázdné šablony ---
@@ -123,7 +124,8 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                     isWeightEnabled = template.isWeightEnabled,
                     isTimeEnabled = template.isTimeEnabled,
                     isDistanceEnabled = template.isDistanceEnabled,
-                    isRirEnabled = template.isRirEnabled
+                    isRirEnabled = template.isRirEnabled,
+                    isRestEnabled = template.isRestEnabled
                 )
             }
             _activeExercises.value = uiList
@@ -165,7 +167,8 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                     isWeightEnabled = template.isWeightEnabled,
                     isTimeEnabled = template.isTimeEnabled,
                     isDistanceEnabled = template.isDistanceEnabled,
-                    isRirEnabled = template.isRirEnabled
+                    isRirEnabled = template.isRirEnabled,
+                    isRestEnabled = template.isRestEnabled
                 )
             }.toMutableList()
 
@@ -221,7 +224,8 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                         isWeightEnabled = true,
                         isTimeEnabled = false,
                         isDistanceEnabled = false,
-                        isRirEnabled = true
+                        isRirEnabled = true,
+                        isRestEnabled = false
                     )
                     finalUiList.add(extraItem)
                 }
@@ -241,6 +245,7 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                 time = res.time ?: "",
                 distance = res.distance ?: "",
                 rir = res.rir ?: "",
+                rest = res.rest ?: "",
                 isCompleted = res.isCompleted
             )
         }.toMutableList()
@@ -269,7 +274,8 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
             isWeightEnabled = true,
             isTimeEnabled = false,
             isDistanceEnabled = false,
-            isRirEnabled = true
+            isRirEnabled = true,
+            isRestEnabled = false
         )
 
         currentList.add(newActiveExercise)

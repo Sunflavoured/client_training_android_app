@@ -20,6 +20,7 @@ import com.example.client_training_app.model.ActiveSetUi
 class ActiveWorkoutAdapter(
     private var exercises: List<ActiveExerciseUi>,
     private val onHistoryClick: (exerciseId: String, exerciseName: String) -> Unit,
+    private val onExerciseDetailClick: (exerciseId: String) -> Unit,
     private val onAddSetClicked: (exerciseIndex: Int) -> Unit,
     private val onDragStart: (RecyclerView.ViewHolder) -> Unit,
     private val onSubstituteClicked: (exerciseIndex: Int) -> Unit
@@ -39,6 +40,10 @@ class ActiveWorkoutAdapter(
                     onDragStart(this) // Řekneme Fragmentu: "Začni přesunovat tento řádek"
                 }
                 false
+            }
+
+            binding.tvExerciseName.setOnClickListener {
+                onExerciseDetailClick(exercise.exerciseId)
             }
 
             binding.btnHistory.setOnClickListener {
@@ -61,12 +66,16 @@ class ActiveWorkoutAdapter(
             val hTime = binding.root.findViewById<TextView>(R.id.hTime)
             val hDistance = binding.root.findViewById<TextView>(R.id.hDistance)
             val hRir = binding.root.findViewById<TextView>(R.id.hRir)
+            val hRest = binding.root.findViewById<TextView>(R.id.hRest)
+
 
             hWeight.isVisible = exercise.isWeightEnabled
             hReps.isVisible = exercise.isRepsEnabled
             hTime.isVisible = exercise.isTimeEnabled
             hDistance.isVisible = exercise.isDistanceEnabled
             hRir.isVisible = exercise.isRirEnabled
+            hRest.isVisible = exercise.isRestEnabled
+
 
             // --- 4. VYKRESLENÍ ŘÁDKŮ SÉRIÍ ---
             binding.llSetsContainer.removeAllViews()
@@ -113,6 +122,8 @@ class ActiveWorkoutAdapter(
             val etTime = setView.findViewById<EditText>(R.id.etTime)
             val etDistance = setView.findViewById<EditText>(R.id.etDistance)
             val etRir = setView.findViewById<EditText>(R.id.etRir)
+            val etRest = setView.findViewById<EditText>(R.id.etRest)
+
 
             // --- LOGIKA KOPÍROVACÍHO TLAČÍTKA ---
             if (previousSet != null) {
@@ -134,6 +145,14 @@ class ActiveWorkoutAdapter(
                         etDistance.setText(previousSet.distance)
                         setUi.distance = previousSet.distance
                     }
+                    if (config.isRirEnabled) {
+                        etRir.setText(previousSet.rir)
+                        setUi.rir = previousSet.rir
+                    }
+                    if (config.isRestEnabled) {
+                        etRest.setText(previousSet.rest)
+                        setUi.rest = previousSet.rest
+                    }
                 }
             } else {
                 btnCopy.visibility = View.INVISIBLE
@@ -145,6 +164,7 @@ class ActiveWorkoutAdapter(
             etTime.isVisible = config.isTimeEnabled
             etDistance.isVisible = config.isDistanceEnabled
             etRir.isVisible = config.isRirEnabled
+            etRest.isVisible = config.isRestEnabled
 
             tvSetNumber.text = setUi.setNumber.toString()
             etWeight.setText(setUi.weight)
@@ -152,6 +172,8 @@ class ActiveWorkoutAdapter(
             etTime.setText(setUi.time)
             etDistance.setText(setUi.distance)
             etRir.setText(setUi.rir)
+            etRest.setText(setUi.rest)
+
 
             // --- TEXT WATCHERS (Ukládání) ---
             if (config.isWeightEnabled) etWeight.addSimpleTextWatcher { setUi.weight = it }
@@ -159,6 +181,8 @@ class ActiveWorkoutAdapter(
             if (config.isTimeEnabled) etTime.addSimpleTextWatcher { setUi.time = it }
             if (config.isDistanceEnabled) etDistance.addSimpleTextWatcher { setUi.distance = it }
             if (config.isRirEnabled) etRir.addSimpleTextWatcher { setUi.rir = it }
+            if (config.isRestEnabled) etRest.addSimpleTextWatcher { setUi.rest = it }
+
 
             binding.llSetsContainer.addView(setView)
         }

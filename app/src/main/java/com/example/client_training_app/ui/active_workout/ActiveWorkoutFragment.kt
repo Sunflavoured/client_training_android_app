@@ -81,6 +81,11 @@ class ActiveWorkoutFragment : Fragment(R.layout.fragment_active_workout) {
         adapter = ActiveWorkoutAdapter(
             exercises = emptyList(),
 
+            onExerciseDetailClick = { exerciseId ->
+                val action = ActiveWorkoutFragmentDirections.actionActiveWorkoutToDetail(exerciseId)
+                findNavController().navigate(action)
+            },
+
             onAddSetClicked = { exerciseIndex ->
                 viewModel.addSet(exerciseIndex)
             },

@@ -11,7 +11,8 @@ data class ActiveExerciseUi(
     val isWeightEnabled: Boolean,
     val isTimeEnabled: Boolean,
     val isDistanceEnabled: Boolean,
-    val isRirEnabled: Boolean
+    val isRirEnabled: Boolean,
+    val isRestEnabled: Boolean
 )
 
 // Reprezentuje jeden ŘÁDEK (Sérii)
@@ -22,5 +23,6 @@ data class ActiveSetUi(
     var rir: String = "",
     var time: String = "",
     var distance: String = "",
+    var rest: String = "",
     var isCompleted: Boolean = false
 )
