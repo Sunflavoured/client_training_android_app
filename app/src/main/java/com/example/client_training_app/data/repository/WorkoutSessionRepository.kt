@@ -27,9 +27,8 @@ class WorkoutRepository(context: Context) {
     }
 
     // Získání historie jednoho cviku (pro grafy)
-    fun getExerciseHistoryFlow(clientId: String, exerciseId: String): Flow<List<WorkoutSetResultEntity>> {
-        return dao.getHistoryForExercise(clientId, exerciseId)
-    }
+    fun getExerciseHistory(clientId: String, exerciseId: String) =
+        dao.getExerciseHistory(clientId, exerciseId)
 
     // 1. Zjistit, jestli už k tomuto plánu (z kalendáře) existuje rozdělaný/hotový trénink
     suspend fun getSessionByScheduleId(scheduleId: Long): WorkoutSessionEntity? {

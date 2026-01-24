@@ -76,6 +76,12 @@
         <action
             android:id="@+id/action_activeWorkoutFragment_to_exercisePickerFragment"
             app:destination="@id/exercisePickerFragment" />
+        <action
+            android:id="@+id/action_activeWorkout_to_history"
+            app:destination="@id/exerciseHistoryFragment" />
+        <action
+            android:id="@+id/action_activeWorkout_to_detail"
+            app:destination="@id/exerciseDetailFragment" />
 
         <argument
             android:name="trainingTitle"
@@ -184,7 +190,20 @@
             app:destination="@id/trainingUnitEditorFragment" />
     </fragment>
 
-
+    <fragment
+        android:id="@+id/exerciseHistoryFragment"
+        android:name="com.example.client_training_app.ui.exercise_history.ExerciseHistoryFragment"
+        android:label="Historie cviku">
+        <argument
+            android:name="clientId"
+            app:argType="string" />
+        <argument
+            android:name="exerciseId"
+            app:argType="string" />
+        <argument
+            android:name="exerciseName"
+            app:argType="string" />
+    </fragment>
 
 
 </navigation>

@@ -29,10 +29,8 @@ import com.example.client_training_app.data.entity.WorkoutSetResultEntity
         ScheduledWorkoutEntity::class,
         WorkoutSetResultEntity::class],
 
-    version = 2, // <--- ZVÝŠENÍ VERZE
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ],
+    version = 3, // <--- ZVÝŠENÍ VERZE
+    //autoMigrations = [AutoMigration(from = 2, to = 3)],
     exportSchema = true
 )
 // Deklarace konvertoru

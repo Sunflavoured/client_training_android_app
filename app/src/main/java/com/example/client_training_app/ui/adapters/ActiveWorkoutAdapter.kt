@@ -19,6 +19,7 @@ import com.example.client_training_app.model.ActiveSetUi
 
 class ActiveWorkoutAdapter(
     private var exercises: List<ActiveExerciseUi>,
+    private val onHistoryClick: (exerciseId: String, exerciseName: String) -> Unit,
     private val onAddSetClicked: (exerciseIndex: Int) -> Unit,
     private val onDragStart: (RecyclerView.ViewHolder) -> Unit,
     private val onSubstituteClicked: (exerciseIndex: Int) -> Unit
@@ -38,6 +39,10 @@ class ActiveWorkoutAdapter(
                     onDragStart(this) // Řekneme Fragmentu: "Začni přesunovat tento řádek"
                 }
                 false
+            }
+
+            binding.btnHistory.setOnClickListener {
+                onHistoryClick(exercise.exerciseId, exercise.exerciseName)
             }
 
             // --- 2. MENU LOGIKA (Substitute) ---

@@ -90,6 +90,18 @@ class ActiveWorkoutFragment : Fragment(R.layout.fragment_active_workout) {
                 itemTouchHelper.startDrag(viewHolder)
             },
 
+            onHistoryClick = { exerciseId, exerciseName ->
+                // TADY JE NAVIGACE
+                val clientId = viewModel.currentClientId // Musíme zpřístupnit clientId ve ViewModelu
+
+                val action = ActiveWorkoutFragmentDirections.actionActiveWorkoutToHistory(
+                    clientId = clientId,
+                    exerciseId = exerciseId,
+                    exerciseName = exerciseName
+                )
+                findNavController().navigate(action)
+            },
+
             onSubstituteClicked = { exerciseIndex ->
                 // Uložíme si index a jdeme vybírat náhradní cvik
                 indexToSubstitute = exerciseIndex

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.client_training_app.R
 import com.example.client_training_app.model.Exercise
@@ -26,6 +27,7 @@ object DatabaseInstance {
                 AppDatabase::class.java,
                 "training_database"
             )
+                .addMigrations(MIGRATION_2_3)
                 // Smaže DB při změně verze
                 //.fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
@@ -62,6 +64,12 @@ object DatabaseInstance {
         }
     }
 
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            // Příkaz SQL, který přidá sloupec 'rest' typu TEXT do tabulky
+            database.execSQL("ALTER TABLE workout_set_results ADD COLUMN rest TEXT")
+        }
+    }
     private suspend fun fillWithDefaultExercises(context: Context) {
 
         val database = getDatabase(context)

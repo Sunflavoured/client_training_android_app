@@ -39,7 +39,7 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
 
     // Metadata pro uložení
     private var trainingStartTime: Long = 0
-    private var currentClientId: String = ""
+    var currentClientId: String = ""
     private var currentTrainingUnitId: String? = null
     private var currentTrainingName: String = ""
 
@@ -314,7 +314,7 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
         val endTime = System.currentTimeMillis()
 
         viewModelScope.launch {
-            val sessionEntity = WorkoutSessionEntity(
+             val sessionEntity = WorkoutSessionEntity(
                 id = currentSessionId,
                 clientId = currentClientId,
                 trainingUnitId = currentTrainingUnitId,

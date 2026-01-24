@@ -53,6 +53,15 @@
                     android:textSize="12sp"/>
             </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/btnHistory"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Historie cviku"
+                android:src="@drawable/ic_history_24"
+                app:tint="#757575" />
+
             <ImageView
                 android:id="@+id/ivMenu"
                 android:layout_width="24dp"
