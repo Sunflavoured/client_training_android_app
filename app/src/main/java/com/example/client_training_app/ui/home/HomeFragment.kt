@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             // Voláme metodu pro získání globálních (šablonových) tréninků
             // Ujisti se, že tuto metodu máš v Repository (viz bod níže)
-            trainingRepository.getGlobalUnitsFlow().collect { unitsList ->
+            trainingRepository.getAllUnitsFlow().collect { unitsList ->
                 val count = unitsList.size
                 // Předpokládám, že máš v XML TextView s ID tvTrainingUnitCount
                 binding.tvUnitCount.text = count.toString()
