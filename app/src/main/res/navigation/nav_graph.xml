@@ -10,7 +10,7 @@
     <!-- Profiles/Clients -->
     <fragment
         android:id="@+id/profilesFragment"
-        android:name="com.example.client_training_app.ui.client.ProfilesFragment"
+        android:name="com.example.client_training_app.ui.profile.ProfilesFragment"
         android:label="Profily" >
         <action
             android:id="@+id/action_profilesFragment_to_clientDetailFragment"
@@ -27,12 +27,19 @@
     <!-- Add Profiles/Clients -->
     <fragment
         android:id="@+id/addProfileFragment"
-        android:name="com.example.client_training_app.ui.client.AddProfileFragment"
-        android:label="Nový profil klienta" />
+        android:name="com.example.client_training_app.ui.profile.AddProfileFragment"
+        android:label="Nový profil klienta" >
+        <argument
+            android:name="clientId"
+            app:argType="string"
+            app:nullable="true">
+
+        </argument>
+    </fragment>
 
     <fragment
         android:id="@+id/clientDetailFragment"
-        android:name="com.example.client_training_app.ui.client.ClientDetailFragment"
+        android:name="com.example.client_training_app.ui.profile.ProfileDetailFragment"
         android:label="Detail klienta">
             <argument
                 android:name="clientId"
@@ -40,13 +47,18 @@
             <action
                 android:id="@+id/action_clientDetailFragment_to_trainingCalendarFragment"
                 app:destination="@id/trainingCalendarFragment" />
+        <action
+            android:id="@+id/action_clientDetailFragment_to_addProfileFragment"
+            app:destination="@id/addProfileFragment">
+
+        </action>
 
     </fragment>
 
     <!-- Add Measurments -->
         <fragment
             android:id="@+id/addMeasurementFragment"
-            android:name="com.example.client_training_app.ui.client.AddMeasurementFragment"
+            android:name="com.example.client_training_app.ui.profile.AddMeasurementFragment"
             android:label="Nové měření">
 
             <argument
