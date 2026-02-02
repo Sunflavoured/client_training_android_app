@@ -70,7 +70,8 @@ class MainActivity : AppCompatActivity() {
             R.id.homeFragment,              // Na domovské obrazovce je zbytečný
             R.id.activeWorkoutFragment,     // Aby si nesmazali trénink
             R.id.trainingUnitEditorFragment, // Aby nepřišli o úpravy tréninku
-            R.id.addExerciseFragment        // Aby nepřišli o rozdělaný cvik
+            R.id.addExerciseFragment,        // Aby nepřišli o rozdělaný cvik
+            R.id.addProfileFragment         // Aby nepřišli o editování klienta
         )
 
         // 4. Pokud je aktuální obrazovka na "černé listině", skryjeme tlačítko
