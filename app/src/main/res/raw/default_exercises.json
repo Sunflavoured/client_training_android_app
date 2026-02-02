@@ -110,6 +110,76 @@
     "isDefault": true
   },
   {
+    "id": "sumo_squat",
+    "name": "Sumo dřep",
+    "category": "STRENGTH",
+    "description": "Rozkroč se výrazně šířeji než ramena a špičky vytoč ven. S rovnými zády klesej dolů, kolena tlač směrem za špičkami. Zaměř se na práci vnitřní strany stehen a hýždí.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna", "Hýždě"],
+    "isDefault": true
+  },
+  {
+    "id": "seated_cable_row",
+    "name": "Přítahy v sedě spodní kladka",
+    "category": "STRENGTH",
+    "description": "Posaď se ke stroji, chodidla opři o opěrky, kolena mírně pokrč. S rovnými zády přitahuj adaptér k pasu, lopatky tlač k sobě a ramena drž dole.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Latissimus", "Rhombický sval", "Biceps"],
+    "isDefault": true
+  },
+  {
+    "id": "glute_bridge",
+    "name": "Pánevní most (Glute Bridge)",
+    "category": "STRENGTH",
+    "description": "Lehni si na záda, pokrč kolena a chodidla opři o zem na šířku pánve. S výdechem zvedni pánev nahoru, dokud trup a stehna netvoří jednu přímku. V horní pozici silně stáhni hýždě, neprolamuj se v bedrech.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Hýždě", "Zadní stehna", "Břicho"],
+    "isDefault": true
+  },
+  {
+    "id": "kneeling_leg_curl",
+    "name": "Zákopy v kleče na stroji",
+    "category": "STRENGTH",
+    "description": "Klečni si na stroj a opři se předloktím. Jednu nohu zahákni za válec a plynulým pohybem přitahuj patu k hýždím. V horní pozici chvíli podrž.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Zadní stehna"],
+    "isDefault": true
+  },
+  {
+    "id": "seated_dumbbell_shoulder_press",
+    "name": "Tlaky na ramena v sedě s jednoručkami",
+    "category": "STRENGTH",
+    "description": "Posaď se na lavici s oporou zad. Činky drž u ramen dlaněmi vpřed. Vytlač je obloukem nad hlavu, nahoře se činky mohou lehce dotknout, ale nepropínej úplně lokty.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Ramena", "Triceps"],
+    "isDefault": true
+  },
+  {
+    "id": "single_leg_extension",
+    "name": "Jednonožní předkopávání horní patro",
+    "category": "STRENGTH",
+    "description": "Posaď se na stroj, nastav si válec nad kotníky. Zvedej váhu propínáním nohou v koleni, buď obě najednou nebo nejdřív jedna, pak druhá. Pohyb dolů brzděte.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna"],
+    "isDefault": true
+  },
+  {
+    "id": "reverse_lunge",
+    "name": "Výpady vzad",
+    "category": "STRENGTH",
+    "description": "Ze stoje vykroč jednou nohou dozadu a klesni do výpadu, dokud se zadní koleno téměř nedotkne země. Přední koleno by nemělo jít příliš před špičku. Vrať se zpět do stoje.",
+    "mediaType": "NONE",
+    "mediaUrl": "",
+    "muscleGroups": ["Přední stehna", "Hýždě", "Zadní stehna"],
+    "isDefault": true
+  },
+  {
     "id": "shoulder_pass_throughs",
     "name": "Rotace ramen s tyčí",
     "category": "MOBILITY",
