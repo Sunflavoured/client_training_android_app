@@ -1,7 +1,9 @@
 package com.example.client_training_app.ui.training_unit
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,12 +17,19 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.client_training_app.utils.TransferManager
 
 class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_library) {
 
     private lateinit var binding: FragmentTrainingUnitLibraryBinding
     private lateinit var adapter: TrainingUnitAdapter
     private val viewModel: TrainingUnitEditorViewModel by viewModels()
+
+    private val openFileLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        uri?.let { performImport(it) }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,6 +39,25 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
         loadTrainingUnits()
         setupFab()
         setupSwipeToDelete()
+
+        binding.btnImport.setOnClickListener {
+            // Otevře systémový výběr souborů, filtruje JSON
+            openFileLauncher.launch(arrayOf("application/json", "application/octet-stream"))
+        }
+    }
+
+    private fun performImport(uri: Uri) {
+        lifecycleScope.launch {
+            val transferManager = TransferManager(requireContext())
+            val success = transferManager.importTrainingUnit(uri)
+
+            if (success) {
+                Toast.makeText(context, "Trénink úspěšně nahrán!", Toast.LENGTH_LONG).show()
+                // Tady zavolej reload seznamu (např. viewModel.loadUnits())
+            } else {
+                Toast.makeText(context, "Chyba při importu. Je soubor platný?", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -126,7 +154,7 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.absoluteAdapterPosition
                 val unitToDelete = adapter.currentList[position]
-                adapter.notifyItemChanged(position)
+
                 // Zobrazíme Dialog
                 android.app.AlertDialog.Builder(requireContext())
                     .setTitle("Smazat trénink?")
@@ -142,16 +170,12 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
                         ).show()
                     }
                     .setNegativeButton("Zrušit") { dialog, _ ->
-                        // Teprve až když řekne ANO, mažeme
-                        viewModel.deleteTrainingUnit(unitToDelete)
-
-                        com.google.android.material.snackbar.Snackbar.make(
-                            binding.root,
-                            "Trénink byl smazán",
-                            com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
-                        ).show()
+                        // Uživatel zrušil -> NIC NEMAŽEME
+                        // Jen musíme vrátit řádek zpátky (zrušit swipe efekt)
+                        adapter.notifyItemChanged(position)
+                        dialog.dismiss()
                     }
-                    .setNegativeButton("Zrušit", null) // Nemusíme dělat nic, řádek už je zpátky
+                    .setCancelable(false) // Aby nešlo kliknout mimo a nechat to viset
                     .show()
             }
         }

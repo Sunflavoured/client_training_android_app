@@ -1,8 +1,15 @@
 package com.example.client_training_app.ui.training_unit
 
 import android.os.Bundle
+import android.view.Menu           // <--- PŘIDÁNO
+import android.view.MenuInflater   // <--- PŘIDÁNO
+import android.view.MenuItem       // <--- PŘIDÁNO
 import android.view.View
+import android.widget.Toast
+import androidx.core.view.MenuHost // <--- PŘIDÁNO
+import androidx.core.view.MenuProvider // <--- PŘIDÁNO
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle // <--- PŘIDÁNO
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -11,8 +18,9 @@ import com.example.client_training_app.R
 import com.example.client_training_app.data.repository.TrainingUnitRepository
 import com.example.client_training_app.databinding.FragmentTrainingUnitDetailBinding
 import com.example.client_training_app.model.TemplateExercise
-import com.example.client_training_app.model.toExercise // Import extension funkce
+import com.example.client_training_app.model.toExercise
 import com.example.client_training_app.ui.adapters.TrainingDetailAdapter
+import com.example.client_training_app.utils.TransferManager
 import kotlinx.coroutines.launch
 
 class TrainingUnitDetailFragment : Fragment(R.layout.fragment_training_unit_detail) {
@@ -32,8 +40,29 @@ class TrainingUnitDetailFragment : Fragment(R.layout.fragment_training_unit_deta
         setupRecyclerView() // 1. Nastavíme prázdný recyclerView
         loadData(unitId)    // 2. Načteme data
         setupButtons(unitId) // 3. Tlačítko pro editaci
+        setupMenu(unitId)
     }
 
+    private fun setupMenu(unitId: String) {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Nafoukneme menu s tlačítkem Sdílet
+                menuInflater.inflate(R.menu.menu_training_detail, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_share -> {
+                        // Po kliknutí spustíme export
+                        exportTraining(unitId)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
     private fun setupRecyclerView() {
         // Inicializujeme adaptér s prázdným seznamem
         // Kliknutí na cvik v detailu zatím nemusí nic dělat (nebo může otevřít detail cviku)
@@ -100,6 +129,41 @@ class TrainingUnitDetailFragment : Fragment(R.layout.fragment_training_unit_deta
                 findNavController().navigate(action)
             }
         }
+
+    private fun exportTraining(unitId: String) {
+        lifecycleScope.launch {
+            val transferManager = TransferManager(requireContext())
+            val jsonString = transferManager.exportTrainingUnit(unitId)
+
+            if (jsonString != null) {
+                shareJsonFile(jsonString, "trenink_export.json")
+            } else {
+                Toast.makeText(context, "Chyba exportu", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun shareJsonFile(jsonContent: String, fileName: String) {
+        // 1. Uložíme do dočasného souboru v cache
+        val file = java.io.File(requireContext().cacheDir, fileName)
+        file.writeText(jsonContent)
+
+        // 2. Vytvoříme URI přes FileProvider (Bezpečné sdílení)
+        // POZOR: Musíš mít nastavený FileProvider v Manifestu (viz bod 6)
+        val uri = androidx.core.content.FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.provider",
+            file
+        )
+
+        // 3. Otevřeme systémové sdílení
+        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+            type = "application/json" // Nebo "text/plain" pro WhatsApp
+            putExtra(android.content.Intent.EXTRA_STREAM, uri)
+            addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(android.content.Intent.createChooser(intent, "Sdílet trénink přes..."))
+    }
     }
 
 
