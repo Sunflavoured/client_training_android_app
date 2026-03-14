@@ -41,22 +41,38 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
         setupSwipeToDelete()
 
         binding.btnImport.setOnClickListener {
-            // Otevře systémový výběr souborů, filtruje JSON
-            openFileLauncher.launch(arrayOf("application/json", "application/octet-stream"))
+            // Povolíme výběr jakéhokoliv souboru (*/*).
+// Neboj, pokud to nebude náš JSON, TransferManager vyhodí chybu při parsování, takže aplikace nespadne.
+            openFileLauncher.launch(arrayOf("*/*"))
         }
     }
 
     private fun performImport(uri: Uri) {
         lifecycleScope.launch {
-            val transferManager = TransferManager(requireContext())
-            val success = transferManager.importTrainingUnit(uri)
+            // Zobrazíme info, že se něco děje
+            Toast.makeText(context, "Nahrávám...", Toast.LENGTH_SHORT).show()
 
-            if (success) {
-                Toast.makeText(context, "Trénink úspěšně nahrán!", Toast.LENGTH_LONG).show()
-                // Tady zavolej reload seznamu (např. viewModel.loadUnits())
-            } else {
-                Toast.makeText(context, "Chyba při importu. Je soubor platný?", Toast.LENGTH_LONG).show()
+            val transferManager = TransferManager(requireContext())
+            val result = transferManager.importTrainingUnit(uri)
+
+            // Zpracování výsledku (Result)
+            result.onSuccess { successMessage ->
+                Toast.makeText(context, successMessage, Toast.LENGTH_LONG).show()
+                // Zde případně reload seznamu, pokud používáš ViewModel
+                // viewModel.loadUnits()
             }
+                .onFailure { exception ->
+                    // Vypíšeme CELÝ STACKTRACE do dialogu, nejen message
+                    // Díky tomu uvidíme např. "JsonSyntaxException" nebo "SecurityException"
+                    val fullError = android.util.Log.getStackTraceString(exception)
+
+                    android.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Chyba importu")
+                        // Pokud je fullError moc dlouhý, zobrazíme aspoň toString
+                        .setMessage(exception.toString() + "\n\n" + exception.message)
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
         }
     }
 

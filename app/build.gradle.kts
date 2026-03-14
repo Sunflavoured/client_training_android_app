@@ -24,6 +24,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-DEV"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -32,6 +36,7 @@ android {
             )
         }
     }
+
     compileOptions {
         // Povolení Java 8+ features (Desugaring)
         isCoreLibraryDesugaringEnabled = true

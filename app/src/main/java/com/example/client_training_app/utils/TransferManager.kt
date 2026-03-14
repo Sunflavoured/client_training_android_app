@@ -41,41 +41,59 @@ class TransferManager(private val context: Context) {
     }
 
     // --- IMPORT ---
-    suspend fun importTrainingUnit(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+    suspend fun importTrainingUnit(uri: Uri): Result<String> = withContext(Dispatchers.IO) {
         try {
             // 1. Přečteme JSON ze souboru
             val inputStream = context.contentResolver.openInputStream(uri)
+                ?: return@withContext Result.failure(Exception("Nelze otevřít stream (soubor nenalezen)"))
+
             val reader = BufferedReader(InputStreamReader(inputStream))
             val jsonString = reader.use { it.readText() }
 
-            // 2. Převedeme zpět na Objekt
-            val pkg = gson.fromJson(jsonString, TrainingUnitExportPackage::class.java)
+            // Zkusíme parsovat
+            val pkg = try {
+                gson.fromJson(jsonString, TrainingUnitExportPackage::class.java)
+            } catch (e: Exception) {
+                return@withContext Result.failure(Exception("Vadný formát souboru (není to JSON trénink)"))
+            }
+
+            if (pkg == null || pkg.unit == null) {
+                return@withContext Result.failure(Exception("Prázdný nebo neplatný soubor"))
+            }
 
             // 3. Uložíme do databáze (Transakce zajistí, že se uloží buď vše, nebo nic)
             db.withTransaction {
-                // 1. Uložíme definice cviků (aby klient měl cvik "Dřep")
+                // 1. Uložíme definice cviků (To je OK)
                 db.exerciseDao().upsertAll(pkg.exerciseDefinitions)
 
-                // 2. Uložíme/Aktualizujeme hlavičku tréninku (Tady funguje to UUID!)
-                db.trainingUnitDao().upsertUnit(pkg.unit)
+                // 2. Uložíme/Aktualizujeme hlavičku tréninku
+                // --- OPRAVA ZDE ---
+                // Původní kód: db.trainingUnitDao().upsertUnit(pkg.unit)
 
-                // 3. Vyčistíme starý seznam cviků pro tento trénink
+                // Nový kód: Vytvoříme kopii tréninku a vymažeme clientId,
+                // aby se trénink nesnažil připojit k neexistujícímu klientovi.
+                val safeUnit = pkg.unit.copy(clientId = null)
+
+                db.trainingUnitDao().upsertUnit(safeUnit)
+                // ------------------
+
+                // 3. Vyčistíme starý seznam cviků
                 db.trainingUnitDao().deleteExercisesForUnit(pkg.unit.id)
 
-                // 4. Vložíme nový seznam cviků
-                // TADY JE TA POJISTKA: Resetujeme ID na 0.
-                // Říkáme tím DB: "Považuj to za nové řádky a přiděl jim svá vlastní volná čísla."
+                // 4. Vložíme nový seznam cviků (s resetovaným ID řádků)
                 val safeExercises = pkg.exercisesInUnit.map {
-                    it.copy(id = 0)
+                    it.copy(id = 0) // Zde měníme ID vazby (pokud máš Int), to je OK
                 }
 
                 // Vložíme bezpečné entity
                 db.trainingUnitDao().insertUnitExercises(safeExercises)
             }
-            return@withContext true
+            return@withContext Result.success("Trénink '${pkg.unit.name}' úspěšně nahrán!")
+
         } catch (e: Exception) {
             e.printStackTrace()
-            return@withContext false
+            // Vrátíme konkrétní chybu
+            return@withContext Result.failure(e)
+            }
         }
     }
-}

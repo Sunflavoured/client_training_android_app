@@ -1,10 +1,12 @@
 package com.example.client_training_app.data.entity
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.client_training_app.data.database.Converters
 
+@Keep
 @Entity(tableName = "exercises")
 @TypeConverters(Converters::class)
 data class ExerciseEntity(
