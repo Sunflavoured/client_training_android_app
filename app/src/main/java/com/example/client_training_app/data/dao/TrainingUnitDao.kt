@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.example.client_training_app.data.entity.TrainingUnitEntity
 import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +45,6 @@ interface TrainingUnitDao {
     }
 
     // 2. Pro editaci (Update = Smazat staré vazby + Vložit nové)
-    // OPRAVA: Musí to být 'suspend', protože volá jiné suspend funkce
     @Transaction
     suspend fun updateTrainingUnitWithExercises(unit: TrainingUnitEntity, exercises: List<TrainingUnitExerciseEntity>) {
         // A) Aktualizuj hlavičku (změna názvu, poznámky)
@@ -74,5 +74,16 @@ interface TrainingUnitDao {
 
     @Query("SELECT * FROM training_units WHERE clientId IS NULL OR clientId = :clientId")
     fun getAvailableUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
+
+    // Pro export
+    @Query("SELECT * FROM training_units WHERE id = :unitId")
+    fun getUnitById(unitId: String): TrainingUnitEntity?
+
+    @Query("SELECT * FROM training_unit_exercises WHERE trainingUnitId = :unitId")
+    fun getExercisesForUnit(unitId: String): List<TrainingUnitExerciseEntity>
+
+    // Pro import
+    @Upsert
+    suspend fun upsertUnit(unit: TrainingUnitEntity)
 
 }

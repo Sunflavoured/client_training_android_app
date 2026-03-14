@@ -1,10 +1,12 @@
 package com.example.client_training_app.data.entity
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+@Keep
 @Entity(
     tableName = "training_unit_exercises",
     foreignKeys = [

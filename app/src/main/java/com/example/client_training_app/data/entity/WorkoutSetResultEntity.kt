@@ -38,6 +38,7 @@ data class WorkoutSetResultEntity(
     val time: String? = null,   // v sekundách
     val distance: String? = null,
     val rir: String? = null,    // Rezerva
+    val rest: String? = null,
 
     val isCompleted: Boolean = true // Zda byla série skutečně dokončena
 )

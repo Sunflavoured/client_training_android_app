@@ -3,6 +3,7 @@ package com.example.client_training_app.data.repository
 import android.content.Context
 import com.example.client_training_app.data.dao.ExerciseDao
 import com.example.client_training_app.data.database.DatabaseInstance
+import com.example.client_training_app.data.entity.ExerciseEntity
 import com.example.client_training_app.model.Exercise
 import com.example.client_training_app.model.toEntity
 import com.example.client_training_app.model.toExercise
@@ -12,8 +13,6 @@ import kotlinx.coroutines.flow.map
 class ExerciseRepository(context: Context) {
 
     private val exerciseDao: ExerciseDao = DatabaseInstance.getDatabase(context).exerciseDao()
-
-    // UŽ ŽÁDNÉ manual loadDefaultExercises()!
 
     // Vrátí Flow se všemi cviky (Teď už jsou VŠECHNY v DB)
     fun getAllExercisesFlow(): Flow<List<Exercise>> {

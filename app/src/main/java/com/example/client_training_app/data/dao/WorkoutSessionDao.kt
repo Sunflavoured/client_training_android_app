@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import com.example.client_training_app.data.entity.WorkoutSetResultEntity
+import com.example.client_training_app.model.ExerciseHistoryItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -35,15 +36,15 @@ interface WorkoutSessionDao {
     @Query("SELECT * FROM workout_set_results WHERE sessionId = :sessionId ORDER BY exerciseId, setNumber")
     suspend fun getSetsForSession(sessionId: String): List<WorkoutSetResultEntity>
 
-    // 5. (Pro budoucí grafy) Načíst historii konkrétního cviku pro klienta
-    // Spojujeme tabulky, abychom mohli filtrovat podle klienta i cviku
+    // 5. Načíst historii konkrétního cviku pro klienta
     @Query("""
-        SELECT sets.* FROM workout_set_results AS sets
-        INNER JOIN workout_sessions AS session ON sets.sessionId = session.id
-        WHERE session.clientId = :clientId AND sets.exerciseId = :exerciseId
-        ORDER BY session.startTime DESC
+        SELECT s.id as sessionId, s.startTime, r.setNumber, r.weight, r.reps, r.rir, r.time, r.distance, r.rest, r.isCompleted
+        FROM workout_sessions s
+        INNER JOIN workout_set_results r ON s.id = r.sessionId
+        WHERE s.clientId = :clientId AND r.exerciseId = :exerciseId
+        ORDER BY s.startTime DESC, r.setNumber ASC
     """)
-    fun getHistoryForExercise(clientId: String, exerciseId: String): Flow<List<WorkoutSetResultEntity>>
+    fun getExerciseHistory(clientId: String, exerciseId: String): kotlinx.coroutines.flow.Flow<List<ExerciseHistoryItem>>
 
     // načtení plánovaého tréninku podle ID, aby měl předvyplněná data
     @Query("SELECT * FROM workout_sessions WHERE scheduledWorkoutId = :scheduleId LIMIT 1")

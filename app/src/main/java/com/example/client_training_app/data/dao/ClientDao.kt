@@ -21,7 +21,7 @@ interface ClientDao {
     suspend fun update(client: ClientEntity)
 
     @Delete
-    suspend fun delete(client: ClientEntity)
+    suspend fun deleteClient(client: ClientEntity)
 
     @Query("SELECT * FROM clients ORDER BY lastName ASC, firstName ASC")
     fun getAllClients(): Flow<List<ClientEntity>>

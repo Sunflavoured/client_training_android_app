@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.client_training_app.R
 import com.example.client_training_app.model.Exercise
@@ -26,33 +27,35 @@ object DatabaseInstance {
                 AppDatabase::class.java,
                 "training_database"
             )
-                // .fallbackToDestructiveMigration() // Smaže DB při změně verze
-                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_2_3)
+                // Smaže DB při změně verze
+                //.fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
                     // 1. Volá se při prvním vytvoření souboru DB
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        Log.d("DatabaseInstance", "onCreate: Plním databázi defaultními daty")
-                        CoroutineScope(Dispatchers.IO).launch {
-                            fillWithDefaultExercises(context)
-                        }
                     }
 
-                    // 2. Volá se, když proběhne destruktivní migrace (zvýšení verze + smazání dat)
+
+                    /*// 2. Volá se, když proběhne destruktivní migrace (zvýšení verze + smazání dat)
                     override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
                         super.onDestructiveMigration(db)
                         Log.d("DatabaseInstance", "onDestructiveMigration: Plním databázi po migraci")
                         CoroutineScope(Dispatchers.IO).launch {
                             fillWithDefaultExercises(context)
                         }
-                    }
+                    }*/
 
-                    // 3. (Volitelné) Pojistka: Volá se při každém otevření
+                    // 3.  Volá se při každém otevření
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
                         // Můžeme zkontrolovat, zda je tabulka prázdná, a pokud ano, doplnit data
                         // To ale vyžaduje přístup k DAO, který uvnitř callbacku na 'db' nemáme přímo,
                         // takže to necháme na onCreate/onDestructiveMigration.
+                        Log.d("DatabaseInstance", "onCreate: Plním databázi defaultními daty")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            fillWithDefaultExercises(context)
+                        }
                     }
                 })
                 .build()
@@ -61,39 +64,36 @@ object DatabaseInstance {
         }
     }
 
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            // Příkaz SQL, který přidá sloupec 'rest' typu TEXT do tabulky
+            database.execSQL("ALTER TABLE workout_set_results ADD COLUMN rest TEXT")
+        }
+    }
     private suspend fun fillWithDefaultExercises(context: Context) {
-        // Pozor: Zde musíme použít getDatabase(context), ale nesmíme se zacyklit.
-        // Protože už jsme uvnitř build procesu, je bezpečnější v této fázi
-        // spoléhat na to, že instance už je přiřazena nebo ji vytáhnout opatrně.
-        // V tomto případě je volání getDatabase(context) uvnitř coroutiny bezpečné,
-        // protože build() už doběhl.
 
         val database = getDatabase(context)
         val exerciseDao = database.exerciseDao()
 
-        // Rychlá kontrola: Pokud už tam data jsou, nic nedělej (aby se neduplikovaly)
-        if (exerciseDao.getExerciseCount() > 0) {
-            Log.d("DatabaseInstance", "Databáze už obsahuje cviky, přeskakuji import.")
-            return
-        }
 
         try {
-            Log.d("DatabaseInstance", "Začínám import JSONu...")
+            Log.d("DatabaseInstance", "Začínám import JSONu...") // Pro méně spamu v logu můžeš zakomentovat
+
             val inputStream = context.resources.openRawResource(R.raw.default_exercises)
             val jsonString = inputStream.bufferedReader().use { it.readText() }
 
             val type = object : TypeToken<List<Exercise>>() {}.type
             val exercises: List<Exercise> = Gson().fromJson(jsonString, type)
 
-            Log.d("DatabaseInstance", "Načteno ${exercises.size} cviků z JSONu. Ukládám...")
-
             val entities = exercises.map { it.toEntity() }
-            exerciseDao.insertAll(entities)
 
-            Log.d("DatabaseInstance", "Hotovo! Cviky uloženy.")
+            // Díky OnConflictStrategy.REPLACE v DAO se existující cviky aktualizují
+            // a nové se přidají.
+            exerciseDao.upsertAll(entities)
+
+            Log.d("DatabaseInstance", "Hotovo! Cviky synchronizovány s JSONem. Počet: ${exercises.size}")
 
         } catch (e: Exception) {
-            // TOTO JE DŮLEŽITÉ: Podívej se do Logcatu (vyhledat "DatabaseInstance" nebo "System.err")
             Log.e("DatabaseInstance", "Chyba při importu cviků!", e)
             e.printStackTrace()
         }

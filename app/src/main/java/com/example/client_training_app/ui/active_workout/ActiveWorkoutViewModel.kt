@@ -9,17 +9,23 @@ import com.example.client_training_app.data.entity.WorkoutSessionEntity
 import com.example.client_training_app.data.entity.WorkoutSetResultEntity
 import com.example.client_training_app.data.repository.ScheduleRepository
 import com.example.client_training_app.data.repository.TrainingUnitRepository
-import com.example.client_training_app.data.repository.WorkoutRepository // Ujisti se, že se jmenuje takto (nebo WorkoutSessionRepository)
+import com.example.client_training_app.data.entity.TrainingUnitExerciseEntity
+import com.example.client_training_app.data.repository.ExerciseRepository
+import com.example.client_training_app.data.repository.WorkoutRepository
 import com.example.client_training_app.model.ActiveExerciseUi
 import com.example.client_training_app.model.ActiveSetUi
 import kotlinx.coroutines.launch
 import java.util.UUID
+import java.util.Collections // Import pro swap
 
 class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(application) {
 
+    private var isDataLoaded = false
     private val unitRepository = TrainingUnitRepository(application)
     private val workoutRepository = WorkoutRepository(application)
     private val scheduleRepository = ScheduleRepository(application)
+
+    private val exerciseRepository = ExerciseRepository(application)
 
     private val _trainingNote = MutableLiveData<String?>()
     val trainingNote: LiveData<String?> = _trainingNote
@@ -33,7 +39,7 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
 
     // Metadata pro uložení
     private var trainingStartTime: Long = 0
-    private var currentClientId: String = ""
+    var currentClientId: String = ""
     private var currentTrainingUnitId: String? = null
     private var currentTrainingName: String = ""
 
@@ -41,8 +47,9 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
     private var scheduledWorkoutId: Long? = null
 
     // ID samotného tréninku (Session)
-    // Pokud editujeme, bude to ID z databáze. Pokud je nový, vygenerujeme ho.
     private var currentSessionId: String = UUID.randomUUID().toString()
+
+
 
     fun startWorkout(trainingUnitId: String, clientId: String, scheduleId: Long?) {
         trainingStartTime = System.currentTimeMillis()
@@ -50,29 +57,46 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
         currentTrainingUnitId = trainingUnitId
         scheduledWorkoutId = scheduleId
 
+        if (isDataLoaded) {
+            return // Pokud už máme data, nic nedělej a nečti znovu z DB
+        }
+        isDataLoaded = true
+
         viewModelScope.launch {
-            // 1. Zkusíme zjistit, jestli už k tomuto plánu existuje historie (Editace)
-            // (Musíš mít v repo metodu getSessionByScheduleId - viz poznámka pod kódem)
             var existingSession: WorkoutSessionEntity? = null
 
             if (scheduleId != null) {
-                // POZOR: Tuto metodu musíš mít v Repository/DAO, pokud ti svítí červeně, viz níže
                 existingSession = workoutRepository.getSessionByScheduleId(scheduleId)
             }
 
             if (existingSession != null) {
                 // --- SCÉNÁŘ A: Editace existujícího tréninku ---
-                currentSessionId = existingSession.id // Použijeme existující ID pro přepis
+                currentSessionId = existingSession.id
                 currentTrainingName = existingSession.trainingName
                 loadFromHistory(existingSession)
             } else {
                 // --- SCÉNÁŘ B: Nový trénink (Šablona) ---
-                currentSessionId = UUID.randomUUID().toString() // Nové ID
+                currentSessionId = UUID.randomUUID().toString()
                 loadFromTemplate(trainingUnitId)
             }
         }
     }
-
+    // Pomocná funkce - vyrobí text "Cíl: 4 x 10 op. @ 50kg..."
+    private fun buildTargetString(template: TrainingUnitExerciseEntity): String {
+        return buildString {
+            append("Cíl: ${template.sets}")
+            if (template.isRepsEnabled) append(" x ${template.reps ?: "?"} op.")
+            if (template.isTimeEnabled) append(" x ${template.time ?: "?"} s")
+            if (template.isDistanceEnabled) append(" x ${template.distance ?: "?"} km")
+            if (template.isWeightEnabled && !template.weight.isNullOrEmpty()) {
+                append(" @ ${template.weight} kg")
+            }
+            if (template.isRirEnabled && !template.rir.isNullOrEmpty()) {
+                append(" (RIR ${template.rir})")
+            }
+            if (template.isRestEnabled) append(" | Pauza: ${template.rest} s")
+        }
+    }
     // --- Logika načtení prázdné šablony ---
     private suspend fun loadFromTemplate(unitId: String) {
         val unitWithExercises = unitRepository.getTrainingUnitWithExercises(unitId)
@@ -92,26 +116,16 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                 ActiveExerciseUi(
                     exerciseId = detail.exercise.id,
                     exerciseName = detail.exercise.name,
-                    targetNote = buildString {
-                        append("🎯 Cíl: ${template.sets}")
 
-                        if (template.isRepsEnabled) append("x ${template.reps ?: "?"} op.")
-                        if (template.isTimeEnabled) append("x ${template.time ?: "?"} s")
-                        if (template.isDistanceEnabled) append("x ${template.distance ?: "?"} km")
-                        if (template.isWeightEnabled && !template.weight.isNullOrEmpty()) {
-                            append(" @ ${template.weight} kg") }
-                        if (template.isRirEnabled && !template.rir.isNullOrEmpty()) {
-                            append(" | RIR ${template.rir}") }
-                        if (template.isRestEnabled) append(" | Pauza: ${template.rest ?: "?"} s")
-                    },
+                    targetNote = buildTargetString(template),
+
                     sets = prefilledSets,
-
-                    // Konfigurace
                     isRepsEnabled = template.isRepsEnabled,
                     isWeightEnabled = template.isWeightEnabled,
                     isTimeEnabled = template.isTimeEnabled,
                     isDistanceEnabled = template.isDistanceEnabled,
-                    isRirEnabled = template.isRirEnabled
+                    isRirEnabled = template.isRirEnabled,
+                    isRestEnabled = template.isRestEnabled
                 )
             }
             _activeExercises.value = uiList
@@ -120,58 +134,121 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
 
     // --- Logika načtení historie (Editace) ---
     private suspend fun loadFromHistory(session: WorkoutSessionEntity) {
-        // 1. Načteme hotové série z DB
-        // (Metodu getSetsForSession musíš mít v repo)
         val results = workoutRepository.getSetsForSession(session.id)
-
-        // 2. Načteme i šablonu, abychom věděli názvy cviků a konfiguraci (sloupečky)
         val unitWithExercises = unitRepository.getTrainingUnitWithExercises(session.trainingUnitId ?: "")
 
         if (unitWithExercises != null) {
             _trainingNote.value = unitWithExercises.trainingUnit.note
-            // Seskupíme výsledky podle ID cviku, aby se nám lépe hledaly
             val resultsByExercise = results.groupBy { it.exerciseId }
 
-            val uiList = unitWithExercises.exercises.map { detail ->
-                val template = detail.trainingData
+            // 1. Nejprve si připravíme seznam podle šablony (zatím bez extra cviků)
+            val templateExerciseIds = unitWithExercises.exercises.map { it.exercise.id }.toSet()
 
-                // Najdeme hotové série pro tento cvik
+            // Tento list budeme postupně upravovat
+            val finalUiList = unitWithExercises.exercises.map { detail ->
+                val template = detail.trainingData
                 val historySets = resultsByExercise[detail.exercise.id] ?: emptyList()
 
-                // Převedeme DB entity na UI modely
+                // Pokud máme historii, použijeme ji. Jinak vytvoříme prázdné chlívky.
                 val activeSets = if (historySets.isNotEmpty()) {
-                    historySets.map { res ->
-                        ActiveSetUi(
-                            setNumber = res.setNumber,
-                            weight = res.weight ?: "",
-                            reps = res.reps ?: "",
-                            time = res.time ?: "",
-                            distance = res.distance ?: "",
-                            rir = res.rir ?: "",
-                            isCompleted = res.isCompleted
-                        )
-                    }.toMutableList()
+                    mapHistoryToUi(historySets)
                 } else {
-                    // Pokud v historii pro tento cvik nic není (divné, ale možné), dáme prázdné
                     MutableList(template.sets.toIntOrNull() ?: 3) { ActiveSetUi(setNumber = it + 1) }
                 }
 
+                // Vytvoříme objekt (zatím původní cvik ze šablony)
                 ActiveExerciseUi(
                     exerciseId = detail.exercise.id,
                     exerciseName = detail.exercise.name,
-                    targetNote = "Upravit záznam", // Nebo původní note
+                    targetNote = buildTargetString(template),
                     sets = activeSets,
-
-                    // Konfigurace bereme ze šablony
+                    // Konfigurace
                     isRepsEnabled = template.isRepsEnabled,
                     isWeightEnabled = template.isWeightEnabled,
                     isTimeEnabled = template.isTimeEnabled,
                     isDistanceEnabled = template.isDistanceEnabled,
-                    isRirEnabled = template.isRirEnabled
+                    isRirEnabled = template.isRirEnabled,
+                    isRestEnabled = template.isRestEnabled
                 )
+            }.toMutableList()
+
+            // 2. Najdeme "Extra" cviky (Ty, co jsou v historii, ale ne v šabloně)
+            val extraExerciseIds = resultsByExercise.keys.filter { !templateExerciseIds.contains(it) }.toMutableList()
+
+            // 3. LOGIKA SUBSTITUCE: Zkusíme napárovat Extra cviky na Prázdná místa v šabloně
+            // Projdeme seznam a hledáme místa, kde nic není vyplněno
+            for (i in finalUiList.indices) {
+                // Pokud už nemáme žádné extra cviky na rozdání, končíme
+                if (extraExerciseIds.isEmpty()) break
+
+                val item = finalUiList[i]
+
+                // Je tento cvik v šabloně "prázdný"? (Tj. žádná historie pro jeho ID)
+                val isSkippedInHistory = resultsByExercise[item.exerciseId] == null
+
+                if (isSkippedInHistory) {
+                    // MÁME SHODU: Prázdné místo v šabloně + Máme extra cvik "v ruce"
+                    val extraId = extraExerciseIds.removeAt(0) // Vezmeme první extra cvik
+                    val extraSets = resultsByExercise[extraId] ?: emptyList()
+                    val extraDef = exerciseRepository.getExerciseById(extraId)
+
+                    if (extraDef != null) {
+                        // Vytvoříme nový UI prvek (Ten nahrazující cvik)
+                        val newItem = item.copy(
+                            exerciseId = extraDef.id,
+                            exerciseName = extraDef.name,
+                            targetNote = "Nahrazeno: ${item.exerciseName}", // Ponecháme info o původním cviku
+                            sets = mapHistoryToUi(extraSets),
+                            // U náhradního cviku nevíme config, necháme původní nebo zapneme vše
+                            isRepsEnabled = true,
+                            isWeightEnabled = true
+                        )
+                        // Přepíšeme původní prázdný cvik tímto novým
+                        finalUiList[i] = newItem
+                    }
+                }
             }
-            _activeExercises.value = uiList
+
+            // 4. Pokud zbyly ještě nějaké Extra cviky (které se nevešly do náhrad), přidáme je nakonec
+            for (extraId in extraExerciseIds) {
+                val extraSets = resultsByExercise[extraId] ?: emptyList()
+                val extraDef = exerciseRepository.getExerciseById(extraId)
+
+                if (extraDef != null) {
+                    val extraItem = ActiveExerciseUi(
+                        exerciseId = extraDef.id,
+                        exerciseName = extraDef.name,
+                        targetNote = "Cvik navíc",
+                        sets = mapHistoryToUi(extraSets),
+                        isRepsEnabled = true,
+                        isWeightEnabled = true,
+                        isTimeEnabled = false,
+                        isDistanceEnabled = false,
+                        isRirEnabled = true,
+                        isRestEnabled = false
+                    )
+                    finalUiList.add(extraItem)
+                }
+            }
+
+            _activeExercises.value = finalUiList
         }
+    }
+
+    // Pomocná metoda pro převod DB výsledků na UI (aby se kód neopakoval)
+    private fun mapHistoryToUi(historySets: List<WorkoutSetResultEntity>): MutableList<ActiveSetUi> {
+        return historySets.map { res ->
+            ActiveSetUi(
+                setNumber = res.setNumber,
+                weight = res.weight ?: "",
+                reps = res.reps ?: "",
+                time = res.time ?: "",
+                distance = res.distance ?: "",
+                rir = res.rir ?: "",
+                rest = res.rest ?: "",
+                isCompleted = res.isCompleted
+            )
+        }.toMutableList()
     }
 
     fun addSet(exerciseIndex: Int) {
@@ -179,8 +256,62 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
         val exercise = currentList[exerciseIndex]
         val newSetNumber = exercise.sets.size + 1
         exercise.sets.add(ActiveSetUi(setNumber = newSetNumber))
+        _activeExercises.value = currentList.toList()
+    }
 
-        // Vynutíme update (vytvoříme novou referenci listu, aby LiveData zareagovala)
+    // --- NOVÉ FUNKCE PRO ÚPRAVU TRÉNINKU ZA BĚHU ---
+
+    fun addNewExercise(exercise: com.example.client_training_app.model.Exercise) {
+        val currentList = _activeExercises.value?.toMutableList() ?: return
+        val newSets = MutableList(3) { ActiveSetUi(setNumber = it + 1) }
+
+        val newActiveExercise = ActiveExerciseUi(
+            exerciseId = exercise.id,
+            exerciseName = exercise.name,
+            targetNote = "Extra cvik",
+            sets = newSets,
+            isRepsEnabled = true,
+            isWeightEnabled = true,
+            isTimeEnabled = false,
+            isDistanceEnabled = false,
+            isRirEnabled = true,
+            isRestEnabled = false
+        )
+
+        currentList.add(newActiveExercise)
+        _activeExercises.value = currentList.toList()
+    }
+
+    fun substituteExercise(oldExerciseIndex: Int, newExercise: com.example.client_training_app.model.Exercise) {
+        val currentList = _activeExercises.value?.toMutableList() ?: return
+        if (oldExerciseIndex !in currentList.indices) return
+
+        val oldItem = currentList[oldExerciseIndex]
+        // Resetujeme hodnoty, ale necháme počet sérií
+        val newSets = oldItem.sets.map { it.copy(weight = "", reps = "", time = "", distance = "") }.toMutableList()
+
+        val newItem = oldItem.copy(
+            exerciseId = newExercise.id,
+            exerciseName = newExercise.name,
+            targetNote = "Nahrazeno: ${oldItem.exerciseName}",
+            sets = newSets
+        )
+
+        currentList[oldExerciseIndex] = newItem
+        _activeExercises.value = currentList.toList()
+    }
+
+    fun moveExercise(fromPosition: Int, toPosition: Int) {
+        val currentList = _activeExercises.value?.toMutableList() ?: return
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(currentList, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(currentList, i, i - 1)
+            }
+        }
         _activeExercises.value = currentList.toList()
     }
 
@@ -189,23 +320,21 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
         val endTime = System.currentTimeMillis()
 
         viewModelScope.launch {
-            // 1. Hlavička (používáme currentSessionId - buď nové, nebo to co editujeme)
-            val sessionEntity = WorkoutSessionEntity(
+             val sessionEntity = WorkoutSessionEntity(
                 id = currentSessionId,
                 clientId = currentClientId,
                 trainingUnitId = currentTrainingUnitId,
-                scheduledWorkoutId = scheduledWorkoutId, // <--- Ukládáme vazbu na kalendář
+                scheduledWorkoutId = scheduledWorkoutId,
                 trainingName = currentTrainingName,
                 startTime = trainingStartTime,
                 endTime = endTime
             )
 
-            // 2. Výsledky
             val resultEntities = mutableListOf<WorkoutSetResultEntity>()
 
             exercises.forEach { exerciseUi ->
                 exerciseUi.sets.forEach { setUi ->
-                    // Ukládáme jen smysluplná data
+                    // Ukládáme jen pokud je něco vyplněno nebo odškrtnuto
                     if (setUi.isCompleted || setUi.weight.isNotEmpty() || setUi.reps.isNotEmpty() || setUi.time.isNotEmpty()) {
                         resultEntities.add(WorkoutSetResultEntity(
                             sessionId = currentSessionId,
@@ -222,10 +351,8 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
                 }
             }
 
-            // 3. Uložení (DAO používá @Insert(onConflict = REPLACE), takže to funguje i pro update)
             workoutRepository.saveWorkout(sessionEntity, resultEntities)
 
-            // 4. Odškrtnutí v kalendáři
             scheduledWorkoutId?.let { id ->
                 scheduleRepository.markAsCompleted(id)
             }

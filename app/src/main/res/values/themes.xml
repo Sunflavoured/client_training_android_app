@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Main App Theme -->
-    <style name="Theme.TrainerApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.TrainerApp" parent="Theme.Material3.Light.NoActionBar">
 
         <!-- Primary Colors (Deep Blue/Navy) -->
         <item name="colorPrimary">#1E3A8A</item>          <!-- Deep Blue -->

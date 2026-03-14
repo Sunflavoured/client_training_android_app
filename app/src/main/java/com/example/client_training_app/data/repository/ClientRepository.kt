@@ -54,6 +54,10 @@ class ClientRepository(context: Context) {
         clientDao.update(client.toEntity())
     }
 
+    suspend fun deleteClient(client: Client) {
+        clientDao.deleteClient(client.toEntity())
+    }
+
     // --- METODY PRO MĚŘENÍ ---
 
     /** Uložení nového měření do databáze */

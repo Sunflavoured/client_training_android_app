@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+//Umí do jednoho políčka v databázi uložit celý seznam textů (např. seznam svalových partií: "Nohy", "Zadek", "Lýtka").
 class Converters {
 
     private val gson = Gson()

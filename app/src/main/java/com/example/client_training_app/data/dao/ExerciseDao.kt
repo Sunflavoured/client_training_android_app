@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.example.client_training_app.data.entity.ExerciseEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -21,12 +22,19 @@ interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(exercises: List<ExerciseEntity>) // Klíčové pro JSON import
 
+    @Upsert
+    suspend fun upsertAll(exercises: List<ExerciseEntity>)
+
     // SELECTS
     @Query("SELECT * FROM exercises ORDER BY name ASC")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
 
     @Query("SELECT * FROM exercises WHERE id = :id")
     suspend fun getExerciseById(id: String): ExerciseEntity?
+
+    // Pro získání definic pro export
+    @Query("SELECT * FROM exercises WHERE id IN (:ids)")
+    fun getExercisesByIds(ids: List<String>): List<ExerciseEntity>
 
     // UPDATES
     @Update

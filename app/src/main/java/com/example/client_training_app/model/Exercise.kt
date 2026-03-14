@@ -46,7 +46,7 @@ enum class MuscleGroup(val displayName: String) {
     CALVES("Lýtka"),
     BICEPS("Biceps"),
     TRICEPS("Triceps"),
-    GLUTES("Gluteus");
+    GLUTES("Hýždě");
 
     companion object {
         // Helper funkce pro získání všech názvů

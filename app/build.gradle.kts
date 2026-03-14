@@ -2,26 +2,32 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.navigation.safeargs.kotlin)
-    id("com.google.devtools.ksp")
-    //plugin který umožňuje přenášet objekty mezi fragmenty
+    // Použijeme alias z toml, aby seděla verze
+    alias(libs.plugins.ksp)
     id("kotlin-parcelize")
 }
 
 android {
     namespace = "com.example.client_training_app"
-    compileSdk = 36
+    compileSdk = 34 // Stabilní SDK, 36 je preview/beta, raději dej 34 nebo 35
 
     defaultConfig {
         applicationId = "com.example.client_training_app"
-        minSdk = 24
-        targetSdk = 36
+        minSdk = 26 // Zvednuto na 26 (Android 8) pro lepší kompatibilitu s Time API
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-DEV"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -30,13 +36,15 @@ android {
             )
         }
     }
+
     compileOptions {
+        // Povolení Java 8+ features (Desugaring)
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         viewBinding = true
@@ -44,46 +52,40 @@ android {
 }
 
 dependencies {
+    // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Navigation Component
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Lifecycle & Coroutines
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Tools & Libs
+    implementation(libs.gson)
+    implementation(libs.calendar.view)
+    implementation(libs.youtube.player)
+
+    // Desugaring (pro práci s časem na starších androidech)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
 
-    // Material + androidx (you might have duplicates here with libs.material above)
-    implementation("com.google.android.material:material:1.11.0") // Updated version
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.recyclerview:recyclerview:1.3.2") // Updated version
-
-    // Navigation Component - Updated versions
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-
-    // Gson
-    implementation("com.google.code.gson:gson:2.10.1")
-
-    // Room Database
-    val room_version = "2.8.3"
-
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-
-    //lifecycle a corountines
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    implementation("androidx.fragment:fragment-ktx:1.8.2")
-
-    // Moderní kalendář
-    implementation("com.kizitonwose.calendar:view:2.5.0")
-
-    // Pro práci s datem (Java Time API desugaring - pro starší Androidy, jistota)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
-
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }

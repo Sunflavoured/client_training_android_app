@@ -3,13 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_settings"
-        android:title="Nastavení"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_about"
-        android:title="O aplikaci"
-        app:showAsAction="never" />
-
+        android:id="@+id/action_home"
+        android:icon="@drawable/ic_home"
+        android:title="Domů"
+        app:showAsAction="ifRoom" />
 </menu>

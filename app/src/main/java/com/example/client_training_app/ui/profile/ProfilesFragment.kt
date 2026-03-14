@@ -1,4 +1,4 @@
-package com.example.client_training_app.ui.client
+package com.example.client_training_app.ui.profile
 
 import android.os.Bundle
 import android.text.Editable
