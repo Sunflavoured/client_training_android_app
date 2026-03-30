@@ -8,9 +8,24 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.client_training_app.databinding.ActivityMainBinding
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    // Třídu pro JSON přesuneme sem nahoru (nebo úplně mimo MainActivity)
+    data class GitHubRelease(val tag_name: String, val html_url: String)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,82 +39,124 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
+        navController.addOnDestinationChangedListener { _, _, _ ->
             invalidateOptionsMenu()
         }
 
         // Connect Toolbar to NavController
         NavigationUI.setupActionBarWithNavController(this, navController)
 
-        //  Back arrow click
+        // Back arrow click
         binding.topAppBar.setNavigationOnClickListener {
             when (navController.currentDestination?.id) {
                 R.id.homeFragment -> {
                     // prostor pro Hamburger menu (otevření šuplíku)
                 }
-
                 else -> {
-                    // Zavoláme systémové zpět.
-                    // To aktivuje OnBackPressedCallback ve tvém EditorFragmentu.
                     onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
+
+        // ZDE JEN ZAVOLÁME FUNKCI PRO KONTROLU AKTUALIZACÍ
+        checkForUpdates(this)
     }
 
+    // --- FUNKCE JSOU NYNÍ VENKU Z onCreate ---
+
+    private fun checkForUpdates(activity: android.app.Activity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // TADY ZKONTROLUJ TU URL (musí začínat api.github.com/repos/...)//releases
+                val urlString = "https://api.github.com/repos/Sunflavoured/client_training_android_app/releases/latest"
+                Log.d("UpdateCheck", "Zkouším se připojit na: $urlString")
+
+                val url = URL(urlString)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+                val responseCode = connection.responseCode
+                Log.d("UpdateCheck", "GitHub odpověděl kódem: $responseCode")
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    Log.d("UpdateCheck", "Odpověď z GitHubu: $response") // Vypíše, co přesně přišlo
+
+                    val release = Gson().fromJson(response, GitHubRelease::class.java)
+
+                    val latestVersion = release.tag_name.replace("v", "")
+                    val currentVersion = BuildConfig.VERSION_NAME
+
+                    Log.d("UpdateCheck", "Moje verze: $currentVersion, GitHub verze: $latestVersion")
+
+                    if (latestVersion != currentVersion) {
+                        Log.d("UpdateCheck", "Verze se liší, zobrazuji dialog!")
+                        withContext(Dispatchers.Main) {
+                            showUpdateDialog(activity, release.html_url)
+                        }
+                    } else {
+                        Log.d("UpdateCheck", "Máme nejnovější verzi, nic nedělám.")
+                    }
+                } else {
+                    Log.e("UpdateCheck", "Chyba API. Kód: $responseCode")
+                }
+            } catch (e: Exception) {
+                // TADY SE ZACHYTÍ TA TVOJE ILLEGAL CHYBA
+                Log.e("UpdateCheck", "Spadlo to na kritické chybě!", e)
+            }
+        }
+    }
+
+    private fun showUpdateDialog(activity: android.app.Activity, releaseUrl: String) {
+        AlertDialog.Builder(activity)
+            .setTitle("Nová verze k dispozici! \uD83D\uDE80") // Raketa emoji
+            .setMessage("Je dostupná nová aktualizace aplikace. Doporučujeme si ji stáhnout pro ty nejlepší funkce a opravy. Tvoje tréninky zůstanou zachovány.")
+            .setPositiveButton("Stáhnout aktualizaci") { _, _ ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(releaseUrl))
+                activity.startActivity(intent)
+            }
+            .setNegativeButton("Později", null)
+            .show()
+    }
+
+    // --- ZBYTEK TVÉHO KÓDU PRO MENU ---
+
     override fun onSupportNavigateUp(): Boolean {
-        // I zde je lepší volat onBackPressed, aby byla logika jednotná,
-        // kdyby se náhodou listener nespustil (ale ten výše má přednost).
         onBackPressedDispatcher.onBackPressed()
         return true
     }
 
-    // 1. Zobrazíme ikonku v horní liště
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
-        // 1. Získáme NavController (abychom věděli, kde jsme)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
-
-        // 2. Zjistíme ID aktuální obrazovky
         val currentId = navController.currentDestination?.id
 
-        // 3. Seznam ID, kde chceme domeček SKRÝT
-        // (Zkontroluj si v nav_graph.xml, že se ta ID jmenují přesně takto!)
         val hideHomeButtonDestinations = setOf(
-            R.id.homeFragment,              // Na domovské obrazovce je zbytečný
-            R.id.activeWorkoutFragment,     // Aby si nesmazali trénink
-            R.id.trainingUnitEditorFragment, // Aby nepřišli o úpravy tréninku
-            R.id.addExerciseFragment,        // Aby nepřišli o rozdělaný cvik
-            R.id.addProfileFragment         // Aby nepřišli o editování klienta
+            R.id.homeFragment,
+            R.id.activeWorkoutFragment,
+            R.id.trainingUnitEditorFragment,
+            R.id.addExerciseFragment,
+            R.id.addProfileFragment
         )
 
-        // 4. Pokud je aktuální obrazovka na "černé listině", skryjeme tlačítko
         if (currentId in hideHomeButtonDestinations) {
             menu?.findItem(R.id.action_home)?.isVisible = false
         } else {
-            // Jinak ho pro jistotu zobrazíme (kdyby bylo skryté z minula)
             menu?.findItem(R.id.action_home)?.isVisible = true
         }
-
         return true
     }
 
-    // 2. Co se stane, když na ni klikneš
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_home -> {
-                // Najdeme NavController
-                val navHostFragment =
-                    supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
                 val navController = navHostFragment.navController
-
                 navController.popBackStack(R.id.homeFragment, false)
                 true
             }
-            // Tady můžeš obsloužit i kliknutí na Profily, pokud ho přidáš do menu
-            // R.id.action_profile -> { ... }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
