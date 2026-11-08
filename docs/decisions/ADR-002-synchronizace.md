@@ -1,6 +1,6 @@
 # ADR-002: Synchronizace Room ↔ Supabase
 
-Stav: **návrh** (rozhodnout po dokončení datového modelu v2, fáze 3)
+Stav: **návrh**, relevantní jen při volbě Supabase (viz ADR-001). Při volbě Firebase synchronizaci zajišťuje Firestore a tento záznam odpadá.
 Datum: 2026-11-08
 
 ## Kontext

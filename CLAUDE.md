@@ -52,7 +52,8 @@ a po splnění položky ji odškrtnout. Nové nápady patří do sekce *Backlog 
 - Zůstat u nativního Android Kotlinu, webová aplikace pro trenéra vznikne zvlášť (React + TypeScript).
 - Cílem je sdílená cloudová databáze s přihlášením (trenér spravuje tréninky klientů), práce offline
   s lokálním Room jako zdrojem pravdy a následnou synchronizací.
-- Backend: kandidáti Supabase vs Firebase, zatím nerozhodnuto.
+- Rozsah (upřesněno 2026-11-08): pilot s několika klienty a demonstrace při obhajobě, po obhajobě se aplikace neprovozuje.
+- Backend: Firebase (Spark) vs Supabase (free), zatím nerozhodnuto, návrh v `docs/decisions/ADR-001-backend.md`.
 - Plánovaný refaktor datového modelu před synchronizací: UUID ve všech tabulkách, `updatedAt` a `deletedAt`,
   číselné hodnoty místo textu (váha, opakování, RIR), program → fáze → jednotka.
 - Text diplomky je v samostatném repozitáři v Markdownu (později LaTeX); zdroje ověřuje uživatelka.
