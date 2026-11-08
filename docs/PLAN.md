@@ -23,6 +23,8 @@ Poslední aktualizace: 2026-11-08
 - Workflow: Claude Code + Android Studio (USB, kontrola diffu), GitHub issues přes `gh`, změny na větvích, nic se nepushuje bez souhlasu, commity jsou podepsané.
 - Text diplomky je v **samostatném repozitáři** jako Markdown, později převod do LaTeXu. Zdroje ověřuje Erika. Pravidla školy k AI řeší Erika sama v textu práce.
 - Dnešní verze: DEV (debug, přípona `.dev`, nahrává se přes USB) a PROD (release, aktualizace podepsaná klíčem). To zůstává.
+- **Strategie v1 a v2 (dohodnuto 2026-11-08):** v1 (`com.example.client_training_app`) se stabilizuje a běží dál v praxi, repozitář zůstává **veřejný** (kontrola aktualizací a stahování APK z Releases). v2 vznikne jako **nová aplikace** v **novém privátním repozitáři** s novým `applicationId`, názvem a keystorem. Data se přenesou importem z exportu v1.
+- Větší přestavba rozložení aplikace (spodní lišta, boční panel s přepínáním klientů) patří do v2, viz sekce *Návrh rozložení aplikace v2*. U v1 se dělají jen drobná vizuální vylepšení.
 
 ## 2. Otevřené otázky
 
@@ -31,8 +33,7 @@ Poslední aktualizace: 2026-11-08
 - Klientský režim: má klient vlastní účet a zapisuje sám, a zapisuje trenér také za klienta při osobním tréninku? (viz 1.2)
 - Registrace trenérů: volná, nebo jen na pozvání?
 - Může mít klient více trenérů, nebo vždy jednoho?
-- Nový `applicationId` a název (viz 1.9). Zobrazovaný název lze měnit kdykoli. `applicationId` ne bez následků: je to nová aplikace, data se přenesou jen přes cloud.
-- Kde je uložený keystore pro podepisování PROD verze? (viz 0.4)
+- Konkrétní `applicationId` a název v2 (viz 1.9). Po publikaci v Google Play už ID nejde změnit.- Kde je uložený keystore pro podepisování PROD verze? (viz 0.4)
 
 ## 3. Milníky
 
@@ -56,13 +57,14 @@ Pořadí priorit při tlaku na termín: M1 až M5 a M7 jsou jádro. Z M6 vzít n
 - [ ] 0.1 Spouštět Android Studio z `C:\Program Files\Android\Android Studio1\bin\studio64.exe` (viz poznámky na konci), opravit zástupce.
 - [x] 0.2 Přihlásit `gh` (hotovo, účet Sunflavoured).
 - [ ] 0.3 **Zálohovat** celou složku `client_training_app` mimo Git a **exportovat databázi z telefonu s PROD verzí** (jsou v ní reálná data klientů). Udělat před jakýmkoli instalováním nové verze.
-- [ ] 0.4 Zálohovat keystore pro podepisování PROD APK mimo repo (heslo do 1Passwordu). Bez něj nelze vydat aktualizaci přes existující instalaci. Zapsat si, kde keystore je.
+- [ ] 0.4 Keystore PROD je v `C:\Users\erika\OneDrive\Training_App_klicenka\moje_klicenka` (složka byla přejmenována, Android Studio ukazuje ještě na starou cestu `...\Training_App\...`, při příštím podepisování ji přenastavit). Ověřit, že odpovídá PROD APK (otisk SHA-256 podpisu `7accf4cb…42d5`, příkaz `keytool -list -v -keystore <soubor>`, heslo zadáš jen ty). Uložit soubor jako přílohu do 1Passwordu a heslo k němu. Bez klíče nelze vydat aktualizaci přes existující instalaci.
 - [ ] 0.5 Ověřit, že DEV build (`.dev`) se instaluje vedle PROD a data nesdílí (dosud fungovalo).
 - [ ] 0.6 Pushnout `chore/repo-cleanup` a otevřít PR do `master`, potom PR pro `04-dev-features`. Po sloučení vytvořit nový release.
 - [ ] 0.7 Commitnout tento soubor a odkaz na něj v `CLAUDE.md`.
 - [ ] 0.8 Založit repozitář diplomky (Markdown): kapitoly, `sources.md` (zdroj, odkaz, stav ověření a datum), složka `decisions/`, složka `figures/`.
 - [ ] 0.9 Projít stávající issues (#1 až #13). Většina odpovídá už hotovým funkcím (profily, cviky, kalendář, jednotky, historie, sdílení), zavřít ty hotové a zbytek přeřadit. Nové issues podle tohoto plánu s milníky M1 až M7 a štítky `bug`, `feature`, `backend`, `data-model`, `sync`, `thesis`.
 - [ ] 0.10 Smazat staré sloučené větve na GitHubu (01, 02, 03). Volitelné, až po sloučení.
+- [ ] 0.11 Vytvořit **privátní** repozitář pro v2 (až bude rozhodnuté `applicationId` a název, viz 1.9). V1 repozitář zůstává veřejný.
 
 ## Fáze 1 – Analýza a rozhodnutí (před psaním kódu)
 
@@ -83,14 +85,15 @@ Pořadí priorit při tlaku na termín: M1 až M5 a M7 jsou jádro. Z M6 vzít n
   - vztah trenér–klient a účet vs profil klienta (klient může existovat bez účtu).
 - [ ] 1.7 Bezpečnost a GDPR: matice oprávnění (kdo co vidí), souhlas klienta, doba uchování, právo na výmaz a export, smlouva se zpracovatelem, region EU, zásady ochrany osobních údajů. Jde o zdravotní údaje. Pozor na role: dokud aplikaci používá jen Erika, je správcem údajů ona. Pokud ji budou používat další trenéři, stává se provozovatelem platformy (zpracovatelem) a trenéři správci. To je téma pro návrh a diplomku, právní dokumenty pro cizí trenéry teď neřešit.
 - [ ] 1.8 Uživatelské toky a drátěné modely aplikace: přihlášení, pozvání klienta, plánování fází, zápis tréninku, grafy.
-- [ ] 1.9 Rozhodnout `applicationId` a název aplikace. Přenos dat řeší cloud, viz 5.7.
+- [ ] 1.9 Rozhodnout `applicationId` a název aplikace. **Návrh:** v2 jako nová aplikace (nové ID, nový název, nový keystore uložený od začátku v 1Passwordu). V1 (`com.example.client_training_app`) běží dál pro praxi a dostává jen opravy z fáze 2. Po publikaci v Google Play už ID nelze změnit, proto ho vybrat s rozmyslem. Přenos dat: import exportu z v1 (viz 2.0 a 5.7), ne migrace na místě.
 - [ ] 1.10 Kritéria úspěchu a způsob testování (offline scénáře, uživatelský test, případně dotazník použitelnosti). Podklad pro kapitolu o testování.
 - [ ] 1.11 Multi-tenance: model trenér–klient, kdo může založit účet trenéra, globální cviky vs vlastní cviky trenéra, sdílení programů v rámci jednoho trenéra (mezi trenéry až později).
 
 ## Fáze 2 – Stabilizace stávající aplikace
 
-Malé opravy před refaktorem. Neřešit zde nic, co se mění ve fázi 3.
+Opravy v1 (stávající aplikace, stejné `applicationId` a klíč), které se vydají jako aktualizace PROD. Neřešit zde nic, co se mění ve fázi 3. Pracovat na samostatné větvi, testovat přes DEV build (má vlastní databázi, data PROD se nedotkne).
 
+- [ ] 2.0 **Záloha a export všech dat** (klienti, jednotky, kalendář, historie, měření) do jednoho souboru přes sdílení a import/obnova z něj. Dnes se ze stávající PROD databáze nedá nic vytáhnout (aplikace není ladicí, `adb backup` na Android 12+ nefunguje, export umí jen jednu tréninkovou jednotku). Po instalaci aktualizace udělat **jako první věc** zálohu. Soubor je zároveň podklad pro přenos do v2.
 - [ ] 2.1 Ukládat `rest` při dokončení tréninku (dnes se do `WorkoutSetResultEntity` nepřenáší).
 - [ ] 2.2 Kalendář: výběr tréninku sbírá Flow bez ukončení, bottom sheet se může otevírat opakovaně (ověřit a opravit).
 - [ ] 2.3 Kalendář: označit splněné tréninky (kód je zakomentovaný).
@@ -99,6 +102,11 @@ Malé opravy před refaktorem. Neřešit zde nic, co se mění ve fázi 3.
 - [ ] 2.6 Výchozí cviky se přepisují z JSON při každém otevření databáze. Verzovat seed, ať se uživatelské úpravy nepřepíšou.
 - [ ] 2.7 Základní testy (DAO, migrace Room) jako záchranná síť před refaktorem.
 - [ ] 2.8 Zvážit zapnutí minifikace u release (ověřit Gson a Room).
+- [ ] 2.9 **Úprava šablony nesmí měnit nic jiného.** `insertOrUpdateUnit` používá REPLACE, který řádek smaže a znovu vloží. Na kopii databáze ověřeno: odcvičeným tréninkům se přitom smaže odkaz na šablonu (`SET NULL`) a smažou se její cviky (`CASCADE`). Nahradit skutečným UPDATE/UPSERT. Důsledek, který Erika popsala: trénink v kalendáři zůstane, ale po otevření je prázdný. Pravděpodobná příčina: `ActiveWorkoutViewModel.loadFromHistory` bere ID šablony ze session (po REPLACE je null) místo z parametru z kalendáře. Opravit i toto (použít ID z kalendáře, při chybějící šabloně zobrazit uložené série), čímž se napraví i již poškozená data. Ověřit testem.
+- [ ] 2.10 Smazání šablony, která je naplánovaná v kalendáři, narazí na cizí klíč (na kopii databáze ověřeno: `FOREIGN KEY constraint failed`, v aplikaci pravděpodobně pád). Ošetřit: varování a rozhodnutí, co se plánem stane.
+- [ ] 2.11 Přidání **nového cviku** přímo z výběru cviků (během tréninku i při tvorbě jednotky). Dnes výběr cviků jen vybírá, tlačítko pro nový cvik chybí.
+- [ ] 2.12 Změna **pořadí cviků** v editoru tréninkové jednotky (dnes jde jen v aktivním tréninku). Táhnutí nebo šipky nahoru/dolů, editor je v rolovacím okně.
+- [ ] 2.13 Drobná vizuální vylepšení v1: seznam konkrétních výhrad od Eriky (obrazovka, co vadí), pak po jedné obrazovce. Přestavba rozložení je záležitost v2.
 
 ## Fáze 3 – Datový model v2 v aplikaci (Room)
 
@@ -129,7 +137,7 @@ Malé opravy před refaktorem. Neřešit zde nic, co se mění ve fázi 3.
 - [ ] 5.4 Stav synchronizace v UI (čeká / synchronizováno / chyba).
 - [ ] 5.5 Testy offline scénářů: letecký režim, přerušené spojení, dvě zařízení.
 - [ ] 5.6 Jednorázové nahrání stávajících lokálních dat do cloudu (se zálohou před spuštěním).
-- [ ] 5.7 Přechod na nový `applicationId` / název (pokud se rozhodne). Postup: všechna zařízení plně synchronizovat, ověřit data v cloudu, nainstalovat novou aplikaci, přihlásit se, ověřit stažení, až potom odinstalovat starou. Neodeslaná lokální data ve staré instalaci by se jinak ztratila. Kontrola nové verze přes GitHub Releases na novou aplikaci nenaváže. Udělat dřív, než aplikaci dostanou klienti.
+- [ ] 5.7 Přenos dat z v1 do v2 (v2 má nové `applicationId`): import souboru z exportu v1 (viz 2.0), kontrola počtů záznamů (klienti, jednotky, kalendář, tréninky, série), nahrání do cloudu. V1 ponechat jako zálohu, dokud pilot neprojde. Klienti dostanou rovnou v2. Kontrola nové verze přes GitHub Releases na v2 nenaváže, je potřeba nový mechanismus (viz 9.2).
 
 ## Fáze 6 – Plánování a klientský režim v aplikaci
 
@@ -209,6 +217,17 @@ Pravidla pro psaní: každý zdroj do `sources.md` se stavem ověření, citace 
 - **Podepisování commitů:** přes 1Password. Pokud je 1Password zamčený, commit se zasekne a vyprší čas. Před commitem odemknout 1Password a potvrdit dialog.
 - **DEV a PROD:** debug build má příponu `.dev`, instaluje se vedle PROD a data nesdílí.
 - **Issues na GitHubu:** #1 až #13, většina je dnes už funkčně hotová, viz 0.9.
+
+## Návrh rozložení aplikace v2 (k rozpracování v 1.8)
+
+Nápad od Eriky, určeno pro v2. Dnešní rozcestník na hlavní stránce se nahradí běžnou navigací.
+
+- **Spodní lišta** přepíná hlavní sekce: *Přehled*, *Kalendář tréninků*, *Měření*, *Knihovna* (databáze tréninků a cviků).
+- **Vysouvací levý panel** s přepínáním osoby: výchozí je uživatel sám („já“), pod ním jeho klienti. Po přepnutí ukazují všechny sekce data vybraného klienta.
+- **Klientský režim** má stejné rozložení bez přepínání osob, vidí jen vlastní data.
+- Princip: *kdo* (osoba v levém panelu) je oddělené od *co* (sekce ve spodní liště).
+- K rozhodnutí: co přesně je *Přehled* (dnešní trénink, nejbližší plán, poslední výsledky, rychlé akce), kam patří správa klientů a nastavení účtu, zda má *Knihovna* záložky *Tréninky* a *Cviky*.
+- Navazuje na model oprávnění z 1.7 (kdo smí přepnout na koho).
 
 ## Backlog nápadů
 
