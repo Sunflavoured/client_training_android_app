@@ -102,10 +102,11 @@ Opravy v1 (stávající aplikace, stejné `applicationId` a klíč), které se v
 - [ ] 2.6 Výchozí cviky se přepisují z JSON při každém otevření databáze. Verzovat seed, ať se uživatelské úpravy nepřepíšou.
 - [ ] 2.7 Základní testy (DAO, migrace Room) jako záchranná síť před refaktorem.
 - [ ] 2.8 Zvážit zapnutí minifikace u release (ověřit Gson a Room).
-- [ ] 2.9 **Úprava šablony nesmí měnit nic jiného.** `insertOrUpdateUnit` používá REPLACE, který řádek smaže a znovu vloží. Na kopii databáze ověřeno: odcvičeným tréninkům se přitom smaže odkaz na šablonu (`SET NULL`) a smažou se její cviky (`CASCADE`). Nahradit skutečným UPDATE/UPSERT. Důsledek, který Erika popsala: trénink v kalendáři zůstane, ale po otevření je prázdný. Pravděpodobná příčina: `ActiveWorkoutViewModel.loadFromHistory` bere ID šablony ze session (po REPLACE je null) místo z parametru z kalendáře. Opravit i toto (použít ID z kalendáře, při chybějící šabloně zobrazit uložené série), čímž se napraví i již poškozená data. Ověřit testem.
-- [ ] 2.10 Smazání šablony, která je naplánovaná v kalendáři, narazí na cizí klíč (na kopii databáze ověřeno: `FOREIGN KEY constraint failed`, v aplikaci pravděpodobně pád). Ošetřit: varování a rozhodnutí, co se plánem stane.
+- [x] 2.9 (hotovo na větvi `fix/stabilizace`, pokryto testy `TemplateEditIntegrityTest`, ověřeno na emulátoru) **Úprava šablony nesmí měnit nic jiného.** `insertOrUpdateUnit` používá REPLACE, který řádek smaže a znovu vloží. Na kopii databáze ověřeno: odcvičeným tréninkům se přitom smaže odkaz na šablonu (`SET NULL`) a smažou se její cviky (`CASCADE`). Nahradit skutečným UPDATE/UPSERT. Důsledek, který Erika popsala: trénink v kalendáři zůstane, ale po otevření je prázdný. Pravděpodobná příčina: `ActiveWorkoutViewModel.loadFromHistory` bere ID šablony ze session (po REPLACE je null) místo z parametru z kalendáře. Opravit i toto (použít ID z kalendáře, při chybějící šabloně zobrazit uložené série), čímž se napraví i již poškozená data. Ověřit testem.
+- [x] 2.10 (hotovo na větvi `fix/stabilizace`: varování s počtem naplánovaných a odcvičených, plán se smaže spolu se šablonou, historie zůstane; ověřeno testy, dialog zatím vizuálně neověřen) Smazání šablony, která je naplánovaná v kalendáři, narazí na cizí klíč (na kopii databáze ověřeno: `FOREIGN KEY constraint failed`, v aplikaci pravděpodobně pád). Ošetřit: varování a rozhodnutí, co se plánem stane.
 - [ ] 2.11 Přidání **nového cviku** přímo z výběru cviků (během tréninku i při tvorbě jednotky). Dnes výběr cviků jen vybírá, tlačítko pro nový cvik chybí.
 - [ ] 2.12 Změna **pořadí cviků** v editoru tréninkové jednotky (dnes jde jen v aktivním tréninku). Táhnutí nebo šipky nahoru/dolů, editor je v rolovacím okně.
+- [ ] 2.14 Z kalendáře jde naplánovaný trénink jen přidat, **odebrat ho nejde** (smazání je v kódu, ale chybí v obrazovce). Přidat odebrání, nejlépe s potvrzením.
 - [ ] 2.13 Drobná vizuální vylepšení v1: seznam konkrétních výhrad od Eriky (obrazovka, co vadí), pak po jedné obrazovce. Přestavba rozložení je záležitost v2.
 
 ## Fáze 3 – Datový model v2 v aplikaci (Room)
@@ -216,6 +217,7 @@ Pravidla pro psaní: každý zdroj do `sources.md` se stavem ověření, citace 
 - **`gh`:** nainstalované a přihlášené (účet Sunflavoured, oprávnění `repo`, `read:org`, `gist`). Terminály spuštěné před instalací ho nemusí vidět v PATH, pak volat plnou cestou `C:\Program Files\GitHub CLI\gh.exe`.
 - **Podepisování commitů:** přes 1Password. Pokud je 1Password zamčený, commit se zasekne a vyprší čas. Před commitem odemknout 1Password a potvrdit dialog.
 - **DEV a PROD:** debug build má příponu `.dev`, instaluje se vedle PROD a data nesdílí.
+- **Lokální build a testy:** Claude Code umí aplikaci sestavit (`gradlew`) a spustit instrumentované testy na běžícím emulátoru Pixel_6 (Android 16). Testy používají databázi v paměti a data aplikace se nedotýkají. Gradle běží na JDK `C:\Users\erika\.jdks\jbr-21.0.11`. Po testech zůstává na emulátoru nainstalovaná DEV aplikace a testovací APK, PROD balíček se nemění. Na fyzický telefon se bez tvého svolení nic neinstaluje.
 - **Issues na GitHubu:** #1 až #13, většina je dnes už funkčně hotová, viz 0.9.
 
 ## Návrh rozložení aplikace v2 (k rozpracování v 1.8)

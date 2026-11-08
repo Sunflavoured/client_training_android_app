@@ -25,6 +25,11 @@ Komunikace i commity jsou česky.
 Aplikaci spouští a ladí uživatelka v Android Studiu (USB zařízení). Z terminálu:
 - `.\gradlew.bat assembleDebug` – debug build (`applicationId` má příponu `.dev`, verze `-DEV`)
 - `.\gradlew.bat testDebugUnitTest` – unit testy (zatím jen šablona)
+- `.\gradlew.bat connectedDebugAndroidTest "-Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true"` – instrumentované testy
+  na běžícím emulátoru (bez přepínače by je Gradle po testech odinstaloval i s daty DEV aplikace). Jeden test:
+  `"-Pandroid.testInstrumentationRunnerArguments.class=com.example.client_training_app.data.TemplateEditIntegrityTest"`
+- Gradle musí běžet na JDK 21: `JAVA_HOME=C:\Users\erika\.jdks\jbr-21.0.11` (JDK v Android Studiu je 25, Gradle 8.13 ho oficiálně nepodporuje; projekt používá 21),
+  `ANDROID_HOME=C:\Users\erika\AppData\Local\Android\Sdk`
 - Release APK vzniká v Android Studiu (Build → Generate Signed Bundle / APK) do `app/release/`;
   složka je ignorovaná gitem, APK se nahrává do GitHub Releases. Keystore si zálohuj mimo repo,
   bez něj nelze vydat aktualizaci přes existující instalaci.
