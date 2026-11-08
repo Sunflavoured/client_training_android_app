@@ -139,6 +139,10 @@ class AddExerciseFragment : Fragment() {
             lifecycleScope.launch {
                 repository.addExercise(newExercise)
                 Toast.makeText(requireContext(), "Cvik uložen", Toast.LENGTH_SHORT).show()
+                // Když jsme přišli z výběru cviků, nový cvik se tam rovnou vybere
+                findNavController().previousBackStackEntry
+                    ?.takeIf { it.destination.id == R.id.exercisePickerFragment }
+                    ?.savedStateHandle?.set("new_exercise", newExercise)
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }

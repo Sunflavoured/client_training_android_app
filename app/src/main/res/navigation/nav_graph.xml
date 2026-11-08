@@ -156,7 +156,12 @@
     <fragment
         android:id="@+id/exercisePickerFragment"
         android:name="com.example.client_training_app.ui.training_unit.ExercisePickerFragment"
-        android:label="Vybrat cviky" />
+        android:label="Vybrat cviky">
+        <!-- Nový cvik přímo z výběru (během tréninku i při tvorbě jednotky) -->
+        <action
+            android:id="@+id/action_exercisePickerFragment_to_addExerciseFragment"
+            app:destination="@id/addExerciseFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/exerciseDetailFragment"

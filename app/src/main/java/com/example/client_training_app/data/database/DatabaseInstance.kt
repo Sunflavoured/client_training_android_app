@@ -25,7 +25,7 @@ object DatabaseInstance {
             val instance = Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
-                "training_database"
+                DB_NAME
             )
                 .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                 // Smaže DB při změně verze
@@ -69,6 +69,27 @@ object DatabaseInstance {
     fun setInstanceForTesting(database: AppDatabase?) {
         synchronized(this) { INSTANCE = database }
     }
+
+    const val DB_NAME = "training_database"
+
+    // --- Pomocné funkce pro zálohu a obnovu (BackupManager) ---
+
+    /** Sloučí žurnál WAL do hlavního souboru, aby byla kopie souboru databáze úplná. Volat mimo hlavní vlákno. */
+    fun checkpoint(context: Context) {
+        getDatabase(context).openHelper.writableDatabase
+            .query("PRAGMA wal_checkpoint(TRUNCATE)").use { it.moveToFirst() }
+    }
+
+    /** Zavře databázi (před nahrazením souboru při obnově). Další getDatabase ji otevře znovu. */
+    fun close() {
+        synchronized(this) {
+            INSTANCE?.close()
+            INSTANCE = null
+        }
+    }
+
+    /** Verze schématu otevřené databáze. Volat mimo hlavní vlákno. */
+    fun currentVersion(context: Context): Int = getDatabase(context).openHelper.readableDatabase.version
 
     val MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {

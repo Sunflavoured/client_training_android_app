@@ -101,6 +101,14 @@ class TrainingUnitEditorFragment : Fragment(R.layout.fragment_training_unit_edit
                 viewModel.deleteTemplateExercise(itemToDelete)
                 hasUnsavedChanges = true
             },
+            onMoveUp = { itemToMove ->
+                viewModel.moveExercise(itemToMove, -1)
+                hasUnsavedChanges = true
+            },
+            onMoveDown = { itemToMove ->
+                viewModel.moveExercise(itemToMove, 1)
+                hasUnsavedChanges = true
+            },
             onSettingsClicked = { itemToEdit ->
                 // Předpokládám, že tento dialog existuje
                 val dialog = com.example.client_training_app.ui.training_unit.ExerciseSettingsBottomSheet(

@@ -7,4 +7,15 @@
         android:icon="@drawable/ic_home"
         android:title="Domů"
         app:showAsAction="ifRoom" />
+
+    <!-- Zobrazují se jen na úvodní obrazovce -->
+    <item
+        android:id="@+id/action_backup"
+        android:title="Zálohovat data"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_restore"
+        android:title="Obnovit ze zálohy"
+        app:showAsAction="never" />
 </menu>

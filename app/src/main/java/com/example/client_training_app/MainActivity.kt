@@ -12,6 +12,13 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import com.example.client_training_app.utils.BackupManager
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -120,6 +127,83 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    // --- ZÁLOHA A OBNOVA DAT ---
+
+    private val backupManager by lazy { BackupManager(applicationContext) }
+
+    private val createBackupLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/octet-stream")
+    ) { uri -> uri?.let { saveBackup(it) } }
+
+    private val openBackupLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> uri?.let { askBeforeRestore(it) } }
+
+    private fun startBackup() {
+        val stamp = SimpleDateFormat("yyyy-MM-dd_HHmm", Locale.US).format(Date())
+        createBackupLauncher.launch("training_backup_$stamp.db")
+    }
+
+    private fun saveBackup(uri: Uri) {
+        lifecycleScope.launch {
+            try {
+                backupManager.createBackup(uri)
+                Toast.makeText(this@MainActivity, "Záloha uložena", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                showMessage("Záloha se nepovedla", e.message ?: "Neznámá chyba")
+            }
+        }
+    }
+
+    private fun askBeforeRestore(uri: Uri) {
+        lifecycleScope.launch {
+            when (val check = backupManager.inspect(uri)) {
+                is BackupManager.Check.Invalid -> showMessage("Soubor nelze obnovit", check.reason)
+                is BackupManager.Check.Ok -> {
+                    val info = check.info
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Obnovit data ze zálohy?")
+                        .setMessage(
+                            "Záloha obsahuje ${info.clients} klientů, ${info.trainingUnits} tréninků " +
+                                "a ${info.workoutSessions} odcvičených tréninků.\n\n" +
+                                "Všechna současná data v aplikaci se přepíšou. " +
+                                "Aktuální stav se předtím uloží do interní pojistné kopie."
+                        )
+                        .setPositiveButton("Obnovit") { _, _ -> restoreBackup(uri) }
+                        .setNegativeButton("Zrušit", null)
+                        .show()
+                }
+            }
+        }
+    }
+
+    private fun restoreBackup(uri: Uri) {
+        lifecycleScope.launch {
+            try {
+                backupManager.restore(uri)
+                Toast.makeText(this@MainActivity, "Data obnovena, aplikace se restartuje", Toast.LENGTH_LONG).show()
+                restartApp()
+            } catch (e: Exception) {
+                showMessage("Obnova se nepovedla", e.message ?: "Neznámá chyba")
+            }
+        }
+    }
+
+    /** Po výměně souboru databáze musí aplikace spustit proces znovu, jinak by používala zavřenou databázi. */
+    private fun restartApp() {
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageName) ?: return
+        startActivity(Intent.makeRestartActivityTask(launchIntent.component))
+        Runtime.getRuntime().exit(0)
+    }
+
+    private fun showMessage(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
     // --- ZBYTEK TVÉHO KÓDU PRO MENU ---
 
     override fun onSupportNavigateUp(): Boolean {
@@ -146,6 +230,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             menu?.findItem(R.id.action_home)?.isVisible = true
         }
+
+        // Záloha a obnova dat jsou jen na úvodní obrazovce
+        val onHome = currentId == R.id.homeFragment
+        menu?.findItem(R.id.action_backup)?.isVisible = onHome
+        menu?.findItem(R.id.action_restore)?.isVisible = onHome
         return true
     }
 
@@ -155,6 +244,14 @@ class MainActivity : AppCompatActivity() {
                 val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
                 val navController = navHostFragment.navController
                 navController.popBackStack(R.id.homeFragment, false)
+                true
+            }
+            R.id.action_backup -> {
+                startBackup()
+                true
+            }
+            R.id.action_restore -> {
+                openBackupLauncher.launch(arrayOf("*/*"))
                 true
             }
             else -> super.onOptionsItemSelected(item)
