@@ -30,7 +30,6 @@ Poslední aktualizace: 2026-11-08
 ## 2. Otevřené otázky
 
 - Přesné datum odevzdání. Podle něj se určí, kdy nejpozději musí začít pilot (doporučení: s rezervou několika týdnů na sběr dat a vyhodnocení).
-- Které opravy v1 ještě zařadit do vydání 0.2.0 (viz 2.16)?
 - Klientský režim: zapisuje trenér i za klienta při osobním tréninku? (viz 1.2)
 - Může mít klient více trenérů, nebo vždy jednoho?
 - Konkrétní `applicationId` a název v2 (viz 1.9). Přihlášení Google je vázané na `applicationId` a otisk podpisového klíče, takže se nastavuje až po jejich určení.
@@ -111,8 +110,8 @@ Opravy v1 (stejné `applicationId` a klíč), které se vydají jako aktualizace
 - [ ] 2.14 Z kalendáře jde naplánovaný trénink jen přidat, **odebrat ho nejde** (smazání je v kódu, ale chybí v obrazovce). Přidat odebrání, nejlépe s potvrzením.
 - [x] 2.15 (hotovo na větvi `fix/stabilizace`, ověřeno testy) **Odcvičený trénink je záznam, nesleduje šablonu.** Zobrazuje jen uložené série v pořadí, v jakém byly zapsány. Naplánovaný (neodcvičený) trénink šablonu dál sleduje. Známá omezení do v2 (fáze 3, snapshot plánu): cvik bez jediné zapsané série se v odcvičeném tréninku nezobrazí a název šablony v kalendáři je pořád aktuální název šablony.
 - [ ] 2.16 **Vydání v1 jako 0.2.0.** Postup:
-  - zvýšit `versionCode` a `versionName` (dnes 1 a 0.1.0), ať aktualizace jde nainstalovat přes PROD a sedí s tagem na GitHubu,
-  - vybrat, které z 2.1 až 2.6 a 2.14 jde do vydání (zbytek do v2),
+  - hotovo: `versionCode` 2 a `versionName` 0.2.0 (dřív 1 a 0.1.0), ať aktualizace jde nainstalovat přes PROD a sedí s tagem na GitHubu; release build projde (nepodepsaný APK, `versionCode` 2),
+  - do vydání už žádné další opravy nejdou (rozhodnuto 2026-11-08), položky 2.1 až 2.6, 2.13 a 2.14 se řeší ve v2,
   - otestovat na DEV buildu (kontrolní seznam: úprava šablony, odcvičený a naplánovaný trénink, smazání šablony, záloha a obnova, nový cvik, pořadí cviků),
   - sestavit podepsaný APK a ověřit otisk podpisu (musí sedět s `7accf4cb…42d5`), jinak ho Android nepřijme jako aktualizaci,
   - nainstalovat přes PROD, hned udělat zálohu a zkontrolovat počty dat,

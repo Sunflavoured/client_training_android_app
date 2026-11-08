@@ -15,8 +15,8 @@ android {
         applicationId = "com.example.client_training_app"
         minSdk = 26 // Zvednuto na 26 (Android 8) pro lepší kompatibilitu s Time API
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2 // musí být vyšší než u již nainstalované verze, jinak Android aktualizaci nepřijme
+        versionName = "0.2.0" // musí odpovídat tagu na GitHubu (v0.2.0), podle něj aplikace hlásí novou verzi
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
