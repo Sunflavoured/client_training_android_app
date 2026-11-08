@@ -171,28 +171,46 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
                 val position = viewHolder.absoluteAdapterPosition
                 val unitToDelete = adapter.currentList[position]
 
-                // Zobrazíme Dialog
-                android.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Smazat trénink?")
-                    .setMessage("Opravdu chcete trvale odstranit trénink '${unitToDelete.name}'?")
-                    .setPositiveButton("Smazat") { _, _ ->
-                        // Uživatel potvrdil -> Smažeme z DB
-                        viewModel.deleteTrainingUnit(unitToDelete)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    // Šablona může být naplánovaná v kalendáři, na to uživatele upozorníme
+                    val usage = viewModel.getScheduleUsage(unitToDelete.id)
+                    val message = buildString {
+                        append("Opravdu chcete trvale odstranit trénink '${unitToDelete.name}'?")
+                        if (usage.total > 0) {
+                            val planned = usage.total - usage.completed
+                            append("\n\n")
+                            if (planned > 0) {
+                                append("Naplánované tréninky ($planned) se z kalendáře odeberou. ")
+                            }
+                            if (usage.completed > 0) {
+                                append("Odcvičené tréninky (${usage.completed}) zůstanou v kalendáři i v historii.")
+                            }
+                        }
+                    }
 
-                        com.google.android.material.snackbar.Snackbar.make(
-                            binding.root,
-                            "Trénink byl smazán",
-                            com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                    .setNegativeButton("Zrušit") { dialog, _ ->
-                        // Uživatel zrušil -> NIC NEMAŽEME
-                        // Jen musíme vrátit řádek zpátky (zrušit swipe efekt)
-                        adapter.notifyItemChanged(position)
-                        dialog.dismiss()
-                    }
-                    .setCancelable(false) // Aby nešlo kliknout mimo a nechat to viset
-                    .show()
+                    // Zobrazíme Dialog
+                    android.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Smazat trénink?")
+                        .setMessage(message)
+                        .setPositiveButton("Smazat") { _, _ ->
+                            // Uživatel potvrdil -> Smažeme z DB
+                            viewModel.deleteTrainingUnit(unitToDelete)
+
+                            com.google.android.material.snackbar.Snackbar.make(
+                                binding.root,
+                                "Trénink byl smazán",
+                                com.google.android.material.snackbar.Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                        .setNegativeButton("Zrušit") { dialog, _ ->
+                            // Uživatel zrušil -> NIC NEMAŽEME
+                            // Jen musíme vrátit řádek zpátky (zrušit swipe efekt)
+                            adapter.notifyItemChanged(position)
+                            dialog.dismiss()
+                        }
+                        .setCancelable(false) // Aby nešlo kliknout mimo a nechat to viset
+                        .show()
+                }
             }
         }
 

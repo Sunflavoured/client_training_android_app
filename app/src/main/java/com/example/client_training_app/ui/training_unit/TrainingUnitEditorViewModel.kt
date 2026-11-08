@@ -125,6 +125,19 @@ class TrainingUnitEditorViewModel(application: Application) : AndroidViewModel(a
         _templateExercises.value = reorderedList
     }
 
+    /** Posune cvik o [delta] míst (-1 nahoru, 1 dolů) a znovu očísluje pořadí. Na okraji seznamu nedělá nic. */
+    fun moveExercise(item: TemplateExercise, delta: Int) {
+        val list = _templateExercises.value.orEmpty().toMutableList()
+        val from = list.indexOfFirst { it.exercise.id == item.exercise.id && it.order == item.order }
+        val to = from + delta
+        if (from == -1 || to !in list.indices) return
+
+        val moved = list[from]
+        list[from] = list[to]
+        list[to] = moved
+        _templateExercises.value = list.mapIndexed { index, exercise -> exercise.copy(order = index + 1) }
+    }
+
     // --- 3. ULOŽENÍ ---
 
     // Zde už nepotřebujeme argClientId, protože bereme hodnotu z selectedClientId LiveData
@@ -174,4 +187,7 @@ class TrainingUnitEditorViewModel(application: Application) : AndroidViewModel(a
             repository.deleteTrainingUnit(unit.id)
         }
     }
+
+    /** Pro varování před smazáním: kolikrát je šablona v kalendáři a kolikrát odcvičená. */
+    suspend fun getScheduleUsage(unitId: String) = repository.getScheduleUsage(unitId)
 }

@@ -72,7 +72,7 @@ class TransferManager(private val context: Context) {
 
                 // Nový kód: Vytvoříme kopii tréninku a vymažeme clientId,
                 // aby se trénink nesnažil připojit k neexistujícímu klientovi.
-                val safeUnit = pkg.unit.copy(clientId = null)
+                val safeUnit = pkg.unit.copy(clientId = null, isArchived = false)
 
                 db.trainingUnitDao().upsertUnit(safeUnit)
                 // ------------------

@@ -14,7 +14,9 @@ import com.example.client_training_app.model.TemplateExercise
 class UnitExerciseEditorAdapter(
     private val onDataChanged: (TemplateExercise) -> Unit,
     private val onDeleteClicked: (TemplateExercise) -> Unit,
-    private val onSettingsClicked: (TemplateExercise) -> Unit
+    private val onSettingsClicked: (TemplateExercise) -> Unit,
+    private val onMoveUp: (TemplateExercise) -> Unit,
+    private val onMoveDown: (TemplateExercise) -> Unit
 ) : ListAdapter<TemplateExercise, UnitExerciseEditorAdapter.ExerciseViewHolder>(TemplateExerciseDiffCallback) {
 
     inner class ExerciseViewHolder(private val binding: ItemUnitExerciseEditorBinding) :
@@ -56,6 +58,16 @@ class UnitExerciseEditorAdapter(
             // 4. Listenery pro tlačítka
             binding.ivDeleteExercise.setOnClickListener { onDeleteClicked(templateExercise) }
             binding.ivSettings.setOnClickListener { onSettingsClicked(templateExercise) }
+
+            // Pořadí cviků: šipky nahoru a dolů (první cvik nejde posunout výš, poslední níž)
+            val isFirst = bindingAdapterPosition == 0
+            val isLast = bindingAdapterPosition == itemCount - 1
+            binding.ivMoveUp.isEnabled = !isFirst
+            binding.ivMoveUp.alpha = if (isFirst) 0.3f else 1f
+            binding.ivMoveDown.isEnabled = !isLast
+            binding.ivMoveDown.alpha = if (isLast) 0.3f else 1f
+            binding.ivMoveUp.setOnClickListener { onMoveUp(templateExercise) }
+            binding.ivMoveDown.setOnClickListener { onMoveDown(templateExercise) }
 
             // 5. TextWatchers (Logika beze změny)
             setsTextWatcher = createWatcher { s -> if (s != templateExercise.sets) onDataChanged(templateExercise.copy(sets = s)) }

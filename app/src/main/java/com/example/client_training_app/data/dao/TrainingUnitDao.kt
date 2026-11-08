@@ -16,8 +16,11 @@ interface TrainingUnitDao {
 
     // --- INSERT / UPDATE ---
 
-    // Vložení nebo aktualizace hlavičky (OnConflictStrategy.REPLACE to řeší za nás)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // Vložení nebo aktualizace hlavičky.
+    // POZOR: nepoužívat REPLACE. Ten řádek nejdřív smaže a znovu vloží, čímž se spustí akce cizích klíčů:
+    // odcvičeným tréninkům se smaže odkaz na šablonu (SET NULL) a smažou se její cviky (CASCADE).
+    // @Upsert existující řádek jen aktualizuje.
+    @Upsert
     suspend fun insertOrUpdateUnit(unit: TrainingUnitEntity)
 
     // Vložení seznamu cviků
@@ -31,6 +34,10 @@ interface TrainingUnitDao {
 
     @Query("DELETE FROM training_units WHERE id = :unitId")
     suspend fun deleteTrainingUnitById(unitId: String)
+
+    // Šablona s historií se nemaže, jen skryje
+    @Query("UPDATE training_units SET isArchived = 1 WHERE id = :unitId")
+    suspend fun archiveUnit(unitId: String)
 
     // --- TRANSAKCE (Logika ukládání) ---
 
@@ -59,20 +66,21 @@ interface TrainingUnitDao {
 
     // --- SELECT (Flows & Data) ---
 
-    @Query("SELECT * FROM training_units WHERE clientId = :clientId")
+    // Archivované šablony (smazané, ale s historií) se v seznamech nezobrazují
+    @Query("SELECT * FROM training_units WHERE clientId = :clientId AND isArchived = 0")
     fun getTrainingUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
 
-    @Query("SELECT * FROM training_units")
+    @Query("SELECT * FROM training_units WHERE isArchived = 0")
     fun getAllTrainingUnits(): Flow<List<TrainingUnitEntity>>
 
-    @Query("SELECT * FROM training_units WHERE clientId IS NULL")
+    @Query("SELECT * FROM training_units WHERE clientId IS NULL AND isArchived = 0")
     fun getGlobalTrainingUnits(): Flow<List<TrainingUnitEntity>>
 
     @Transaction
     @Query("SELECT * FROM training_units WHERE id = :unitId")
     suspend fun getTrainingUnitWithExercises(unitId: String): TrainingUnitWithExercises?
 
-    @Query("SELECT * FROM training_units WHERE clientId IS NULL OR clientId = :clientId")
+    @Query("SELECT * FROM training_units WHERE isArchived = 0 AND (clientId IS NULL OR clientId = :clientId)")
     fun getAvailableUnitsForClient(clientId: String): Flow<List<TrainingUnitEntity>>
 
     // Pro export

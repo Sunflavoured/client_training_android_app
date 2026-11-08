@@ -32,6 +32,22 @@ class ExercisePickerFragment : Fragment(R.layout.fragment_exercise_picker) {
         setupRecyclerView()
         setupSearchBar()
         loadExercises()
+        setupNewExercise()
+    }
+
+    // Nový cvik: otevře formulář a po uložení se cvik rovnou vybere a vrátíme se zpět
+    private fun setupNewExercise() {
+        binding.btnNewExercise.setOnClickListener {
+            findNavController().navigate(R.id.action_exercisePickerFragment_to_addExerciseFragment)
+        }
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Exercise>("new_exercise")
+            ?.observe(viewLifecycleOwner) { exercise ->
+                if (exercise != null) {
+                    findNavController().currentBackStackEntry?.savedStateHandle?.remove<Exercise>("new_exercise")
+                    onExerciseSelected(exercise)
+                }
+            }
     }
 
     private fun setupRecyclerView() {

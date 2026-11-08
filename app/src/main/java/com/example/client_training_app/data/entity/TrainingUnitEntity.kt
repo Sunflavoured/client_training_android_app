@@ -1,6 +1,7 @@
 package com.example.client_training_app.data.entity
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -27,5 +28,10 @@ data class TrainingUnitEntity(
     val note: String? = null,
 
     // Null = Globální jednotka, Vyplněno = Jednotka konkrétního klienta
-    val clientId: String? = null
+    val clientId: String? = null,
+
+    // Smazaná šablona, která má historii (odcvičené tréninky), se jen archivuje: zmizí z knihovny a nabídky,
+    // ale odcvičené tréninky v kalendáři na ni dál odkazují.
+    @ColumnInfo(defaultValue = "0")
+    val isArchived: Boolean = false
 )

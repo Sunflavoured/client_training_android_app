@@ -22,12 +22,40 @@
             android:id="@+id/tvExerciseName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/ivSettings"
+            android:layout_toStartOf="@id/ivMoveUp"
             android:layout_centerVertical="true"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"
             tools:text="Dřep (Squat)" />
+
+        <ImageView
+            android:id="@+id/ivMoveUp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_toStartOf="@id/ivMoveDown"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_arrow_forward_24"
+            android:rotation="-90"
+            android:contentDescription="Posunout cvik nahoru"
+            app:tint="?attr/colorControlNormal"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/ivMoveDown"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_toStartOf="@id/ivSettings"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_arrow_forward_24"
+            android:rotation="90"
+            android:contentDescription="Posunout cvik dolů"
+            app:tint="?attr/colorControlNormal"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true" />
 
         <ImageView
             android:id="@+id/ivSettings"

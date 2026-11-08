@@ -25,9 +25,9 @@ object DatabaseInstance {
             val instance = Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
-                "training_database"
+                DB_NAME
             )
-                .addMigrations(MIGRATION_2_3)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                 // Smaže DB při změně verze
                 //.fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
@@ -64,12 +64,46 @@ object DatabaseInstance {
         }
     }
 
+    /** Pouze pro testy: nahradí produkční databázi jinou (např. v paměti). `null` ji vrátí do výchozího stavu. */
+    @androidx.annotation.VisibleForTesting
+    fun setInstanceForTesting(database: AppDatabase?) {
+        synchronized(this) { INSTANCE = database }
+    }
+
+    const val DB_NAME = "training_database"
+
+    // --- Pomocné funkce pro zálohu a obnovu (BackupManager) ---
+
+    /** Sloučí žurnál WAL do hlavního souboru, aby byla kopie souboru databáze úplná. Volat mimo hlavní vlákno. */
+    fun checkpoint(context: Context) {
+        getDatabase(context).openHelper.writableDatabase
+            .query("PRAGMA wal_checkpoint(TRUNCATE)").use { it.moveToFirst() }
+    }
+
+    /** Zavře databázi (před nahrazením souboru při obnově). Další getDatabase ji otevře znovu. */
+    fun close() {
+        synchronized(this) {
+            INSTANCE?.close()
+            INSTANCE = null
+        }
+    }
+
+    /** Verze schématu otevřené databáze. Volat mimo hlavní vlákno. */
+    fun currentVersion(context: Context): Int = getDatabase(context).openHelper.readableDatabase.version
+
     val MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
             // Příkaz SQL, který přidá sloupec 'rest' typu TEXT do tabulky
             database.execSQL("ALTER TABLE workout_set_results ADD COLUMN rest TEXT")
         }
     }
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            // Archivace šablon: smazaná šablona s historií zůstane v databázi, jen skrytá
+            database.execSQL("ALTER TABLE training_units ADD COLUMN isArchived INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
     private suspend fun fillWithDefaultExercises(context: Context) {
 
         val database = getDatabase(context)

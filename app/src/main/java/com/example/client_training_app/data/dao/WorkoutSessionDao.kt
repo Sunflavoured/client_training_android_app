@@ -49,4 +49,8 @@ interface WorkoutSessionDao {
     // načtení plánovaého tréninku podle ID, aby měl předvyplněná data
     @Query("SELECT * FROM workout_sessions WHERE scheduledWorkoutId = :scheduleId LIMIT 1")
     suspend fun getSessionByScheduleId(scheduleId: Long): WorkoutSessionEntity?
+
+    // Kolik odcvičených tréninků vzniklo podle dané šablony
+    @Query("SELECT COUNT(*) FROM workout_sessions WHERE trainingUnitId = :unitId")
+    suspend fun countSessionsForUnit(unitId: String): Int
 }
