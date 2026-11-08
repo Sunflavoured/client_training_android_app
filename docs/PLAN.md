@@ -15,7 +15,7 @@ Poslední aktualizace: 2026-11-08
 
 - Zůstáváme u **nativního Android Kotlinu**. Cílem je **sdílená cloudová databáze** s přihlášením.
 - **Cíl diplomky: milník M7 bez webu, tedy pilot s několika klienty a demonstrace při obhajobě** (upřesněno 2026-11-08). Aplikace se po obhajobě reálně provozovat nebude. Web je návrh rozšíření a nebude výstupem diplomky. Architektura s ním ale počítá: web se později napojí na stejnou databázi, proto musí být oprávnění vyřešená v databázi (pravidla přístupu), ne v aplikaci.
-- **Backend: znovu otevřeno (2026-11-08)** po změně zadání. Zvažuje se **Firebase (plán Spark)** a **Supabase (free plán)**, obojí zdarma, placený plán se nebude platit. Srovnání a návrh v `docs/decisions/ADR-001-backend.md`. Pro Supabase platí: pozastavený projekt se obnoví jedním tlačítkem, data zůstanou (oficiální dokumentace).
+- **Backend: Firebase (plán Spark)** (rozhodnuto 2026-11-08 po změně zadání; Erika: cesta nejmenšího odporu pro pilot se třemi klienty). Bez placení a bez vlastní synchronizace, offline řeší Firestore. Supabase (free) zůstává záložní alternativou, srovnání v `docs/decisions/ADR-001-backend.md`. Placený plán se nebude platit.
 - Má vzniknout **platforma pro více trenérů**. Navrhujeme `trainerId` v datech a oprávnění v databázi hned od začátku, uživatelské rozhraní zatím pro jednoho trenéra.
 - **Klienti budou zapisovat tréninky offline** (špatný signál v posilovně). Z toho plyne klientský režim v aplikaci (viz 1.2).
 - Termín: několik měsíců (přesné datum doplnit).
@@ -29,7 +29,7 @@ Poslední aktualizace: 2026-11-08
 ## 2. Otevřené otázky
 
 - Přesné datum odevzdání. Podle něj se určí, kdy nejpozději musí začít pilot (doporučení: s rezervou několika týdnů na sběr dat a vyhodnocení).
-- **Backend: Firebase, nebo Supabase?** Viz ADR-001. Od toho se odvíjí řešení synchronizace (viz 1.5).
+- Ověřit na malém prototypu Firebase: offline zápis, restart aplikace a odeslání po připojení na dvou zařízeních, zakládání účtů klientů a pozvánky bez Cloud Functions, region EU (viz ADR-001).
 - Chce Erika vydat opravy z fáze 2 jako aktualizaci PROD verze v1? Pokud ano, doporučuje se nejdřív záloha dat (viz 2.0).
 - Klientský režim: má klient vlastní účet a zapisuje sám, a zapisuje trenér také za klienta při osobním tréninku? (viz 1.2)
 - Registrace trenérů: volná, nebo jen na pozvání?
@@ -72,8 +72,8 @@ Pořadí priorit při tlaku na termín: M1 až M5 a M7 jsou jádro. Z M6 vzít n
 - [ ] 1.1 Jeden seznam požadavků (funkční a nefunkční), roztříděný podle MoSCoW. Sem patří všechny dosavadní nápady. Web a iOS označit jako mimo rozsah.
 - [ ] 1.2 Role a případy užití. **Trenérský režim** (správa klientů, plánování, přehledy) a **klientský režim** (vlastní plán, zápis tréninku offline, vlastní historie). Rozhodnout, zda trenér zapisuje i za klienta a kdo je autorem záznamu.
 - [ ] 1.3 Rešerše podobných řešení (co umí, co chybí). Zdroje ověřit a zapsat do `sources.md`.
-- [ ] 1.4 Backend: Firebase (Spark) vs Supabase (free), znovu otevřeno po změně zadání. Návrh v `docs/decisions/ADR-001-backend.md`, k potvrzení.
-- [ ] 1.5 Offline a synchronizace. Při volbě Firebase je zajišťuje Firestore (offline cache je na Androidu zapnutá, zápisy se po připojení odešlou, při souběžných změnách vyhrává poslední zápis), jen ověřit chování v offline scénářích. Při volbě Supabase viz ADR-002 (vlastní synchronizace vs PowerSync).
+- [x] 1.4 Backend: Firebase (Spark), rozhodnuto 2026-11-08, záznam v `docs/decisions/ADR-001-backend.md`. Supabase je záložní alternativa.
+- [ ] 1.5 Offline: zajišťuje Firestore (offline cache je na Androidu zapnutá, zápisy se po připojení odešlou, při souběžných změnách vyhrává poslední zápis). Vlastní synchronizace se nevyvíjí, jen se ověří chování v offline scénářích (viz 5.5). Pozor: data musí být aspoň jednou načtená online, aby byla offline k dispozici. ADR-002 platí jen při návratu k Supabase.
 - [ ] 1.6 Datový model v2: ER diagram (nebo struktura dokumentů) a pravidla:
   - UUID ve všech záznamech (dnes jsou v polovině tabulek autoincrementy),
   - `createdAt`, `updatedAt`, `deletedAt`, `trainerId`/`ownerId`,
@@ -124,7 +124,7 @@ Platí pro obě varianty backendu. Při volbě Firebase se model navrhuje jako k
 - [ ] 3.7 **Volitelné:** test importu dat z v1 na **anonymizované** kopii (viz 5.7).
 - [ ] 3.8 Aktualizovat `CLAUDE.md` a dokumentaci modelu.
 
-## Fáze 4 – Backend (podle rozhodnutí 1.4)
+## Fáze 4 – Backend (Firebase, plán Spark; poznámky k Supabase jsou jen záložní varianta)
 
 - [ ] 4.1 Dva projekty (`dev` pro DEV build, `prod` pro PROD build) v regionu EU, oba na bezplatném plánu. Konfigurace (u Firebase `google-services.json`) mimo veřejný repozitář. Tajné klíče (Supabase `service_role`, serverové klíče) nikdy do aplikace ani do repozitáře.
 - [ ] 4.2 Schéma podle modelu z fáze 3: u Firebase struktura kolekcí a dokumentů, u Supabase SQL migrace verzované v repozitáři.
@@ -137,8 +137,8 @@ Platí pro obě varianty backendu. Při volbě Firebase se model navrhuje jako k
 ## Fáze 5 – Přihlášení, offline a synchronizace v Androidu
 
 - [ ] 5.1 Přihlašovací obrazovky, správa relace, odhlášení, smazání účtu (výmaz dat na žádost, viz 1.7).
-- [ ] 5.2 Offline a synchronizace podle 1.4 a 1.5: u Firebase ověřit a nastavit offline cache Firestore, u Supabase vlastní vrstva (fronta změn, stahování podle `updatedAt`, tombstony, WorkManager, idempotence).
-- [ ] 5.3 Řešení konfliktů podle rozhodnutí z 1.5.
+- [ ] 5.2 Offline: ověřit a nastavit trvalou offline cache Firestore a v UI ukázat stav čekajících zápisů. Žádná vlastní synchronizační vrstva.
+- [ ] 5.3 Konflikty: ve Firestore vyhrává poslední zápis. Model dat navrhnout tak, aby klient a trenér neměnili stejné pole (výsledky zapisuje klient, plán trenér).
 - [ ] 5.4 Stav synchronizace v UI (čeká / synchronizováno / chyba).
 - [ ] 5.5 Testy offline scénářů: letecký režim, přerušené spojení, dvě zařízení.
 - [ ] 5.6 Seed skript s demo daty (klienti, programy, historie) pro vývoj, testování a obhajobu. Reprodukovatelný, bez reálných osobních údajů.

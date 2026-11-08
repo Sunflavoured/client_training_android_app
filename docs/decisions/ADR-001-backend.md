@@ -1,6 +1,6 @@
 # ADR-001: Backend a databáze (Firebase vs Supabase)
 
-Stav: **návrh, k potvrzení Erikou**
+Stav: **rozhodnuto: Firebase (plán Spark)**. Důvod: nejmenší odpor pro pilot se třemi klienty a hotový offline režim. Supabase zůstává záložní alternativou.
 Datum: 2026-11-08 (znovu otevřeno po změně zadání)
 
 ## Kontext
@@ -17,7 +17,9 @@ klienti zapisují tréninky i offline, web se v budoucnu připojí na stejnou da
 - Slábne: přenositelnost, vlastní hosting, předvídatelné ceny při provozu, relační model kvůli dlouhodobé analytice.
 - Sílí: **hotová offline synchronizace** (největší technické riziko celé práce) a minimum vlastní infrastruktury.
 - Vyrovnané: cena (obě služby jsou zdarma) a riziko pozastavení. Pozastavený projekt Supabase se obnoví jedním
-  tlačítkem a data zůstanou, takže to není důvod proti Supabase. Zálohy nejsou ani u jedné z bezplatných variant.
+  tlačítkem a data zůstanou. Pozastavení se ale spouští nízkou aktivitou (k zabránění stačí několik dotazů denně po
+  celý týden), takže při lehkém používání třemi klienty by hrozilo hlavně v týdnech bez tréninků a chtělo by to
+  hlídání. Zálohy nejsou ani u jedné z bezplatných variant.
 
 ## Porovnání pro tento rozsah
 
@@ -34,7 +36,11 @@ klienti zapisují tréninky i offline, web se v budoucnu připojí na stejnou da
 
 Poznámka k analytice: objem dat pilotu je malý (jednotky klientů), grafy a metriky se spočítají v aplikaci.
 
-## Návrh
+## Návrh a rozhodnutí
+
+Erika zvolila cestu nejmenšího odporu: vlastní synchronizace by diplomku zbytečně komplikovala a při malém
+rozsahu (tři klienti, lehké používání) nic neodůvodňuje relační databázi. Offline u Firebase není potřeba
+odkládat do návrhů na rozšíření, protože je součástí SDK.
 
 **Firebase (plán Spark)** kvůli hotové offline synchronizaci. Po ověření obnovy pozastaveného projektu je to
 **těsná volba**: Supabase free je pro pilot a obhajobu také použitelný. Rozhoduje, co je důležitější:
