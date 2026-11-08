@@ -1,15 +1,33 @@
-*.iml
+# Gradle / build
 .gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
 /build
+/app/build
 /captures
 .externalNativeBuild
 .cxx
+*.iml
+
+# Lokální konfigurace stroje
+/local.properties
 local.properties
+
+# Android Studio (generované soubory, mění se podle zařízení a IDE)
+/.idea/
+
+# Kotlin compiler session a chybové logy
+/.kotlin/
+
+# Release artefakty - APK se publikuje přes GitHub Releases, ne přes git
+/app/release/
+*.apk
+*.aab
+
+# Podepisovací klíče a tajemství - nikdy necommitovat
+*.jks
+*.keystore
+google-services.json
+.env
+
+# OS
+.DS_Store
+desktop.ini
