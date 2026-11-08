@@ -27,7 +27,7 @@ object DatabaseInstance {
                 AppDatabase::class.java,
                 "training_database"
             )
-                .addMigrations(MIGRATION_2_3)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                 // Smaže DB při změně verze
                 //.fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
@@ -76,6 +76,13 @@ object DatabaseInstance {
             database.execSQL("ALTER TABLE workout_set_results ADD COLUMN rest TEXT")
         }
     }
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            // Archivace šablon: smazaná šablona s historií zůstane v databázi, jen skrytá
+            database.execSQL("ALTER TABLE training_units ADD COLUMN isArchived INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
     private suspend fun fillWithDefaultExercises(context: Context) {
 
         val database = getDatabase(context)

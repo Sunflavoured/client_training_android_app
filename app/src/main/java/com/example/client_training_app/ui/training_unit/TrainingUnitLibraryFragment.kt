@@ -177,9 +177,14 @@ class TrainingUnitLibraryFragment : Fragment(R.layout.fragment_training_unit_lib
                     val message = buildString {
                         append("Opravdu chcete trvale odstranit trénink '${unitToDelete.name}'?")
                         if (usage.total > 0) {
-                            append("\n\nTrénink je naplánovaný v kalendáři ${usage.total}× ")
-                            append("(odcvičeno ${usage.completed}×). ")
-                            append("Po smazání z kalendáře zmizí. Zapsané výsledky odcvičených tréninků zůstanou v historii.")
+                            val planned = usage.total - usage.completed
+                            append("\n\n")
+                            if (planned > 0) {
+                                append("Naplánované tréninky ($planned) se z kalendáře odeberou. ")
+                            }
+                            if (usage.completed > 0) {
+                                append("Odcvičené tréninky (${usage.completed}) zůstanou v kalendáři i v historii.")
+                            }
                         }
                     }
 

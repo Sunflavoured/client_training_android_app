@@ -132,110 +132,49 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    // --- Logika načtení historie (Editace) ---
+    // --- Logika načtení historie (odcvičený trénink) ---
+    // Odcvičený trénink je záznam o tom, co se skutečně stalo. Zobrazujeme proto jen uložené série
+    // a šablonu nečteme: pozdější úprava šablony (přidaný, odebraný nebo změněný cvik) se do něj nepromítá.
     private suspend fun loadFromHistory(session: WorkoutSessionEntity) {
         val results = workoutRepository.getSetsForSession(session.id)
-        // ID šablony bereme ze session. Když chybí (starší data, kterým ho smazala úprava šablony),
-        // použijeme ID z kalendáře, odkud trénink otevíráme. Jinak by obrazovka zůstala prázdná.
-        val unitId = session.trainingUnitId ?: currentTrainingUnitId ?: ""
-        val unitWithExercises = unitRepository.getTrainingUnitWithExercises(unitId)
+        _trainingNote.value = session.note
 
-        if (unitWithExercises != null) {
-            _trainingNote.value = unitWithExercises.trainingUnit.note
-            val resultsByExercise = results.groupBy { it.exerciseId }
+        // Pořadí cviků = pořadí, v jakém byly uloženy (série se ukládají v pořadí z obrazovky)
+        val resultsByExercise = results.sortedBy { it.id }.groupBy { it.exerciseId }
 
-            // 1. Nejprve si připravíme seznam podle šablony (zatím bez extra cviků)
-            val templateExerciseIds = unitWithExercises.exercises.map { it.exercise.id }.toSet()
+        val uiList = resultsByExercise.mapNotNull { (exerciseId, sets) ->
+            val definition = exerciseRepository.getExerciseById(exerciseId) ?: return@mapNotNull null
 
-            // Tento list budeme postupně upravovat
-            val finalUiList = unitWithExercises.exercises.map { detail ->
-                val template = detail.trainingData
-                val historySets = resultsByExercise[detail.exercise.id] ?: emptyList()
+            // Které údaje se sledovaly, poznáme podle toho, co je u cviku vyplněno
+            val hasReps = sets.any { !it.reps.isNullOrBlank() }
+            val hasWeight = sets.any { !it.weight.isNullOrBlank() }
+            val hasTime = sets.any { !it.time.isNullOrBlank() }
+            val hasDistance = sets.any { !it.distance.isNullOrBlank() }
+            val hasRir = sets.any { !it.rir.isNullOrBlank() }
+            val hasRest = sets.any { !it.rest.isNullOrBlank() }
+            // Když nebylo vyplněno nic (jen odškrtnuté série), nabídneme opakování a váhu
+            val nothingFilled = !(hasReps || hasWeight || hasTime || hasDistance || hasRir || hasRest)
 
-                // Pokud máme historii, použijeme ji. Jinak vytvoříme prázdné chlívky.
-                val activeSets = if (historySets.isNotEmpty()) {
-                    mapHistoryToUi(historySets)
-                } else {
-                    MutableList(template.sets.toIntOrNull() ?: 3) { ActiveSetUi(setNumber = it + 1) }
-                }
-
-                // Vytvoříme objekt (zatím původní cvik ze šablony)
-                ActiveExerciseUi(
-                    exerciseId = detail.exercise.id,
-                    exerciseName = detail.exercise.name,
-                    targetNote = buildTargetString(template),
-                    sets = activeSets,
-                    // Konfigurace
-                    isRepsEnabled = template.isRepsEnabled,
-                    isWeightEnabled = template.isWeightEnabled,
-                    isTimeEnabled = template.isTimeEnabled,
-                    isDistanceEnabled = template.isDistanceEnabled,
-                    isRirEnabled = template.isRirEnabled,
-                    isRestEnabled = template.isRestEnabled
-                )
-            }.toMutableList()
-
-            // 2. Najdeme "Extra" cviky (Ty, co jsou v historii, ale ne v šabloně)
-            val extraExerciseIds = resultsByExercise.keys.filter { !templateExerciseIds.contains(it) }.toMutableList()
-
-            // 3. LOGIKA SUBSTITUCE: Zkusíme napárovat Extra cviky na Prázdná místa v šabloně
-            // Projdeme seznam a hledáme místa, kde nic není vyplněno
-            for (i in finalUiList.indices) {
-                // Pokud už nemáme žádné extra cviky na rozdání, končíme
-                if (extraExerciseIds.isEmpty()) break
-
-                val item = finalUiList[i]
-
-                // Je tento cvik v šabloně "prázdný"? (Tj. žádná historie pro jeho ID)
-                val isSkippedInHistory = resultsByExercise[item.exerciseId] == null
-
-                if (isSkippedInHistory) {
-                    // MÁME SHODU: Prázdné místo v šabloně + Máme extra cvik "v ruce"
-                    val extraId = extraExerciseIds.removeAt(0) // Vezmeme první extra cvik
-                    val extraSets = resultsByExercise[extraId] ?: emptyList()
-                    val extraDef = exerciseRepository.getExerciseById(extraId)
-
-                    if (extraDef != null) {
-                        // Vytvoříme nový UI prvek (Ten nahrazující cvik)
-                        val newItem = item.copy(
-                            exerciseId = extraDef.id,
-                            exerciseName = extraDef.name,
-                            targetNote = "Nahrazeno: ${item.exerciseName}", // Ponecháme info o původním cviku
-                            sets = mapHistoryToUi(extraSets),
-                            // U náhradního cviku nevíme config, necháme původní nebo zapneme vše
-                            isRepsEnabled = true,
-                            isWeightEnabled = true
-                        )
-                        // Přepíšeme původní prázdný cvik tímto novým
-                        finalUiList[i] = newItem
-                    }
-                }
-            }
-
-            // 4. Pokud zbyly ještě nějaké Extra cviky (které se nevešly do náhrad), přidáme je nakonec
-            for (extraId in extraExerciseIds) {
-                val extraSets = resultsByExercise[extraId] ?: emptyList()
-                val extraDef = exerciseRepository.getExerciseById(extraId)
-
-                if (extraDef != null) {
-                    val extraItem = ActiveExerciseUi(
-                        exerciseId = extraDef.id,
-                        exerciseName = extraDef.name,
-                        targetNote = "Cvik navíc",
-                        sets = mapHistoryToUi(extraSets),
-                        isRepsEnabled = true,
-                        isWeightEnabled = true,
-                        isTimeEnabled = false,
-                        isDistanceEnabled = false,
-                        isRirEnabled = true,
-                        isRestEnabled = false
-                    )
-                    finalUiList.add(extraItem)
-                }
-            }
-
-            _activeExercises.value = finalUiList
+            ActiveExerciseUi(
+                exerciseId = definition.id,
+                exerciseName = definition.name,
+                targetNote = "Zapsáno v tréninku",
+                sets = mapHistoryToUi(sets.sortedBy { it.setNumber }),
+                isRepsEnabled = hasReps || nothingFilled,
+                isWeightEnabled = hasWeight || nothingFilled,
+                isTimeEnabled = hasTime,
+                isDistanceEnabled = hasDistance,
+                isRirEnabled = hasRir,
+                isRestEnabled = hasRest
+            )
         }
+
+        if (uiList.isEmpty()) {
+            // Trénink byl uložen bez jediné vyplněné série: nabídneme aktuální šablonu, ať je co vyplnit
+            loadFromTemplate(session.trainingUnitId ?: currentTrainingUnitId ?: "")
+            return
+        }
+        _activeExercises.value = uiList
     }
 
     // Pomocná metoda pro převod DB výsledků na UI (aby se kód neopakoval)

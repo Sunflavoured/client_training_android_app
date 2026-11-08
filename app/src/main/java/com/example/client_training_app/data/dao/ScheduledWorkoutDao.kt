@@ -27,8 +27,9 @@ interface ScheduledWorkoutDao {
     @Query("SELECT COUNT(*) FROM scheduled_workouts WHERE trainingUnitId = :unitId AND isCompleted = 1")
     suspend fun countCompletedForUnit(unitId: String): Int
 
-    @Query("DELETE FROM scheduled_workouts WHERE trainingUnitId = :unitId")
-    suspend fun deleteByUnit(unitId: String)
+    // Naplánované, ještě neodcvičené tréninky dané šablony (odcvičené se nemažou)
+    @Query("DELETE FROM scheduled_workouts WHERE trainingUnitId = :unitId AND isCompleted = 0")
+    suspend fun deleteIncompleteByUnit(unitId: String)
 
     // 1. Získat tréninky pro konkrétního klienta a konkrétní DEN
     // Používáme rozsah 'od-do' (start dne a konec dne), abychom chytili vše

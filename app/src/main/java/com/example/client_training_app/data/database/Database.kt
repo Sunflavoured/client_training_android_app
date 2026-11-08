@@ -29,7 +29,7 @@ import com.example.client_training_app.data.entity.WorkoutSetResultEntity
         ScheduledWorkoutEntity::class,
         WorkoutSetResultEntity::class],
 
-    version = 3, // <--- ZVÝŠENÍ VERZE
+    version = 4, // 4: training_units.isArchived
     //autoMigrations = [AutoMigration(from = 2, to = 3)],
     exportSchema = true
 )

@@ -50,6 +50,10 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    sourceSets {
+        // Exportovaná schémata Room, potřebná pro testy migrací
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -85,6 +89,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.room.testing)
 }
 
 ksp {

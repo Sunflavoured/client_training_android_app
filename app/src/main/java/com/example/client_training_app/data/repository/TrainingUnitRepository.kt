@@ -73,14 +73,20 @@ class TrainingUnitRepository(context: Context) {
     }
 
     /**
-     * Smaže šablonu i její záznamy v kalendáři v jedné transakci. Plán v kalendáři odkazuje na šablonu
-     * cizím klíčem bez akce, takže šablonu s naplánovaným tréninkem jinak nejde smazat.
-     * Výsledky odcvičených tréninků (historie) zůstávají.
+     * Smaže šablonu. Naplánované (ještě neodcvičené) tréninky odebere z kalendáře. Má-li šablona historii
+     * (odcvičené tréninky), jen ji archivuje: zmizí z knihovny a nabídky, ale odcvičené tréninky zůstanou
+     * v kalendáři i v historii. Bez historie se smaže úplně. Vše v jedné transakci.
      */
     suspend fun deleteTrainingUnit(unitId: String) {
         database.withTransaction {
-            scheduledWorkoutDao.deleteByUnit(unitId)
-            trainingUnitDao.deleteTrainingUnitById(unitId)
+            scheduledWorkoutDao.deleteIncompleteByUnit(unitId)
+            val hasHistory = scheduledWorkoutDao.countForUnit(unitId) > 0 ||
+                database.workoutSessionDao().countSessionsForUnit(unitId) > 0
+            if (hasHistory) {
+                trainingUnitDao.archiveUnit(unitId)
+            } else {
+                trainingUnitDao.deleteTrainingUnitById(unitId)
+            }
         }
     }
 }
