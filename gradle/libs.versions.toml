@@ -1,6 +1,6 @@
 [versions]
-# OPRAVA: AGP 8.13 neexistuje, stabilní je 8.3.2
-agp = "8.3.2"
+# Android Gradle Plugin; musí odpovídat verzi Gradle ve wrapperu (8.13)
+agp = "8.13.2"
 kotlin = "2.0.21"
 # KSP verze musí přesně sedět k verzi Kotlinu
 ksp = "2.0.21-1.0.27"
