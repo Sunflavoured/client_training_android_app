@@ -8,7 +8,7 @@ Komunikace i commity jsou česky.
 ## Stack (stav k 2026-11-08)
 - Nativní Kotlin 2.0.21, AGP 8.13.2, Gradle 8.13, minSdk 26, target/compileSdk 34
 - UI: XML layouty + ViewBinding, jedna `MainActivity`, Navigation Component (Fragmenty, Safe Args)
-- Data: Room 2.6.1 (schéma verze 3, `exportSchema = true`), KSP, Coroutines/Flow, LiveData, Gson
+- Data: Room 2.6.1 (schéma verze 4, `exportSchema = true`), KSP, Coroutines/Flow, LiveData, Gson
 - Knihovny: kizitonwose CalendarView, android-youtube-player (zatím nevyužito)
 - Žádná dependency injection, repozitáře se vytvářejí ve Fragmentech/ViewModelech z `Context`
 - Distribuce: APK přes GitHub Releases, aplikace při startu kontroluje `releases/latest`
@@ -26,7 +26,9 @@ Aplikaci spouští a ladí uživatelka v Android Studiu (USB zařízení). Z ter
 - `.\gradlew.bat assembleDebug` – debug build (`applicationId` má příponu `.dev`, verze `-DEV`)
 - `.\gradlew.bat testDebugUnitTest` – unit testy (zatím jen šablona)
 - `.\gradlew.bat connectedDebugAndroidTest "-Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true"` – instrumentované testy
-  na běžícím emulátoru (bez přepínače by je Gradle po testech odinstaloval i s daty DEV aplikace). Jeden test:
+  na emulátoru (bez přepínače by je Gradle po testech odinstaloval i s daty DEV aplikace). **Vždy nastavit `ANDROID_SERIAL=emulator-5554`**,
+  jinak Gradle pustí testy na všech připojených zařízeních včetně telefonu. Emulátor `Pixel_6` se spouští jako dlouhý proces
+  (`emulator.exe -avd Pixel_6`), z krátkého příkazu se po jeho skončení vypne. Jeden test:
   `"-Pandroid.testInstrumentationRunnerArguments.class=com.example.client_training_app.data.TemplateEditIntegrityTest"`
 - Gradle musí běžet na JDK 21: `JAVA_HOME=C:\Users\erika\.jdks\jbr-21.0.11` (JDK v Android Studiu je 25, Gradle 8.13 ho oficiálně nepodporuje; projekt používá 21),
   `ANDROID_HOME=C:\Users\erika\AppData\Local\Android\Sdk`

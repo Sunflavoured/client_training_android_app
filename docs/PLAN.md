@@ -15,7 +15,7 @@ Poslední aktualizace: 2026-11-08
 
 - Zůstáváme u **nativního Android Kotlinu**. Cílem je **sdílená cloudová databáze** s přihlášením.
 - **Cíl diplomky: milník M7 (ostrý provoz a pilot) bez webu.** Web je návrh rozšíření a nebude výstupem diplomky. Architektura s ním ale počítá: web se později napojí na stejnou databázi, proto musí být oprávnění vyřešená v databázi (RLS), ne v aplikaci.
-- **Backend: Supabase, free plán** (rozhodnuto 2026-11-08). Dva zdarma dostupné projekty využijeme jako `dev` a `prod`, stejně jako dnešní DEV a PROD build.
+- **Backend: Supabase, free plán** (rozhodnuto 2026-11-08). Dva zdarma dostupné projekty využijeme jako `dev` a `prod`, stejně jako dnešní DEV a PROD build. Placený plán neplatíme, free plán stačí do obhajoby.
 - Má vzniknout **platforma pro více trenérů**. Navrhujeme `trainerId` v schématu a oprávnění přes RLS hned od začátku, uživatelské rozhraní zatím pro jednoho trenéra.
 - **Klienti budou zapisovat tréninky offline** (špatný signál v posilovně). Z toho plyne klientský režim v aplikaci (viz 1.2).
 - Termín: několik měsíců (přesné datum doplnit).
@@ -103,10 +103,11 @@ Opravy v1 (stávající aplikace, stejné `applicationId` a klíč), které se v
 - [ ] 2.7 Základní testy (DAO, migrace Room) jako záchranná síť před refaktorem.
 - [ ] 2.8 Zvážit zapnutí minifikace u release (ověřit Gson a Room).
 - [x] 2.9 (hotovo na větvi `fix/stabilizace`, pokryto testy `TemplateEditIntegrityTest`, ověřeno na emulátoru) **Úprava šablony nesmí měnit nic jiného.** `insertOrUpdateUnit` používá REPLACE, který řádek smaže a znovu vloží. Na kopii databáze ověřeno: odcvičeným tréninkům se přitom smaže odkaz na šablonu (`SET NULL`) a smažou se její cviky (`CASCADE`). Nahradit skutečným UPDATE/UPSERT. Důsledek, který Erika popsala: trénink v kalendáři zůstane, ale po otevření je prázdný. Pravděpodobná příčina: `ActiveWorkoutViewModel.loadFromHistory` bere ID šablony ze session (po REPLACE je null) místo z parametru z kalendáře. Opravit i toto (použít ID z kalendáře, při chybějící šabloně zobrazit uložené série), čímž se napraví i již poškozená data. Ověřit testem.
-- [x] 2.10 (hotovo na větvi `fix/stabilizace`: varování s počtem naplánovaných a odcvičených, plán se smaže spolu se šablonou, historie zůstane; ověřeno testy, dialog zatím vizuálně neověřen) Smazání šablony, která je naplánovaná v kalendáři, narazí na cizí klíč (na kopii databáze ověřeno: `FOREIGN KEY constraint failed`, v aplikaci pravděpodobně pád). Ošetřit: varování a rozhodnutí, co se plánem stane.
+- [x] 2.10 (hotovo na větvi `fix/stabilizace`: smazaná šablona s historií se archivuje, naplánované tréninky se z kalendáře odeberou, odcvičené zůstanou v kalendáři i v historii; migrace databáze 3→4; ověřeno testy, dialog zatím vizuálně neověřen) Smazání šablony, která je naplánovaná v kalendáři, narazí na cizí klíč (na kopii databáze ověřeno: `FOREIGN KEY constraint failed`, v aplikaci pravděpodobně pád). Ošetřit: varování a rozhodnutí, co se plánem stane.
 - [ ] 2.11 Přidání **nového cviku** přímo z výběru cviků (během tréninku i při tvorbě jednotky). Dnes výběr cviků jen vybírá, tlačítko pro nový cvik chybí.
 - [ ] 2.12 Změna **pořadí cviků** v editoru tréninkové jednotky (dnes jde jen v aktivním tréninku). Táhnutí nebo šipky nahoru/dolů, editor je v rolovacím okně.
 - [ ] 2.14 Z kalendáře jde naplánovaný trénink jen přidat, **odebrat ho nejde** (smazání je v kódu, ale chybí v obrazovce). Přidat odebrání, nejlépe s potvrzením.
+- [x] 2.15 (hotovo na větvi `fix/stabilizace`, ověřeno testy) **Odcvičený trénink je záznam, nesleduje šablonu.** Zobrazuje jen uložené série v pořadí, v jakém byly zapsány. Naplánovaný (neodcvičený) trénink šablonu dál sleduje. Známá omezení do v2 (fáze 3, snapshot plánu): cvik bez jediné zapsané série se v odcvičeném tréninku nezobrazí a název šablony v kalendáři je pořád aktuální název šablony.
 - [ ] 2.13 Drobná vizuální vylepšení v1: seznam konkrétních výhrad od Eriky (obrazovka, co vadí), pak po jedné obrazovce. Přestavba rozložení je záležitost v2.
 
 ## Fáze 3 – Datový model v2 v aplikaci (Room)
@@ -127,7 +128,7 @@ Opravy v1 (stávající aplikace, stejné `applicationId` a klíč), které se v
 - [ ] 4.3 Přihlášení: e-mail a heslo (případně magic link). Role trenér/klient.
 - [ ] 4.4 Row Level Security a automatizované testy politik (trenér vidí jen své klienty, klient jen sebe). Ověřit možnost lokálního běhu Supabase přes jeho CLI.
 - [ ] 4.5 Pozvánky klientů (kód nebo odkaz) a převzetí existujícího profilu klienta.
-- [ ] 4.6 **Zálohy na free plánu nejsou.** Zavést vlastní pravidelný export databáze (např. týdenní dump z Erikina počítače), uložit mimo repozitář a **otestovat obnovu**. Projekt se po týdnu neaktivity pozastaví, hlídat to před dovolenou. Rozhodnout před pilotem, kdy přejít na placený plán (zálohy a žádné pozastavení).
+- [ ] 4.6 **Zálohy na free plánu nejsou.** Zavést vlastní pravidelný export databáze (např. týdenní dump z Erikina počítače), uložit mimo repozitář a **otestovat obnovu**. Projekt se po týdnu neaktivity pozastaví, hlídat to před dovolenou a před obhajobou (ověřit v dokumentaci Supabase, jak pozastavený projekt obnovit). **Rozhodnuto 2026-11-08: placený plán neplatíme, zůstáváme na free plánu.**
 - [ ] 4.7 Média: úložiště pro obrázky a GIFy, nebo jen odkazy na YouTube (viz fáze 8).
 
 ## Fáze 5 – Přihlášení a synchronizace v Androidu
@@ -169,7 +170,7 @@ Dřív to mělo být na webu, teď to musí zvládnout aplikace.
 - [ ] 9.2 Distribuce (vnitřní testování v Google Play, nebo APK) a mechanismus aktualizací.
 - [ ] 9.3 Hlášení chyb z provozu.
 - [ ] 9.4 Pilot: Erika a její klienti, sběr zpětné vazby.
-- [ ] 9.5 Rozhodnutí o přechodu Supabase na placený plán a test obnovy ze zálohy.
+- [ ] 9.5 Test obnovy ze zálohy. Po obhajobě rozhodnout, jak dál provozovat (free plán, placený plán, jiné řešení).
 - [ ] 9.6 Uživatelské testování jako podklad pro diplomku.
 
 ## Fáze W – Web a další rozšíření (mimo rozsah diplomky)
@@ -204,7 +205,7 @@ Pravidla pro psaní: každý zdroj do `sources.md` se stavem ověření, citace 
 ## Rizika
 
 - **Ztráta dat klientů** při migraci nebo přechodu na nové ID: záloha databáze před každou instalací PROD verze, testy jen přes DEV build.
-- **Free plán Supabase bez záloh a s pozastavováním:** vlastní týdenní export a test obnovy, hlídat neaktivitu.
+- **Free plán Supabase bez záloh a s pozastavováním:** vlastní týdenní export a test obnovy, hlídat neaktivitu. Placený plán se neplánuje, riziko je vědomě přijaté a zmírněné lokálními kopiemi dat v zařízeních.
 - **Vlastní synchronizace je složitá:** začít jednoduše (poslední zápis vyhrává), udělat prototyp, psát testy. Rozhodnutí o PowerSync co nejdřív.
 - **Rozsah vs termín:** plánování musí být v aplikaci, protože web odpadá. Držet jádro M1 až M5 a M7.
 - **Zdravotní údaje (GDPR):** řešit od návrhu. Při více trenérech se mění role provozovatele.
@@ -217,7 +218,7 @@ Pravidla pro psaní: každý zdroj do `sources.md` se stavem ověření, citace 
 - **`gh`:** nainstalované a přihlášené (účet Sunflavoured, oprávnění `repo`, `read:org`, `gist`). Terminály spuštěné před instalací ho nemusí vidět v PATH, pak volat plnou cestou `C:\Program Files\GitHub CLI\gh.exe`.
 - **Podepisování commitů:** přes 1Password. Pokud je 1Password zamčený, commit se zasekne a vyprší čas. Před commitem odemknout 1Password a potvrdit dialog.
 - **DEV a PROD:** debug build má příponu `.dev`, instaluje se vedle PROD a data nesdílí.
-- **Lokální build a testy:** Claude Code umí aplikaci sestavit (`gradlew`) a spustit instrumentované testy na běžícím emulátoru Pixel_6 (Android 16). Testy používají databázi v paměti a data aplikace se nedotýkají. Gradle běží na JDK `C:\Users\erika\.jdks\jbr-21.0.11`. Po testech zůstává na emulátoru nainstalovaná DEV aplikace a testovací APK, PROD balíček se nemění. Na fyzický telefon se bez tvého svolení nic neinstaluje.
+- **Lokální build a testy:** Claude Code umí aplikaci sestavit (`gradlew`) a spustit instrumentované testy na běžícím emulátoru Pixel_6 (Android 16). Testy používají databázi v paměti a data aplikace se nedotýkají. Gradle běží na JDK `C:\Users\erika\.jdks\jbr-21.0.11`. Po testech zůstává na emulátoru nainstalovaná DEV aplikace a testovací APK, PROD balíček se nemění. Na fyzický telefon se bez tvého svolení nic neinstaluje. Gradle ale pouští testy na všech připojených zařízeních, proto vždy s `ANDROID_SERIAL=emulator-5554`. Jednou se testy omylem spustily na připojeném telefonu (aktualizovala se DEV aplikace a nainstaloval testovací balíček `.dev.test`, PROD ani žádná data se nezměnily).
 - **Issues na GitHubu:** #1 až #13, většina je dnes už funkčně hotová, viz 0.9.
 
 ## Návrh rozložení aplikace v2 (k rozpracování v 1.8)
