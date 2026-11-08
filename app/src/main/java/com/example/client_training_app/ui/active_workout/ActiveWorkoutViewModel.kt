@@ -135,7 +135,10 @@ class ActiveWorkoutViewModel(application: Application) : AndroidViewModel(applic
     // --- Logika načtení historie (Editace) ---
     private suspend fun loadFromHistory(session: WorkoutSessionEntity) {
         val results = workoutRepository.getSetsForSession(session.id)
-        val unitWithExercises = unitRepository.getTrainingUnitWithExercises(session.trainingUnitId ?: "")
+        // ID šablony bereme ze session. Když chybí (starší data, kterým ho smazala úprava šablony),
+        // použijeme ID z kalendáře, odkud trénink otevíráme. Jinak by obrazovka zůstala prázdná.
+        val unitId = session.trainingUnitId ?: currentTrainingUnitId ?: ""
+        val unitWithExercises = unitRepository.getTrainingUnitWithExercises(unitId)
 
         if (unitWithExercises != null) {
             _trainingNote.value = unitWithExercises.trainingUnit.note

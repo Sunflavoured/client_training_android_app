@@ -16,8 +16,11 @@ interface TrainingUnitDao {
 
     // --- INSERT / UPDATE ---
 
-    // Vložení nebo aktualizace hlavičky (OnConflictStrategy.REPLACE to řeší za nás)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // Vložení nebo aktualizace hlavičky.
+    // POZOR: nepoužívat REPLACE. Ten řádek nejdřív smaže a znovu vloží, čímž se spustí akce cizích klíčů:
+    // odcvičeným tréninkům se smaže odkaz na šablonu (SET NULL) a smažou se její cviky (CASCADE).
+    // @Upsert existující řádek jen aktualizuje.
+    @Upsert
     suspend fun insertOrUpdateUnit(unit: TrainingUnitEntity)
 
     // Vložení seznamu cviků

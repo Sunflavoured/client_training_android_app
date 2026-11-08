@@ -174,4 +174,7 @@ class TrainingUnitEditorViewModel(application: Application) : AndroidViewModel(a
             repository.deleteTrainingUnit(unit.id)
         }
     }
+
+    /** Pro varování před smazáním: kolikrát je šablona v kalendáři a kolikrát odcvičená. */
+    suspend fun getScheduleUsage(unitId: String) = repository.getScheduleUsage(unitId)
 }

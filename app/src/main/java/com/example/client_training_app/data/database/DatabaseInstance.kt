@@ -64,6 +64,12 @@ object DatabaseInstance {
         }
     }
 
+    /** Pouze pro testy: nahradí produkční databázi jinou (např. v paměti). `null` ji vrátí do výchozího stavu. */
+    @androidx.annotation.VisibleForTesting
+    fun setInstanceForTesting(database: AppDatabase?) {
+        synchronized(this) { INSTANCE = database }
+    }
+
     val MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
             // Příkaz SQL, který přidá sloupec 'rest' typu TEXT do tabulky
