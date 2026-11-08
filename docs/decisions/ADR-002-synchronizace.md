@@ -1,6 +1,6 @@
 # ADR-002: Synchronizace Room ↔ Supabase
 
-Stav: **návrh**, relevantní jen při volbě Supabase (viz ADR-001). Při volbě Firebase synchronizaci zajišťuje Firestore a tento záznam odpadá.
+Stav: **rozhodnuto** (2026-11-08): varianta A v zúžené podobě, PowerSync zůstává záložní variantou (viz ADR-001, Supabase).
 Datum: 2026-11-08
 
 ## Kontext
@@ -32,10 +32,19 @@ takže skutečné konflikty budou vzácné.
   přes vlastní konektor do Supabase. To znamená dvě místa s pravidly oprávnění a další služba, která se
   na free plánu pozastavuje.
 
-## Návrh
+## Rozhodnutí
 
-Začít s **A** (vlastní jednoduchá synchronizace), pokud malý prototyp po datovém modelu v2 ukáže, že je
-zvládnutelná. **B** ponechat jako záložní řešení.
+Varianta **A** v zúžené podobě, přiměřené rozsahu diplomky (tři pilotní klienti):
+- **čtení offline:** plán, cviky a data klienta se stahují do Room, aplikace s nimi pracuje bez připojení,
+- **zápis offline:** odcvičený trénink se uloží lokálně jako nový záznam s UUID a po připojení se odešle (fronta
+  odchozích změn, WorkManager, idempotentní zápis). Nové záznamy nemají s čím kolidovat,
+- **bez obecné obousměrné synchronizace:** plán upravuje jen trenér online, výsledky zapisuje jen klient.
+  Úpravy stejného záznamu z více míst by byly rozšíření.
+
+Pokud by ani tato zúžená vrstva nevycházela časově, odloží se obousměrná část do návrhů na rozšíření a výsledky
+se budou odesílat jen při dostupném spojení. **B** (PowerSync) zůstává záložní možností.
+
+Datový model v2 (UUID, `updatedAt`, `deletedAt`, vlastník záznamu) je pro obě varianty stejný.
 
 Datový model v2 (UUID, `updatedAt`, `deletedAt`, vlastník záznamu) je potřeba pro obě varianty,
 takže o synchronizaci lze rozhodnout až po fázi 3 bez ztráty práce.

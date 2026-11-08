@@ -53,7 +53,7 @@ a po splnění položky ji odškrtnout. Nové nápady patří do sekce *Backlog 
 - Cílem je sdílená cloudová databáze s přihlášením (trenér spravuje tréninky klientů), práce offline
   s lokálním Room jako zdrojem pravdy a následnou synchronizací.
 - Rozsah (upřesněno 2026-11-08): pilot s několika klienty a demonstrace při obhajobě, po obhajobě se aplikace neprovozuje.
-- Backend: Firebase (plán Spark), rozhodnuto 2026-11-08, viz `docs/decisions/ADR-001-backend.md`. Offline řeší Firestore, vlastní synchronizace se nevyvíjí.
+- Backend: Supabase (free plán), rozhodnuto 2026-11-08, viz `docs/decisions/ADR-001-backend.md` (porovnání s Firebase). Přihlášení Google (ADR-003), zúžená offline vrstva nad Room (ADR-002).
 - Plánovaný refaktor datového modelu před synchronizací: UUID ve všech tabulkách, `updatedAt` a `deletedAt`,
   číselné hodnoty místo textu (váha, opakování, RIR), program → fáze → jednotka.
 - Text diplomky je v samostatném repozitáři v Markdownu (později LaTeX); zdroje ověřuje uživatelka.
