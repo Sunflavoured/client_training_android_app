@@ -37,6 +37,10 @@ Aplikaci spouští a ladí uživatelka v Android Studiu (USB zařízení). Z ter
   Pro vývoj a ukázky používat anonymizovaná data.
 - Commit zprávy: česky, s číslem issue ve formátu `#N` (jako dosud).
 
+## Plán a checklist
+Postup, pořadí kroků a rozhodnutí jsou v `docs/PLAN.md`. Před další prací ho přečíst, držet pořadí fází
+a po splnění položky ji odškrtnout. Nové nápady patří do sekce *Backlog nápadů*, ne rovnou do fází.
+
 ## Domluvený směr (diplomka)
 - Zůstat u nativního Android Kotlinu, webová aplikace pro trenéra vznikne zvlášť (React + TypeScript).
 - Cílem je sdílená cloudová databáze s přihlášením (trenér spravuje tréninky klientů), práce offline
